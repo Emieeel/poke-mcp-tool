@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node -e ' *)",
+      "Bash(node -e \"const d=require\\('./data/champions-dex.sample.json'\\); for\\(const k of Object.keys\\(d.pokemon\\)\\){const e=d.pokemon[k];console.log\\(e.name+': '+e.moves.length+' moves ->', e.moves.slice\\(0,8\\).join\\(', '\\),'...'\\);}\")",
+      "Bash(node -e \"const d=require\\('./data/champions-dex.json'\\); const m=d.pokemon.garchomp.moves; console.log\\('Surf?',m.includes\\('Surf'\\),'| Recover?',m.includes\\('Recover'\\),'| Moonblast?',m.includes\\('Moonblast'\\),'| Quiver Dance?',m.includes\\('Quiver Dance'\\)\\); console.log\\('total',m.length\\);\")",
+      "Bash(node -e \"const d=require\\('./data/champions-dex.json'\\);const r=require\\('./regulations/m-b.json'\\);console.log\\('dex:',d.meta.count,'pokemon |',Object.values\\(d.pokemon\\).reduce\\(\\(s,e\\)=>s+e.moves.length,0\\),'total move entries'\\);console.log\\('reg m-b:',r.legalPokemon.length,'legal,',r.bannedPokemon.length,'banned'\\);\")"
+    ]
+  }
+}

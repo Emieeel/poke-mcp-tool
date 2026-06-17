@@ -1,0 +1,28 @@
+{
+  "name": "pokemon-champions-mcp",
+  "version": "0.1.0",
+  "description": "MCP server exposing damage calc, type effectiveness, Pokédex lookup, and Pokémon Champions regulation legality.",
+  "type": "module",
+  "private": true,
+  "bin": {
+    "pokemon-champions-mcp": "dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "scrape": "tsx scripts/scrape-regulation.ts",
+    "scrape:dex": "tsx scripts/scrape-champions-dex.ts",
+    "test": "tsx test/smoke.ts"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.29.0",
+    "@smogon/calc": "^0.11.0",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "cheerio": "1.0.0",
+    "tsx": "^4.22.4",
+    "typescript": "^5.7.0"
+  }
+}

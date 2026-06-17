@@ -1,0 +1,687 @@
+{
+  "meta": {
+    "id": "m-b",
+    "name": "Regulation M-B",
+    "game": "Pokémon Champions",
+    "validFrom": "2026-06-17",
+    "validTo": "2026-09-02",
+    "source": "https://www.serebii.net/pokemonchampions/rankedbattle/regulationm-b.shtml",
+    "rosterSource": "https://www.serebii.net/pokedex-champions/",
+    "scrapedAt": "2026-06-17T17:01:34.400Z",
+    "listScope": "full-roster",
+    "newlyUseable": [
+      "Mega Raichu X",
+      "Mega Raichu Y",
+      "Vileplume",
+      "Qwilfish",
+      "Sceptile",
+      "Mega Sceptile",
+      "Blaziken",
+      "Mega Blaziken",
+      "Swampert",
+      "Mega Swampert",
+      "Mawile",
+      "Mega Mawile",
+      "Metagross",
+      "Mega Metagross",
+      "Staraptor",
+      "Mega Staraptor",
+      "Musharna",
+      "Scolipede",
+      "Mega Scolipede",
+      "Scrafty",
+      "Mega Scrafty",
+      "Eelektross",
+      "Mega Eelektross",
+      "Pyroar",
+      "Mega Pyroar",
+      "Malamar",
+      "Mega Malamar",
+      "Barbaracle",
+      "Mega Barbaracle",
+      "Dragalge",
+      "Mega Dragalge",
+      "Grimmsnarl",
+      "Falinks",
+      "Mega Falinks",
+      "Overqwil",
+      "Houndstone",
+      "Annihilape",
+      "Gholdengo"
+    ]
+  },
+  "legalPokemon": [
+    {
+      "name": "Venusaur"
+    },
+    {
+      "name": "Charizard"
+    },
+    {
+      "name": "Blastoise"
+    },
+    {
+      "name": "Beedrill"
+    },
+    {
+      "name": "Pidgeot"
+    },
+    {
+      "name": "Arbok"
+    },
+    {
+      "name": "Pikachu"
+    },
+    {
+      "name": "Raichu"
+    },
+    {
+      "name": "Clefable"
+    },
+    {
+      "name": "Ninetales"
+    },
+    {
+      "name": "Vileplume"
+    },
+    {
+      "name": "Arcanine"
+    },
+    {
+      "name": "Alakazam"
+    },
+    {
+      "name": "Machamp"
+    },
+    {
+      "name": "Victreebel"
+    },
+    {
+      "name": "Slowbro"
+    },
+    {
+      "name": "Gengar"
+    },
+    {
+      "name": "Kangaskhan"
+    },
+    {
+      "name": "Starmie"
+    },
+    {
+      "name": "Pinsir"
+    },
+    {
+      "name": "Tauros"
+    },
+    {
+      "name": "Gyarados"
+    },
+    {
+      "name": "Ditto"
+    },
+    {
+      "name": "Vaporeon"
+    },
+    {
+      "name": "Jolteon"
+    },
+    {
+      "name": "Flareon"
+    },
+    {
+      "name": "Aerodactyl"
+    },
+    {
+      "name": "Snorlax"
+    },
+    {
+      "name": "Dragonite"
+    },
+    {
+      "name": "Meganium"
+    },
+    {
+      "name": "Typhlosion"
+    },
+    {
+      "name": "Feraligatr"
+    },
+    {
+      "name": "Ariados"
+    },
+    {
+      "name": "Ampharos"
+    },
+    {
+      "name": "Azumarill"
+    },
+    {
+      "name": "Politoed"
+    },
+    {
+      "name": "Espeon"
+    },
+    {
+      "name": "Umbreon"
+    },
+    {
+      "name": "Slowking"
+    },
+    {
+      "name": "Forretress"
+    },
+    {
+      "name": "Steelix"
+    },
+    {
+      "name": "Qwilfish"
+    },
+    {
+      "name": "Scizor"
+    },
+    {
+      "name": "Heracross"
+    },
+    {
+      "name": "Skarmory"
+    },
+    {
+      "name": "Houndoom"
+    },
+    {
+      "name": "Tyranitar"
+    },
+    {
+      "name": "Sceptile"
+    },
+    {
+      "name": "Blaziken"
+    },
+    {
+      "name": "Swampert"
+    },
+    {
+      "name": "Pelipper"
+    },
+    {
+      "name": "Gardevoir"
+    },
+    {
+      "name": "Sableye"
+    },
+    {
+      "name": "Mawile"
+    },
+    {
+      "name": "Aggron"
+    },
+    {
+      "name": "Medicham"
+    },
+    {
+      "name": "Manectric"
+    },
+    {
+      "name": "Sharpedo"
+    },
+    {
+      "name": "Camerupt"
+    },
+    {
+      "name": "Torkoal"
+    },
+    {
+      "name": "Altaria"
+    },
+    {
+      "name": "Milotic"
+    },
+    {
+      "name": "Castform"
+    },
+    {
+      "name": "Banette"
+    },
+    {
+      "name": "Chimecho"
+    },
+    {
+      "name": "Absol"
+    },
+    {
+      "name": "Glalie"
+    },
+    {
+      "name": "Metagross"
+    },
+    {
+      "name": "Torterra"
+    },
+    {
+      "name": "Infernape"
+    },
+    {
+      "name": "Empoleon"
+    },
+    {
+      "name": "Staraptor"
+    },
+    {
+      "name": "Luxray"
+    },
+    {
+      "name": "Roserade"
+    },
+    {
+      "name": "Rampardos"
+    },
+    {
+      "name": "Bastiodon"
+    },
+    {
+      "name": "Lopunny"
+    },
+    {
+      "name": "Spiritomb"
+    },
+    {
+      "name": "Garchomp"
+    },
+    {
+      "name": "Lucario"
+    },
+    {
+      "name": "Hippowdon"
+    },
+    {
+      "name": "Toxicroak"
+    },
+    {
+      "name": "Abomasnow"
+    },
+    {
+      "name": "Weavile"
+    },
+    {
+      "name": "Rhyperior"
+    },
+    {
+      "name": "Leafeon"
+    },
+    {
+      "name": "Glaceon"
+    },
+    {
+      "name": "Gliscor"
+    },
+    {
+      "name": "Mamoswine"
+    },
+    {
+      "name": "Gallade"
+    },
+    {
+      "name": "Froslass"
+    },
+    {
+      "name": "Rotom"
+    },
+    {
+      "name": "Serperior"
+    },
+    {
+      "name": "Emboar"
+    },
+    {
+      "name": "Samurott"
+    },
+    {
+      "name": "Watchog"
+    },
+    {
+      "name": "Liepard"
+    },
+    {
+      "name": "Simisage"
+    },
+    {
+      "name": "Simisear"
+    },
+    {
+      "name": "Simipour"
+    },
+    {
+      "name": "Musharna"
+    },
+    {
+      "name": "Excadrill"
+    },
+    {
+      "name": "Audino"
+    },
+    {
+      "name": "Conkeldurr"
+    },
+    {
+      "name": "Scolipede"
+    },
+    {
+      "name": "Whimsicott"
+    },
+    {
+      "name": "Krookodile"
+    },
+    {
+      "name": "Scrafty"
+    },
+    {
+      "name": "Cofagrigus"
+    },
+    {
+      "name": "Garbodor"
+    },
+    {
+      "name": "Zoroark"
+    },
+    {
+      "name": "Reuniclus"
+    },
+    {
+      "name": "Vanilluxe"
+    },
+    {
+      "name": "Emolga"
+    },
+    {
+      "name": "Eelektross"
+    },
+    {
+      "name": "Chandelure"
+    },
+    {
+      "name": "Beartic"
+    },
+    {
+      "name": "Stunfisk"
+    },
+    {
+      "name": "Golurk"
+    },
+    {
+      "name": "Hydreigon"
+    },
+    {
+      "name": "Volcarona"
+    },
+    {
+      "name": "Chesnaught"
+    },
+    {
+      "name": "Delphox"
+    },
+    {
+      "name": "Greninja"
+    },
+    {
+      "name": "Diggersby"
+    },
+    {
+      "name": "Talonflame"
+    },
+    {
+      "name": "Vivillon"
+    },
+    {
+      "name": "Pyroar"
+    },
+    {
+      "name": "Floette"
+    },
+    {
+      "name": "Florges"
+    },
+    {
+      "name": "Pangoro"
+    },
+    {
+      "name": "Furfrou"
+    },
+    {
+      "name": "Meowstic"
+    },
+    {
+      "name": "Aegislash"
+    },
+    {
+      "name": "Aromatisse"
+    },
+    {
+      "name": "Slurpuff"
+    },
+    {
+      "name": "Malamar"
+    },
+    {
+      "name": "Barbaracle"
+    },
+    {
+      "name": "Dragalge"
+    },
+    {
+      "name": "Clawitzer"
+    },
+    {
+      "name": "Heliolisk"
+    },
+    {
+      "name": "Tyrantrum"
+    },
+    {
+      "name": "Aurorus"
+    },
+    {
+      "name": "Sylveon"
+    },
+    {
+      "name": "Hawlucha"
+    },
+    {
+      "name": "Dedenne"
+    },
+    {
+      "name": "Goodra"
+    },
+    {
+      "name": "Klefki"
+    },
+    {
+      "name": "Trevenant"
+    },
+    {
+      "name": "Gourgeist"
+    },
+    {
+      "name": "Avalugg"
+    },
+    {
+      "name": "Noivern"
+    },
+    {
+      "name": "Decidueye"
+    },
+    {
+      "name": "Incineroar"
+    },
+    {
+      "name": "Primarina"
+    },
+    {
+      "name": "Toucannon"
+    },
+    {
+      "name": "Crabominable"
+    },
+    {
+      "name": "Lycanroc"
+    },
+    {
+      "name": "Toxapex"
+    },
+    {
+      "name": "Mudsdale"
+    },
+    {
+      "name": "Araquanid"
+    },
+    {
+      "name": "Salazzle"
+    },
+    {
+      "name": "Tsareena"
+    },
+    {
+      "name": "Oranguru"
+    },
+    {
+      "name": "Passimian"
+    },
+    {
+      "name": "Mimikyu"
+    },
+    {
+      "name": "Drampa"
+    },
+    {
+      "name": "Kommo-o"
+    },
+    {
+      "name": "Corviknight"
+    },
+    {
+      "name": "Flapple"
+    },
+    {
+      "name": "Appletun"
+    },
+    {
+      "name": "Sandaconda"
+    },
+    {
+      "name": "Polteageist"
+    },
+    {
+      "name": "Hatterene"
+    },
+    {
+      "name": "Grimmsnarl"
+    },
+    {
+      "name": "Runerigus"
+    },
+    {
+      "name": "Alcremie"
+    },
+    {
+      "name": "Falinks"
+    },
+    {
+      "name": "Morpeko"
+    },
+    {
+      "name": "Dragapult"
+    },
+    {
+      "name": "Wyrdeer"
+    },
+    {
+      "name": "Kleavor"
+    },
+    {
+      "name": "Basculegion"
+    },
+    {
+      "name": "Sneasler"
+    },
+    {
+      "name": "Overqwil"
+    },
+    {
+      "name": "Meowscarada"
+    },
+    {
+      "name": "Skeledirge"
+    },
+    {
+      "name": "Quaquaval"
+    },
+    {
+      "name": "Maushold"
+    },
+    {
+      "name": "Garganacl"
+    },
+    {
+      "name": "Armarouge"
+    },
+    {
+      "name": "Ceruledge"
+    },
+    {
+      "name": "Bellibolt"
+    },
+    {
+      "name": "Scovillain"
+    },
+    {
+      "name": "Espathra"
+    },
+    {
+      "name": "Tinkaton"
+    },
+    {
+      "name": "Palafin"
+    },
+    {
+      "name": "Orthworm"
+    },
+    {
+      "name": "Glimmora"
+    },
+    {
+      "name": "Houndstone"
+    },
+    {
+      "name": "Annihilape"
+    },
+    {
+      "name": "Farigiraf"
+    },
+    {
+      "name": "Kingambit"
+    },
+    {
+      "name": "Gholdengo"
+    },
+    {
+      "name": "Sinistcha"
+    },
+    {
+      "name": "Archaludon"
+    },
+    {
+      "name": "Hydrapple"
+    }
+  ],
+  "bannedPokemon": [
+    {
+      "name": "Mega Garchomp Z",
+      "notes": "Excluded Mega form (base Garchomp is legal). Source: Game8."
+    },
+    {
+      "name": "Mega Lucario Z",
+      "notes": "Excluded Mega form (base Lucario is legal). Source: Game8."
+    }
+  ],
+  "notes": "legalPokemon is the full Champions Pokédex (all Pokémon transferable via Pokémon HOME), which is the legal pool for this regulation; per the official rules there are no Restricted Pokémon. bannedPokemon lists specific Mega forms excluded from this format (their base species remain legal). newlyUseable (in meta) is what this regulation newly added. No per-move legality is published, so legalMoves is omitted and move-legality checks are unavailable for this regulation."
+}

@@ -1,0 +1,5 @@
+node_modules/
+dist/
+*.log
+# Test artifact from `npm run scrape:dex -- <slug>`; the full champions-dex.json is committed.
+data/*.sample.json
