@@ -6,3 +6,6 @@ data/*.sample.json
 
 # Local Claude Code harness config (personal permission allowlist, not for publishing).
 .claude/
+
+# Internal design/spec doc — kept locally, not published.
+spec.md
