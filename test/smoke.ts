@@ -35,8 +35,8 @@ async function main() {
   const toolNames = tools.tools.map((t) => t.name).sort();
   console.log('\nRegistered tools:', toolNames.join(', '));
   check(
-    'all 9 tools present',
-    ['calculate_damage', 'check_legality', 'find_pokemon_by_move', 'get_item', 'get_pokemon', 'list_items', 'list_legal_moves', 'list_regulations', 'type_effectiveness'].every(
+    'all 10 tools present',
+    ['calculate_damage', 'check_legality', 'find_pokemon_by_move', 'get_item', 'get_pokemon', 'list_items', 'list_legal_moves', 'list_legal_pokemon', 'list_regulations', 'type_effectiveness'].every(
       (n) => toolNames.includes(n),
     ),
   );
@@ -371,6 +371,18 @@ async function main() {
         status.parsed.moves.every((m: any) => m.category === 'Status' && /spore/i.test(m.displayName)) &&
         status.parsed.moves.some((m: any) => m.name === 'Stun Spore'),
       status.parsed.moves);
+  }
+
+  // 10. list_legal_pokemon — the regulation's legal roster, with filters.
+  console.log('\nlist_legal_pokemon:');
+  {
+    const all = await callJson(client, 'list_legal_pokemon', {});
+    check('m-b has a large legal-Pokémon pool (100+)', all.parsed.totalLegalPokemon > 100, { total: all.parsed.totalLegalPokemon });
+    check('resolved entries carry typing and base stats', all.parsed.pokemon.some((p: any) => p.resolved && p.types.length > 0 && p.baseStats), { sample: all.parsed.pokemon.slice(0, 2) });
+    const dragon = await callJson(client, 'list_legal_pokemon', { type: 'Dragon' });
+    check('type filter returns only Dragon types', dragon.parsed.count > 0 && dragon.parsed.pokemon.every((p: any) => p.types.includes('Dragon')), { count: dragon.parsed.count });
+    const name = await callJson(client, 'list_legal_pokemon', { nameContains: 'char' });
+    check('name filter matches substring (case-insensitive)', name.parsed.count > 0 && name.parsed.pokemon.every((p: any) => /char/i.test(p.name)), { matches: name.parsed.pokemon.map((p: any) => p.name) });
   }
 
   await client.close();

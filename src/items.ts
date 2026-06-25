@@ -12,15 +12,12 @@
  * NOTE: this module only knows the item *catalog* (what items exist + their facts). Which
  * items are LEGAL in a given regulation is regulation data — see regulations.ts.
  */
-import { readFileSync, existsSync } from 'node:fs';
-import { fileURLToPath } from 'node:url';
-import { dirname, join } from 'node:path';
 import { gen } from './calc.js';
 import { toID } from '@smogon/calc';
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
-// dist/items.js -> ../data ; src/items.ts -> ../data
-const ITEMS_FILE = join(__dirname, '..', 'data', 'champions-items.json');
+// NOTE: intentionally free of `node:*` imports so it can be bundled for filesystem-less
+// runtimes (Cloudflare Workers). Data arrives INJECTED via provideItemsData() or via a disk
+// LOADER registered by the Node-only src/diskdata.ts. See those two files.
 
 export type ItemCategory = 'Hold Item' | 'Mega Stone' | 'Berry' | 'Miscellaneous';
 
@@ -59,30 +56,38 @@ let indexCache:
   | null
   | undefined;
 
+// Data can be INJECTED (Workers bundle the JSON) or read from disk via a LOADER the Node-only
+// src/diskdata.ts registers. Either way this module stays free of `node:*` imports.
+let injectedItems: RawItemsFile | undefined;
+export function provideItemsData(raw: unknown): void {
+  injectedItems = raw as RawItemsFile;
+  indexCache = undefined; // force a rebuild from the injected data on next access
+}
+
+// A disk loader returns the parsed items JSON, or null if the file is missing/unreadable.
+type ItemsLoader = () => RawItemsFile | null;
+let diskLoader: ItemsLoader | undefined;
+export function registerItemsLoader(loader: ItemsLoader): void {
+  diskLoader = loader;
+  indexCache = undefined;
+}
+
+function buildIndex(raw: RawItemsFile) {
+  const byKey = new Map<string, RawItem>();
+  const all: RawItem[] = [];
+  for (const item of Object.values(raw.items)) {
+    const key = itemKey(item.name);
+    if (!byKey.has(key)) byKey.set(key, item);
+    all.push(item);
+  }
+  return { byKey, all, meta: raw.meta };
+}
+
 function loadIndex() {
   if (indexCache !== undefined) return indexCache;
-  if (!existsSync(ITEMS_FILE)) {
-    console.error(
-      `[items] ${ITEMS_FILE} not found — falling back to @smogon/calc data. ` +
-        `Run \`npm run scrape:items\` to build the Champions item catalog.`,
-    );
-    indexCache = null;
-    return indexCache;
-  }
-  try {
-    const raw = JSON.parse(readFileSync(ITEMS_FILE, 'utf8')) as RawItemsFile;
-    const byKey = new Map<string, RawItem>();
-    const all: RawItem[] = [];
-    for (const item of Object.values(raw.items)) {
-      const key = itemKey(item.name);
-      if (!byKey.has(key)) byKey.set(key, item);
-      all.push(item);
-    }
-    indexCache = { byKey, all, meta: raw.meta };
-  } catch (err) {
-    console.error(`[items] Failed to read ${ITEMS_FILE}: ${(err as Error).message}. Falling back.`);
-    indexCache = null;
-  }
+  const raw = injectedItems ?? diskLoader?.() ?? null;
+  // null means no Champions catalog available — callers fall back to @smogon/calc data.
+  indexCache = raw ? buildIndex(raw) : null;
   return indexCache;
 }
 

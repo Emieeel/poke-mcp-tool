@@ -5,17 +5,14 @@
  * Files live in regulations/<id>.json and are produced by scripts/scrape-regulation.ts.
  * The server only READS these files — it never scrapes on a normal tool call.
  */
-import { readFileSync, readdirSync, existsSync } from 'node:fs';
-import { fileURLToPath } from 'node:url';
-import { dirname, join } from 'node:path';
 import { z } from 'zod';
 import { nameKey, baseSpeciesKey } from './names.js';
-import { getPokemonMoves } from './dex.js';
+import { getPokemonMoves, getPokemonInfo } from './dex.js';
 import { itemKey } from './items.js';
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
-// dist/regulations.js -> ../regulations ; src/regulations.ts -> ../regulations
-export const REGULATIONS_DIR = join(__dirname, '..', 'regulations');
+// NOTE: intentionally free of `node:*` imports so it can be bundled for filesystem-less
+// runtimes (Cloudflare Workers). Regulation JSON arrives INJECTED via provideRegulationData()
+// or via a disk LOADER registered by the Node-only src/diskdata.ts. See those two files.
 
 export const regulationSchema = z.object({
   meta: z.object({
@@ -53,8 +50,23 @@ export const regulationSchema = z.object({
 
 export type Regulation = z.infer<typeof regulationSchema>;
 
-function regIdToFile(id: string): string {
-  return join(REGULATIONS_DIR, `${normalizeId(id)}.json`);
+// Regulation data can be INJECTED (Workers bundle the JSON, keyed by normalized id) or read
+// from disk via a LOADER the Node-only src/diskdata.ts registers. Injected data wins. This
+// module stays free of `node:*` imports either way.
+const injectedRegulations = new Map<string, unknown>();
+export function provideRegulationData(id: string, raw: unknown): void {
+  injectedRegulations.set(normalizeId(id), raw);
+}
+
+// A disk loader can list available regulation ids and read one's raw JSON (null if missing).
+// The stdio entry registers this (src/diskdata.ts); Workers never do (they inject instead).
+interface RegulationDiskLoader {
+  list(): string[];
+  read(id: string): unknown | null;
+}
+let diskLoader: RegulationDiskLoader | undefined;
+export function registerRegulationLoader(loader: RegulationDiskLoader): void {
+  diskLoader = loader;
 }
 
 export function normalizeId(id: string): string {
@@ -63,10 +75,10 @@ export function normalizeId(id: string): string {
 
 /** List the regulation ids available locally, with each file's meta. */
 export function listRegulations(): { id: string; meta: Regulation['meta'] | null; error?: string }[] {
-  if (!existsSync(REGULATIONS_DIR)) return [];
-  const files = readdirSync(REGULATIONS_DIR).filter((f) => f.endsWith('.json'));
-  return files.map((f) => {
-    const id = f.replace(/\.json$/, '');
+  // Union of injected ids and whatever the disk loader (if any) can enumerate.
+  const ids = new Set<string>([...injectedRegulations.keys()]);
+  if (diskLoader) for (const id of diskLoader.list()) ids.add(normalizeId(id));
+  return [...ids].map((id) => {
     try {
       const reg = loadRegulation(id);
       return { id: reg.meta.id, meta: reg.meta };
@@ -76,25 +88,22 @@ export function listRegulations(): { id: string; meta: Regulation['meta'] | null
   });
 }
 
-/** Load + validate a regulation file. Throws a clear error if missing or malformed. */
+/** Load + validate a regulation by id. Throws a clear error if missing or malformed. */
 export function loadRegulation(id: string): Regulation {
-  const file = regIdToFile(id);
-  if (!existsSync(file)) {
+  // Injected data (filesystem-less runtimes) wins over the disk loader.
+  const norm = normalizeId(id);
+  let raw: unknown = injectedRegulations.get(norm);
+  if (raw === undefined) raw = diskLoader?.read(norm) ?? undefined;
+  if (raw === undefined) {
     throw new Error(
-      `No regulation data for "${normalizeId(id)}". Expected ${file}. ` +
-        `Run the scraper to create it:  npm run scrape -- ${normalizeId(id)}`,
+      `No regulation data for "${norm}". ` +
+        `Run the scraper to create it:  npm run scrape -- ${norm}`,
     );
-  }
-  let raw: unknown;
-  try {
-    raw = JSON.parse(readFileSync(file, 'utf8'));
-  } catch (err) {
-    throw new Error(`Regulation file ${file} is not valid JSON: ${(err as Error).message}`);
   }
   const parsed = regulationSchema.safeParse(raw);
   if (!parsed.success) {
     throw new Error(
-      `Regulation file ${file} failed validation: ${parsed.error.issues
+      `Regulation "${normalizeId(id)}" failed validation: ${parsed.error.issues
         .map((i) => `${i.path.join('.')}: ${i.message}`)
         .join('; ')}`,
     );
@@ -260,6 +269,104 @@ export function checkLegality(
     moveLegalityAvailable,
     items: itemResults,
     itemLegalityAvailable,
+    notes,
+  };
+}
+
+export interface LegalPokemonEntry {
+  name: string;
+  num: number | null;
+  types: string[];
+  baseStats?: { hp: number; atk: number; def: number; spa: number; spd: number; spe: number };
+  abilities?: string[];
+  /** Set when the regulation file annotates this entry (e.g. restricted-slot note). */
+  notes?: string;
+  /** True when the entry could be resolved in the Champions dex (else types/stats are absent). */
+  resolved: boolean;
+}
+
+export interface ListLegalPokemonResult {
+  regulation: string;
+  regulationName: string;
+  /** Total size of the regulation's legal pool, before filters. */
+  totalLegalPokemon: number;
+  count: number;
+  filter: { nameContains?: string; type?: string };
+  /** Scope of the underlying list: "full-roster" (the whole legal pool) or "newly-useable". */
+  listScope?: string;
+  pokemon: LegalPokemonEntry[];
+  notes: string[];
+}
+
+/**
+ * List the Pokémon legal in `regulationId` (the regulation's allowlist), each enriched with
+ * dex number, typing, base stats, and abilities from the Champions dex. Optional filters narrow
+ * by name substring or (case-insensitive) type. The complement to listLegalMoves: this reads
+ * straight from the regulation's legalPokemon list rather than deriving anything from learnsets.
+ */
+export function listLegalPokemon(
+  regulationId: string,
+  opts: { nameContains?: string; type?: string } = {},
+): ListLegalPokemonResult {
+  const reg = loadRegulation(regulationId);
+
+  let entries: LegalPokemonEntry[] = reg.legalPokemon.map((p) => {
+    const info = getPokemonInfo(p.name);
+    if (!info) {
+      return { name: p.name, num: null, types: [], notes: p.notes, resolved: false };
+    }
+    return {
+      name: info.name,
+      num: info.num ?? null,
+      types: info.types,
+      baseStats: info.baseStats,
+      abilities: info.abilities,
+      notes: p.notes,
+      resolved: true,
+    };
+  });
+  const totalLegalPokemon = entries.length;
+
+  // Filters.
+  const nameNeedle = opts.nameContains?.trim().toLowerCase();
+  if (nameNeedle) entries = entries.filter((e) => e.name.toLowerCase().includes(nameNeedle));
+  if (opts.type) {
+    const t = opts.type.toLowerCase();
+    entries = entries.filter((e) => e.types.some((ty) => ty.toLowerCase() === t));
+  }
+
+  entries.sort((a, b) => (a.num ?? 1e9) - (b.num ?? 1e9) || a.name.localeCompare(b.name));
+
+  const notes: string[] = [];
+  if (totalLegalPokemon === 0) {
+    notes.push(
+      `Regulation ${reg.meta.id} has no legal-Pokémon list loaded (possibly a partial scrape). ` +
+        `Re-run \`npm run scrape -- ${reg.meta.id}\`.`,
+    );
+  }
+  if (reg.meta.listScope === 'newly-useable') {
+    notes.push(
+      `This regulation's list only contains Pokémon NEWLY useable in ${reg.meta.name}; Pokémon ` +
+        `introduced in an earlier regulation may also be legal. Verify against ` +
+        `${reg.meta.source ?? 'the source'}.`,
+    );
+  }
+  const unresolved = entries.filter((e) => !e.resolved).length;
+  if (unresolved > 0) {
+    notes.push(
+      `${unresolved} legal Pokémon could not be resolved in the Champions dex, so typing/stats ` +
+        `are unavailable for them (run \`npm run scrape:dex\`).`,
+    );
+  }
+
+  return {
+    regulation: reg.meta.id,
+    regulationName: reg.meta.name,
+    totalLegalPokemon,
+    count: entries.length,
+    filter: { nameContains: opts.nameContains, type: opts.type },
+    listScope: reg.meta.listScope,
+    pokemon: entries,
     notes,
   };
 }

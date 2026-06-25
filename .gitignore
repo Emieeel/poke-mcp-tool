@@ -4,6 +4,9 @@ dist/
 # Test artifact from `npm run scrape:dex -- <slug>`; the full champions-dex.json is committed.
 data/*.sample.json
 
+# Cloudflare Workers local dev state (wrangler).
+.wrangler/
+
 # Local Claude Code harness config (personal permission allowlist, not for publishing).
 .claude/
 

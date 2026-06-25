@@ -1,0 +1,22 @@
+# Cloudflare Workers config for the hosted (HTTP) Pokémon Champions MCP server.
+# Deploy with `npm run deploy:worker` (wraps `wrangler deploy`). The local stdio server
+# (src/index.ts) is unaffected by this file.
+#
+# Wrangler bundles TypeScript directly with esbuild, so `main` points at the .ts entry — no
+# separate build step is needed for the Worker. The bundled JSON datasets ship inside the code.
+
+name = "pokemon-champions-mcp"
+main = "src/worker.ts"
+
+# Set to the date the project was wired up; bump deliberately after testing (see Cloudflare's
+# compatibility-dates docs). nodejs_compat is belt-and-suspenders — the bundle currently needs
+# no Node built-ins, but the flag lets the SDK fall back to a polyfill if a future version does.
+compatibility_date = "2026-06-25"
+compatibility_flags = ["nodejs_compat"]
+
+# Serve the worker on its workers.dev subdomain (…workers.dev). This is the URL you paste into
+# an MCP client. Set to false later if you attach a custom domain via [[routes]].
+workers_dev = true
+
+[observability]
+enabled = true

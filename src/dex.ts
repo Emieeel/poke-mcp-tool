@@ -12,16 +12,14 @@
  * @smogon/calc remains the engine for the damage *formula* (see calc.ts) — only per-Pokémon
  * facts (stats/types/abilities/weight) are sourced here.
  */
-import { readFileSync, existsSync } from 'node:fs';
-import { fileURLToPath } from 'node:url';
-import { dirname, join } from 'node:path';
 import { toID } from '@smogon/calc';
 import { gen } from './calc.js';
 import { nameKey } from './names.js';
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
-// dist/dex.js -> ../data ; src/dex.ts -> ../data
-const DEX_FILE = join(__dirname, '..', 'data', 'champions-dex.json');
+// NOTE: this module is intentionally free of `node:*` imports so it can be bundled for
+// filesystem-less runtimes (Cloudflare Workers). Data arrives either INJECTED via
+// provideDexData() (Workers bundle the JSON) or through a disk LOADER registered by the
+// Node-only src/diskdata.ts (the stdio server). See those two files.
 
 interface RawForm {
   name: string;
@@ -98,33 +96,42 @@ let indexCache:
   | null
   | undefined;
 
+// Data can be INJECTED (Workers bundle the JSON) or read from disk via a LOADER the Node-only
+// src/diskdata.ts registers. Either way this module stays free of `node:*` imports.
+let injectedDex: RawDex | undefined;
+export function provideDexData(raw: unknown): void {
+  injectedDex = raw as RawDex;
+  indexCache = undefined; // force a rebuild from the injected data on next access
+}
+
+// A disk loader returns the parsed dex JSON, or null if the file is missing/unreadable. The
+// stdio entry registers this (src/diskdata.ts); Workers never do (they inject instead).
+type DexLoader = () => RawDex | null;
+let diskLoader: DexLoader | undefined;
+export function registerDexLoader(loader: DexLoader): void {
+  diskLoader = loader;
+  indexCache = undefined;
+}
+
+function buildIndex(raw: RawDex) {
+  const byKey = new Map<string, { entry: RawEntry; form: RawForm }>();
+  for (const entry of Object.values(raw.pokemon)) {
+    for (const form of entry.forms) {
+      const key = nameKey(form.name);
+      if (!byKey.has(key)) byKey.set(key, { entry, form });
+    }
+    // Also index the bare species name/slug so "Staraptor" resolves to its base form.
+    const baseKey = nameKey(entry.name);
+    if (!byKey.has(baseKey) && entry.forms[0]) byKey.set(baseKey, { entry, form: entry.forms[0] });
+  }
+  return { byKey, meta: raw.meta };
+}
+
 function loadIndex() {
   if (indexCache !== undefined) return indexCache;
-  if (!existsSync(DEX_FILE)) {
-    console.error(
-      `[dex] ${DEX_FILE} not found — falling back to @smogon/calc data. ` +
-        `Run \`npm run scrape:dex\` to build the Champions dex.`,
-    );
-    indexCache = null;
-    return indexCache;
-  }
-  try {
-    const raw = JSON.parse(readFileSync(DEX_FILE, 'utf8')) as RawDex;
-    const byKey = new Map<string, { entry: RawEntry; form: RawForm }>();
-    for (const entry of Object.values(raw.pokemon)) {
-      for (const form of entry.forms) {
-        const key = nameKey(form.name);
-        if (!byKey.has(key)) byKey.set(key, { entry, form });
-      }
-      // Also index the bare species name/slug so "Staraptor" resolves to its base form.
-      const baseKey = nameKey(entry.name);
-      if (!byKey.has(baseKey) && entry.forms[0]) byKey.set(baseKey, { entry, form: entry.forms[0] });
-    }
-    indexCache = { byKey, meta: raw.meta };
-  } catch (err) {
-    console.error(`[dex] Failed to read ${DEX_FILE}: ${(err as Error).message}. Falling back.`);
-    indexCache = null;
-  }
+  const raw = injectedDex ?? diskLoader?.() ?? null;
+  // null means no Champions dex available — callers fall back to @smogon/calc data.
+  indexCache = raw ? buildIndex(raw) : null;
   return indexCache;
 }
 

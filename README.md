@@ -60,6 +60,30 @@ the built `dist/index.js`.
 Use the **absolute** path — the client runs from its own working directory, so a relative
 one won't resolve.
 
+## Hosting it online (Cloudflare Workers)
+
+Want people to use it without installing anything — or from Claude on the web or your phone?
+Deploy it as a remote HTTP server and they just paste a **URL**. It runs on Cloudflare
+Workers' free tier.
+
+Every tool is read-only over public data, so the hosted server is **stateless and needs no
+login or API key** — there's no OAuth to set up. Workers has no filesystem, so the datasets are
+bundled into the Worker ([`src/worker.ts`](src/worker.ts)) instead of read from disk; the local
+stdio server is untouched.
+
+```bash
+npm install
+npx wrangler login          # one-time: authorize Wrangler with your free Cloudflare account
+npm run dev:worker          # optional: test locally (real Workers runtime, no account needed)
+npm run deploy:worker       # deploy — prints your public URL
+```
+
+The MCP endpoint is the printed URL plus **`/mcp`** (e.g.
+`https://pokemon-champions-mcp.<you>.workers.dev/mcp`); a plain `GET /` is a health check.
+Add that `/mcp` URL as a **custom connector** in Claude (Settings → Connectors; requires a paid
+plan, or one connector on Free) or as a remote MCP server in Cursor. Config lives in
+[`wrangler.toml`](wrangler.toml).
+
 ## Tools
 
 | Tool | What it answers |
@@ -72,6 +96,7 @@ one won't resolve.
 | `check_legality` | Whether a Pokémon — and optionally listed moves and/or held `items` — is legal in a regulation. |
 | `find_pokemon_by_move` | "Who can run Fake Out in M-B?" — every Pokémon legal in a regulation that can learn a given move, with the move's type/category/base power. Name-tolerant (`willowisp` → Will-O-Wisp). Defaults to `m-b`. |
 | `list_legal_moves` | The pool of moves usable in a regulation (everything learnable by at least one legal Pokémon), each with type, category, base power, and how many Pokémon learn it. Filter by `type`, `category`, or a `nameContains` substring. Defaults to `m-b`. |
+| `list_legal_pokemon` | The regulation's legal roster, each with its dex number, typing, base stats, and abilities. Filter by `type` (e.g. `Dragon`) or a `nameContains` substring. The complement to `list_legal_moves`. Defaults to `m-b`. |
 | `list_regulations` | Which regulations are available locally, with each one's metadata and counts. |
 
 ## Good to know
@@ -107,14 +132,18 @@ found instead of crashing.
 ## Layout
 
 ```text
-src/index.ts        MCP server — declares the tools and the stdio transport
+src/server.ts       the 9 MCP tools (transport-agnostic; no Node-only or filesystem code)
+src/index.ts        stdio entry — mounts server.ts on stdio (the local default)
+src/worker.ts       Cloudflare Workers entry — mounts server.ts on HTTP, with data bundled in
+src/diskdata.ts     Node-only: reads the JSON datasets from disk and registers them (stdio)
 src/calc.ts         damage formula + type effectiveness
-src/dex.ts          Pokémon lookups (data/champions-dex.json)
-src/items.ts        item lookups (data/champions-items.json)
+src/dex.ts          Pokémon lookups (data/champions-dex.json; injected or disk-loaded)
+src/items.ts        item lookups (data/champions-items.json; injected or disk-loaded)
 src/movedex.ts      move search, regulation-scoped
-src/regulations.ts  legality checks over regulations/*.json
+src/regulations.ts  legality checks over regulations/*.json (injected or disk-loaded)
 src/names.ts        Pokémon-name normalization (Mega word order, base species)
 scripts/            the standalone scrapers
-data/, regulations/ generated data (committed)
+data/, regulations/ generated data (committed; bundled into the Worker)
 test/smoke.ts       in-memory MCP client exercising every tool
+wrangler.toml       Cloudflare Workers config (hosted deployment)
 ```

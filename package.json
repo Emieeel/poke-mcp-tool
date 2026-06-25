@@ -13,7 +13,9 @@
     "scrape": "tsx scripts/scrape-regulation.ts",
     "scrape:dex": "tsx scripts/scrape-champions-dex.ts",
     "scrape:items": "tsx scripts/scrape-champions-items.ts",
-    "test": "tsx test/smoke.ts"
+    "test": "tsx test/smoke.ts",
+    "dev:worker": "wrangler dev",
+    "deploy:worker": "wrangler deploy"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.29.0",
@@ -24,6 +26,7 @@
     "@types/node": "^22.10.0",
     "cheerio": "1.0.0",
     "tsx": "^4.22.4",
-    "typescript": "^5.7.0"
+    "typescript": "^5.7.0",
+    "wrangler": "^4.0.0"
   }
 }
