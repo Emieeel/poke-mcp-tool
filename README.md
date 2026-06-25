@@ -59,23 +59,54 @@ Optional sanity check — runs all nine tools through an in-memory MCP client:
 npm test
 ```
 
-## Register in Claude Code
+## Add to your MCP client
 
-Add this to your Claude Code MCP config (use an **absolute WSL/Linux path** — Claude Code
-here runs via AWS Bedrock inside WSL2):
+This is a standard stdio MCP server, so any MCP-capable client (Claude Desktop, Claude Code,
+Cursor, or your own [SDK](https://modelcontextprotocol.io) host) can launch it. The recipe is
+always the same: tell the client to run `node <path>/dist/index.js`.
 
-```json
-{
-  "mcpServers": {
-    "pokemon-champions": {
-      "command": "node",
-      "args": ["/home/emielkoridon/git_repos/poke-mcp-tool/dist/index.js"]
-    }
-  }
-}
-```
+1. **Build it** so `dist/index.js` exists:
 
-Then restart Claude Code. (Run `npm run build` first so `dist/index.js` exists.)
+   ```bash
+   npm install
+   npm run build
+   ```
+
+2. **Get the absolute path** to the built entry point — you'll paste this into the client:
+
+   ```bash
+   node -e "console.log(require('path').resolve('dist/index.js'))"
+   ```
+
+3. **Register the server** in your client's MCP config, using that path. The server entry is:
+
+   ```json
+   {
+     "mcpServers": {
+       "pokemon-champions": {
+         "command": "node",
+         "args": ["/ABSOLUTE/PATH/TO/poke-mcp-tool/dist/index.js"]
+       }
+     }
+   }
+   ```
+
+   Where this config lives depends on the client:
+   - **Claude Desktop** — `claude_desktop_config.json` (Settings → Developer → Edit Config; or
+     `~/Library/Application Support/Claude/` on macOS, `%APPDATA%\Claude\` on Windows). Merge
+     the `mcpServers` entry into that file.
+   - **Claude Code** — run `claude mcp add pokemon-champions node /ABSOLUTE/PATH/dist/index.js`,
+     or add the same block to your `.mcp.json` / settings.
+   - **Other clients** — add an equivalent stdio server entry (`command: node`, `args: [path]`).
+
+4. **Restart the client** (or reload its MCP servers) so it picks up the new entry.
+
+5. **Verify** — the client should now list tools like `calculate_damage` and
+   `find_pokemon_by_move`. Ask it something like *"Is Garchomp legal in Regulation M-B, and
+   who can learn Fake Out there?"*
+
+Use an **absolute path** — relative paths won't resolve, since the client sets its own working
+directory. The server requires **Node 18+** on the machine that runs the client.
 
 ## Tools
 

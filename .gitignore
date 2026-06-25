@@ -3,3 +3,6 @@ dist/
 *.log
 # Test artifact from `npm run scrape:dex -- <slug>`; the full champions-dex.json is committed.
 data/*.sample.json
+
+# Local Claude Code harness config (personal permission allowlist, not for publishing).
+.claude/
