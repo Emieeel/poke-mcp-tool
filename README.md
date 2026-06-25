@@ -5,7 +5,7 @@ up-to-date data for competitive **Pokémon Champions**. Hook it up to Claude (or
 client) and you can ask things like:
 
 > *"Does my Choice Band Mega Staraptor OHKO Garchomp?"*
-> *"Is Garchomp legal in Regulation M-B, and who else can run Fake Out there?"*
+> *"Is Sneasler legal in Regulation M-B, and who else can run Fake Out there?"*
 > *"What Fairy moves are usable this format?"*
 
 It covers damage calculation, type matchups, Pokédex and item lookups, move search, and
@@ -64,7 +64,7 @@ one won't resolve.
 
 | Tool | What it answers |
 | --- | --- |
-| `calculate_damage` | "Does my Choice Band Staraptor-Mega OHKO that Garchomp?" — full damage/percent range, hits-to-KO, and the human-readable calc string. Auto-fills stats/typing/ability from the Champions dex (so Mega Staraptor uses Contrary, and even Champions-only Megas like Mega Eelektross calc correctly). Handles items, weather, terrain, Tera, crits, multi-hit, and Doubles spread reduction. |
+| `calculate_damage` | "Does my Mystic Water Blastoise OHKO that Garchomp?" — full damage/percent range, hits-to-KO, and the human-readable calc string. Auto-fills stats/typing/ability from the Champions dex (so Mega Staraptor uses Contrary, and even Champions-only Megas like Mega Eelektross calc correctly). Handles items, weather, terrain, Tera, crits, multi-hit, and Doubles spread reduction. |
 | `type_effectiveness` | The multiplier (0–4x) of an attacking type against 1–2 defending types. |
 | `get_pokemon` | Base stats, typing, abilities, weight, and full **movelist** for a Pokémon (Mega forms accepted, e.g. `Staraptor-Mega`, `Mega Staraptor`, `Mega Raichu X`). Pass a `regulation` id to also get legality and regulation-legal moves. |
 | `get_item` | Effect, how-to-obtain, and category (Hold Item / Mega Stone / Berry) for a held item, e.g. `Choice Scarf`, `Garchompite`, `Lum Berry`. Pass a `regulation` id to also check legality. |
