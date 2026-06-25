@@ -15,6 +15,8 @@ import {
 } from '@smogon/calc';
 import { z } from 'zod';
 import { getSpeciesOverride } from './dex.js';
+import { offensiveAbility, defensiveAbility, NO_DAMAGE_EFFECT } from './abilities.js';
+import { resolveBasePower } from './moves.js';
 
 // `Generation` isn't re-exported at the package root, so derive it from Generations.get.
 type Generation = ReturnType<typeof Generations.get>;
@@ -40,17 +42,64 @@ export const TYPE_NAMES = [
   'Dark', 'Fairy', 'Stellar', '???',
 ] as const;
 
-// A per-stat block. @smogon/calc uses spa/spd; we accept that shape directly.
-const statsSchema = z
+// --- Pokémon Champions Stat Points (the EV/IV replacement) -------------------
+//
+// Champions threw out the traditional EV (0–252/stat, 510 total) and IV (0–31) systems and
+// replaced BOTH with Stat Points (SP): 1 SP = +1 to that stat at the fixed Level 50 battle
+// format, capped at 32 SP per stat and 66 SP total, and every Pokémon is treated as having
+// maxed (31) IVs. (See Serebii/Bulbapedia/Champions stat-point guides.)
+//
+// We reproduce this exactly on top of @smogon/calc's real stat formula rather than faking it:
+// with IV = 31 at Level 50, that formula bumps a stat by exactly one point at EV = 4, 12, 20,
+// …, 252 — i.e. EV = 8·SP − 4 (clamped at 0). So 32 SP maps precisely onto the 252-EV cap and
+// each SP contributes exactly one final stat point. No approximation; the engine still does
+// the math.
+export const MAX_SP_PER_STAT = 32;
+export const MAX_SP_TOTAL = 66;
+
+// Convert Stat Points to the EV the engine expects. Unspecified stats are 0 SP (the Champions
+// default), and must yield a concrete 0 EV — a missing/undefined EV makes @smogon/calc compute
+// a NaN stat rather than defaulting to 0.
+export function spToEv(sp?: number): number {
+  return Math.max(0, 8 * (sp ?? 0) - 4);
+}
+
+// Inverse of spToEv. @smogon/calc's calc string (result.desc()) is written in EV units; we
+// translate those numbers back into Stat Points so NOTHING the tool emits speaks the old EV
+// system. The EVs the engine ever sees here are exactly {0, 4, 12, …, 252}, which invert
+// cleanly: SP = (EV + 4) / 8 for EV ≥ 4, and 0 EV → 0 SP.
+export function evToSp(ev: number): number {
+  return ev <= 0 ? 0 : Math.round((ev + 4) / 8);
+}
+
+// Stat investment in @smogon/calc's desc string looks like "252+ SpA" / "12 HP" / "0 SpD".
+// Rewrite each "<ev><+/-?> <Stat>" occurrence into Stat Points, preserving the nature marker
+// (+/-) and spacing. The trailing \s+ before the stat keeps this from matching KO text like
+// "4HKO" or move power like "150 BP".
+const DESC_STAT_INVEST = /(\d+)([+-]?)(\s+)(HP|Atk|Def|SpA|SpD|Spe)\b/g;
+export function descToStatPoints(desc: string): string {
+  return desc.replace(
+    DESC_STAT_INVEST,
+    (_m, ev: string, sign: string, ws: string, stat: string) =>
+      `${evToSp(Number(ev))}${sign}${ws}${stat}`,
+  );
+}
+
+// A per-stat Stat-Point block: 0–32 per stat, 66 total (the Champions caps).
+const statPointsSchema = z
   .object({
-    hp: z.number().int().optional(),
-    atk: z.number().int().optional(),
-    def: z.number().int().optional(),
-    spa: z.number().int().optional(),
-    spd: z.number().int().optional(),
-    spe: z.number().int().optional(),
+    hp: z.number().int().min(0).max(MAX_SP_PER_STAT).optional(),
+    atk: z.number().int().min(0).max(MAX_SP_PER_STAT).optional(),
+    def: z.number().int().min(0).max(MAX_SP_PER_STAT).optional(),
+    spa: z.number().int().min(0).max(MAX_SP_PER_STAT).optional(),
+    spd: z.number().int().min(0).max(MAX_SP_PER_STAT).optional(),
+    spe: z.number().int().min(0).max(MAX_SP_PER_STAT).optional(),
   })
-  .strict();
+  .strict()
+  .refine(
+    (sp) => Object.values(sp).reduce((sum: number, v) => sum + (v ?? 0), 0) <= MAX_SP_TOTAL,
+    { message: `Stat Points must total at most ${MAX_SP_TOTAL} across all stats (Pokémon Champions cap).` },
+  );
 
 const boostsSchema = z
   .object({
@@ -64,16 +113,26 @@ const boostsSchema = z
 
 export const pokemonSchema = z.object({
   name: z.string().describe('Species name, e.g. "Garchomp" or "Staraptor-Mega".'),
+  // Champions battles are always Level 50; keep the field configurable but default to 50.
   level: z.number().int().min(1).max(100).default(50),
   item: z.string().optional().describe('Held item, e.g. "Choice Band".'),
   ability: z.string().optional().describe('Ability name, e.g. "Intimidate".'),
   nature: z.string().optional().describe('Nature, e.g. "Adamant". Defaults to Serious.'),
-  evs: statsSchema.optional().describe('Effort values per stat (0-252).'),
-  ivs: statsSchema.optional().describe('Individual values per stat (0-31). Default 31.'),
+  statPoints: statPointsSchema
+    .optional()
+    .describe(
+      'Pokémon Champions Stat Points (SP) per stat — the EV/IV replacement. 1 SP = +1 to ' +
+      'that stat at Level 50; max 32 per stat, 66 total. IVs do not exist in Champions ' +
+      '(treated as maxed). Defaults to 0 in every stat.',
+    ),
   boosts: boostsSchema.optional().describe('Stat stage boosts per stat (-6..+6).'),
   teraType: z.enum(TYPE_NAMES).optional().describe('Tera type, if Terastallized.'),
   status: z.enum(STATUSES).optional().describe('Status condition.'),
-});
+})
+  // Champions uses Stat Points, not EVs/IVs. Reject the legacy `evs`/`ivs` keys loudly (instead
+  // of silently ignoring them) so an old-style call fails fast and the caller switches to
+  // `statPoints` rather than wondering why their EV spread had no effect.
+  .strict();
 
 export const fieldSchema = z
   .object({
@@ -94,8 +153,45 @@ export const fieldSchema = z
   })
   .strict();
 
+// Battle-HISTORY context for moves whose base power accumulates over a battle — something
+// @smogon/calc can't know from a single-turn snapshot. Each field drives the matching move;
+// `basePowerOverride` is the universal escape hatch for any other variable-power move.
+export const moveContextSchema = z
+  .object({
+    timesHit: z
+      .number()
+      .int()
+      .min(0)
+      .optional()
+      .describe(
+        'Rage Fist: number of times the attacker has been hit by a damaging move this ' +
+        'battle. Each hit adds +50 BP (50 base), capped at 350 BP after 6 hits.',
+      ),
+    faintedAllies: z
+      .number()
+      .int()
+      .min(0)
+      .optional()
+      .describe(
+        "Last Respects: number of Pokémon that have fainted on the attacker's side this " +
+        'battle. Each adds +50 BP (50 base); the count is capped at 100.',
+      ),
+    basePowerOverride: z
+      .number()
+      .int()
+      .min(1)
+      .optional()
+      .describe(
+        'Force the move\'s base power to this exact value. Wins over the counters above and ' +
+        'works for ANY variable-power move the engine does not model. Use when you already ' +
+        'know the move\'s current BP.',
+      ),
+  })
+  .strict();
+
 export type PokemonInput = z.infer<typeof pokemonSchema>;
 export type FieldInput = z.infer<typeof fieldSchema>;
+export type MoveContextInput = z.infer<typeof moveContextSchema>;
 
 function buildPokemon(
   g: Generation,
@@ -126,13 +222,27 @@ function buildPokemon(
     autofilled.push('stats/typing (Champions dex)');
   }
 
+  // Translate Champions Stat Points into the EVs @smogon/calc's formula expects (EV = 8·SP−4),
+  // and force maxed IVs since Champions has no IV system. The engine then produces exactly
+  // "+1 final stat per SP" at Level 50 — see the spToEv() note above.
+  const sp = input.statPoints ?? {};
+  const evs = {
+    hp: spToEv(sp.hp),
+    atk: spToEv(sp.atk),
+    def: spToEv(sp.def),
+    spa: spToEv(sp.spa),
+    spd: spToEv(sp.spd),
+    spe: spToEv(sp.spe),
+  };
+  const maxedIvs = { hp: 31, atk: 31, def: 31, spa: 31, spd: 31, spe: 31 };
+
   const pokemon = new Pokemon(g, input.name, {
     level: input.level,
     item: input.item as any,
     ability: (engineAbilityAlias ?? resolvedAbility) as any,
     nature: input.nature as any,
-    evs: input.evs,
-    ivs: input.ivs,
+    evs,
+    ivs: maxedIvs,
     boosts: input.boosts,
     teraType: input.teraType as any,
     status: (input.status ?? '') as any,
@@ -185,28 +295,113 @@ export function calculateDamage(args: {
   defender: PokemonInput;
   move: string;
   field?: FieldInput;
+  moveContext?: MoveContextInput;
 }): DamageResult {
   const g = gen();
+  const notes: string[] = [];
+
+  // Resolve Champions-original abilities before building calc objects.
+  const atkAbilityEffect = offensiveAbility(args.attacker.ability);
+  const defAbilityEffect = defensiveAbility(args.defender.ability);
+
+  // Defensive ability: pass engine alias so @smogon/calc models the effect natively.
+  const { pokemon: defender, autofilled: defAuto } = buildPokemon(
+    g, args.defender, defAbilityEffect?.engineAlias,
+  );
+  if (defAbilityEffect) notes.push(defAbilityEffect.note);
+
+  // Offensive ability: no engine alias needed (we post-process), but still build normally.
   const { pokemon: attacker, autofilled: atkAuto } = buildPokemon(g, args.attacker);
-  const { pokemon: defender, autofilled: defAuto } = buildPokemon(g, args.defender);
-  const move = new Move(g, args.move);
+
+  // Build the move. IMPORTANT: calculate() internally calls move.clone(), and clone() rebuilds
+  // the move from its name + `overrides` ONLY — a post-construction `move.bp = ` or
+  // `move.type = ` is silently discarded by that clone. So every adjustment we want the engine
+  // to actually apply (retype for STAB/effectiveness, scaled base power) MUST go through the
+  // constructor's `overrides`, not a mutation. We probe once to read the move's canonical
+  // name/type, then build the real move with whatever overrides we need.
+  const probe = new Move(g, args.move);
+  const originalMoveType = probe.type;
+  const moveOverrides: { type?: string; basePower?: number } = {};
+
+  // Offensive ability retype (e.g. Dragonize turns Normal moves Dragon) — via overrides so the
+  // engine computes type effectiveness + STAB on the NEW type.
+  const resolvedMoveType =
+    atkAbilityEffect?.moveTypeChange && probe.type === atkAbilityEffect.moveTypeChange.from
+      ? atkAbilityEffect.moveTypeChange.to
+      : probe.type;
+  if (resolvedMoveType !== probe.type) {
+    moveOverrides.type = resolvedMoveType;
+  }
+
+  // Base power, resolved in one place so the engine sees the final number (it clones the move
+  // and only honors `overrides`). Start from the move's own BP, scale it for battle-history
+  // moves / caller overrides (Rage Fist, Last Respects, basePowerOverride), then fold in any
+  // "+X% power" offensive ability (Fire Mane, Dragonize) — the game applies these as a
+  // base-power modifier, which matches the reference calculator exactly. probe.name is
+  // canonical even for aliased forms.
+  const bpResolved = resolveBasePower(probe.name, args.moveContext);
+  if (bpResolved) notes.push(bpResolved.note);
+  let basePower = bpResolved?.bp ?? probe.bp;
+  if (atkAbilityEffect?.bpMultiplier) {
+    const mult = atkAbilityEffect.bpMultiplier(resolvedMoveType, originalMoveType);
+    if (mult !== 1) basePower = Math.max(1, Math.round(basePower * mult));
+  }
+  if (basePower !== probe.bp) moveOverrides.basePower = basePower;
+
+  const move = new Move(g, args.move, { overrides: moveOverrides as any });
+
   const field = buildField(args.field);
+  // Offensive abilities that act as if a weather is present (Mega Sol -> Sun). Set it on the
+  // field so the engine applies the full weather package, but never override a real weather the
+  // caller already specified.
+  if (atkAbilityEffect?.weather && !(field as any).weather) {
+    (field as any).weather = atkAbilityEffect.weather;
+  }
+
+  // Handle Piercing Drill: if defender is protected and the move is contact, we still calc
+  // through but will scale damage to the bypass fraction afterward.
+  const isProtected = Boolean(args.field?.isProtected);
+  const isContact = Boolean((move as any).flags?.contact);
+  let bypassingProtect = false;
+  if (atkAbilityEffect?.bypassProtect && isProtected && isContact) {
+    // Remove Protect from the field so the engine computes full damage (we scale after).
+    (field.defenderSide as any).isProtected = false;
+    bypassingProtect = true;
+  }
 
   const result = calculate(g, attacker, defender, move, field);
 
   // result.damage can be a number, an array of rolls, or (rarely) nested arrays.
-  const rolls = normalizeRolls(result.damage as number | number[]);
+  let rolls = normalizeRolls(result.damage as number | number[]);
+
+  // NB: offensive-ability power boosts (Fire Mane, Dragonize) are already folded into the move's
+  // base power above, and weather effects (Mega Sol) into the field, so the engine has applied
+  // them natively here — nothing to post-multiply.
+
+  // Apply Piercing Drill bypass fraction.
+  if (bypassingProtect && atkAbilityEffect?.bypassProtect) {
+    const frac = atkAbilityEffect.bypassProtect.fraction;
+    rolls = rolls.map((r) => Math.max(1, Math.round(r * frac)));
+  }
+
+  if (atkAbilityEffect) notes.push(atkAbilityEffect.note);
+
+  // Surface NO_DAMAGE_EFFECT abilities as notes (recognized but don't alter the calc).
+  const atkNoDmg = args.attacker.ability ? NO_DAMAGE_EFFECT[args.attacker.ability] : undefined;
+  const defNoDmg = args.defender.ability ? NO_DAMAGE_EFFECT[args.defender.ability] : undefined;
+  if (atkNoDmg) notes.push(atkNoDmg);
+  if (defNoDmg) notes.push(defNoDmg);
+
   const min = rolls.length ? Math.min(...rolls) : 0;
   const max = rolls.length ? Math.max(...rolls) : 0;
   const maxHP = defender.maxHP();
-  const pct = (n: number) => Math.round((n / maxHP) * 1000) / 10;
+  // Truncate to one decimal (NOT round) to match the canonical @smogon/calc desc string and
+  // the online VGC calculator — e.g. 81/185 = 43.78% is shown as 43.7%, not 43.8%.
+  const pct = (n: number) => Math.floor((n / maxHP) * 1000) / 10;
 
-  const notes: string[] = [];
   if (atkAuto.length) notes.push(`Attacker auto-filled from Champions dex: ${atkAuto.join(', ')}.`);
   if (defAuto.length) notes.push(`Defender auto-filled from Champions dex: ${defAuto.join(', ')}.`);
   if (field.gameType === 'Doubles') {
-    // In Doubles the engine applies the 0.75x spread-move reduction automatically
-    // for moves that hit multiple targets.
     notes.push('Doubles field: spread moves get the 0.75x reduction automatically.');
   }
   if (attacker.ability) notes.push(`Attacker ability "${attacker.ability}" applied by the engine.`);
@@ -214,18 +409,18 @@ export function calculateDamage(args: {
   if (field.weather) notes.push(`Weather "${field.weather}" in effect.`);
   if (field.terrain) notes.push(`Terrain "${field.terrain}" in effect.`);
   if (attacker.teraType) notes.push(`Attacker Terastallized to ${attacker.teraType}.`);
-  // Champions-original abilities (e.g. Eelevate) aren't modelled by the @smogon/calc engine;
-  // base damage uses correct stats/types but the ability's special effect may be ignored.
+  if (bypassingProtect) notes.push('Piercing Drill bypassed Protect; damage is 1/4 of the full hit.');
   if (max === 0) notes.push('Move deals no damage here (likely a type immunity).');
 
-  // @smogon/calc's desc()/kochance() throw on all-zero damage; guard them.
   let description: string;
   let ko: { chance?: number; n: number; text?: string };
   if (max === 0) {
     description = `${attacker.name} ${move.name} vs. ${defender.name}: 0 damage (no effect / immune).`;
     ko = { chance: 0, n: 0, text: 'no damage' };
   } else {
-    description = result.desc();
+    // result.desc() writes stat investment in EV units; translate it back into Champions
+    // Stat Points so the calc string never exposes the old EV/IV system.
+    description = descToStatPoints(result.desc());
     ko = result.kochance();
   }
 

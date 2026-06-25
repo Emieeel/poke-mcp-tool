@@ -1,0 +1,1201 @@
+{
+  "meta": {
+    "game": "Pokémon Champions",
+    "source": "https://www.serebii.net/pokemonchampions/items.shtml",
+    "scrapedAt": "2026-06-17T19:31:41.229Z",
+    "count": 169,
+    "heldCount": 148,
+    "byCategory": {
+      "Hold Item": 45,
+      "Mega Stone": 75,
+      "Berry": 28,
+      "Miscellaneous": 21
+    },
+    "note": "Champions held-item catalog scraped from Serebii. Hold Items, Mega Stones, and Berries are items a Pokémon can hold in battle (held=true); Miscellaneous tickets are not held (held=false). @smogon/calc bundles mainline items with no Champions effect/location text, which is why we source this ourselves."
+  },
+  "items": {
+    "big root": {
+      "name": "Big Root",
+      "category": "Hold Item",
+      "held": true,
+      "effect": "An item to be held by a Pokémon. This root boosts the amount of HP the holder restores to itself when it uses HP-stealing moves.",
+      "location": "Shop, 700 VP"
+    },
+    "black belt": {
+      "name": "Black Belt",
+      "category": "Hold Item",
+      "held": true,
+      "effect": "An item to be held by a Pokémon. This belt helps with focus and boosts the power of the holder's Fighting-type moves.",
+      "location": "Shop, 700 VP"
+    },
+    "black glasses": {
+      "name": "Black Glasses",
+      "category": "Hold Item",
+      "held": true,
+      "effect": "An item to be held by a Pokémon. It's a pair of shady- looking glasses that boost the power of the holder's Dark-type moves.",
+      "location": "Shop, 700 VP"
+    },
+    "bright powder": {
+      "name": "Bright Powder",
+      "category": "Hold Item",
+      "held": true,
+      "effect": "An item to be held by a Pokémon. This glittery powder casts a tricky glare that lowers the accuracy of opposing Pokémon's moves.",
+      "location": "Beginning"
+    },
+    "charcoal": {
+      "name": "Charcoal",
+      "category": "Hold Item",
+      "held": true,
+      "effect": "An item to be held by a Pokémon. It's a combustible fuel that boosts the power of the holder's Fire-type moves.",
+      "location": "Shop, 700 VP"
+    },
+    "choice scarf": {
+      "name": "Choice Scarf",
+      "category": "Hold Item",
+      "held": true,
+      "effect": "An item to be held by a Pokémon. This curious scarf boosts the holder's Speed stat but only allows the use of a single move.",
+      "location": "Beginning"
+    },
+    "damp rock": {
+      "name": "Damp Rock",
+      "category": "Hold Item",
+      "held": true,
+      "effect": "An item to be held by a Pokémon. When the holder changes the weather to rain, the rain will persist for longer than usual.",
+      "location": "Shop, 700 VP"
+    },
+    "dragon fang": {
+      "name": "Dragon Fang",
+      "category": "Hold Item",
+      "held": true,
+      "effect": "An item to be held by a Pokémon. This hard, sharp fang boosts the power of the holder's Dragon-type moves.",
+      "location": "Shop, 700 VP"
+    },
+    "expert belt": {
+      "name": "Expert Belt",
+      "category": "Hold Item",
+      "held": true,
+      "effect": "An item to be held by a Pokémon. It's a well-worn belt that slightly boosts the power of the holder's supereffective moves.",
+      "location": "Shop, 1000 VP"
+    },
+    "fairy feather": {
+      "name": "Fairy Feather",
+      "category": "Hold Item",
+      "held": true,
+      "effect": "An item to be held by a Pokémon. This feather, which gleams faintly when hit by light, boosts the power of the holder's Fairy-type moves.",
+      "location": "Shop, 700 VP"
+    },
+    "focus band": {
+      "name": "Focus Band",
+      "category": "Hold Item",
+      "held": true,
+      "effect": "An item to be held by a Pokémon. When the holder is hit with a move that should knock it out, it may be able to endure with 1 HP.",
+      "location": "Beginning"
+    },
+    "focus sash": {
+      "name": "Focus Sash",
+      "category": "Hold Item",
+      "held": true,
+      "effect": "An item to be held by a Pokémon. If the holder has full HP and it is hit with a move that should knock it out, it will endure with 1 HP—but only once.",
+      "location": "Beginning"
+    },
+    "hard stone": {
+      "name": "Hard Stone",
+      "category": "Hold Item",
+      "held": true,
+      "effect": "An item to be held by a Pokémon. It's a durable stone that boosts the power of the holder's Rock-type moves.",
+      "location": "Shop, 700 VP"
+    },
+    "heat rock": {
+      "name": "Heat Rock",
+      "category": "Hold Item",
+      "held": true,
+      "effect": "An item to be held by a Pokémon. When the holder changes the weather to harsh sunlight, the sunlight will persist for longer than usual.",
+      "location": "Shop, 700 VP"
+    },
+    "icy rock": {
+      "name": "Icy Rock",
+      "category": "Hold Item",
+      "held": true,
+      "effect": "An item to be held by a Pokémon. When the holder changes the weather to snow, the snow will persist for longer than usual.",
+      "location": "Shop, 700 VP"
+    },
+    "iron ball": {
+      "name": "Iron Ball",
+      "category": "Hold Item",
+      "held": true,
+      "effect": "An item to be held by a Pokémon. It lowers the holder's Speed stat and makes the holder vulnerable to Ground- type moves even if it is a Flying type or is levitating.",
+      "location": "Shop, 1000 VP"
+    },
+    "king's rock": {
+      "name": "King's Rock",
+      "category": "Hold Item",
+      "held": true,
+      "effect": "An item to be held by a Pokémon. It may cause the target to flinch whenever the holder successfully inflicts damage on them with an attack.",
+      "location": "Beginning"
+    },
+    "leftovers": {
+      "name": "Leftovers",
+      "category": "Hold Item",
+      "held": true,
+      "effect": "An item to be held by a Pokémon. It slowly but steadily restores the holder's HP.",
+      "location": "Beginning"
+    },
+    "life orb": {
+      "name": "Life Orb",
+      "category": "Hold Item",
+      "held": true,
+      "effect": "An item to be held by a Pokémon. It boosts the power of the holder's moves, but the holder also loses a small amount of HP upon landing an attack.",
+      "location": "Shop, 1000 VP"
+    },
+    "light ball": {
+      "name": "Light Ball",
+      "category": "Hold Item",
+      "held": true,
+      "effect": "An item to be held by Pikachu. It's a mysterious orb that boosts Pikachu's Attack and Sp. Atk stats.",
+      "location": "Shop, 1000 VP"
+    },
+    "light clay": {
+      "name": "Light Clay",
+      "category": "Hold Item",
+      "held": true,
+      "effect": "An item to be held by a Pokémon. When the holder uses protective moves like Light Screen or Reflect, their effects will last longer than usual.",
+      "location": "Shop, 1000 VP"
+    },
+    "magnet": {
+      "name": "Magnet",
+      "category": "Hold Item",
+      "held": true,
+      "effect": "An item to be held by a Pokémon. It's a powerful magnet that boosts the power of the holder's Electric-type moves.",
+      "location": "Shop, 700 VP"
+    },
+    "mental herb": {
+      "name": "Mental Herb",
+      "category": "Hold Item",
+      "held": true,
+      "effect": "An item to be held by a Pokémon. The holder will be able to shake off move-binding effects to move freely— but only once.",
+      "location": "Shop, 1000 VP"
+    },
+    "metal coat": {
+      "name": "Metal Coat",
+      "category": "Hold Item",
+      "held": true,
+      "effect": "An item to be held by a Pokémon. It's a special metallic coating that boosts the power of the holder's Steel-type moves.",
+      "location": "Shop, 700 VP"
+    },
+    "metronome": {
+      "name": "Metronome",
+      "category": "Hold Item",
+      "held": true,
+      "effect": "An item to be held by a Pokémon. It boosts the power of a move that's used repeatedly. Once the chain is broken, the move's power returns to normal.",
+      "location": "Shop, 700 VP"
+    },
+    "miracle seed": {
+      "name": "Miracle Seed",
+      "category": "Hold Item",
+      "held": true,
+      "effect": "An item to be held by a Pokémon. It's a seed imbued with life force that boosts the power of the holder's Grass-type moves.",
+      "location": "Shop, 700 VP"
+    },
+    "muscle band": {
+      "name": "Muscle Band",
+      "category": "Hold Item",
+      "held": true,
+      "effect": "An item to be held by a Pokémon. This headband exudes strength, slightly boosting the power of the holder's physical moves.",
+      "location": "Shop, 700 VP"
+    },
+    "mystic water": {
+      "name": "Mystic Water",
+      "category": "Hold Item",
+      "held": true,
+      "effect": "An item to be held by a Pokémon. This teardrop-shaped gem boosts the power of the holder's Water-type moves.",
+      "location": "Shop, 700 VP"
+    },
+    "never-melt ice": {
+      "name": "Never-Melt Ice",
+      "category": "Hold Item",
+      "held": true,
+      "effect": "An item to be held by a Pokémon. It's a heat-repelling piece of ice that boosts the power of the holder's Ice- type moves.",
+      "location": "Shop, 700 VP"
+    },
+    "poison barb": {
+      "name": "Poison Barb",
+      "category": "Hold Item",
+      "held": true,
+      "effect": "An item to be held by a Pokémon. This small poisonous barb boosts the power of the holder's Poison-type moves.",
+      "location": "Shop, 700 VP"
+    },
+    "quick claw": {
+      "name": "Quick Claw",
+      "category": "Hold Item",
+      "held": true,
+      "effect": "An item to be held by a Pokémon. This light, sharp claw lets the holder occasionally unleash a move faster than it usually would.",
+      "location": "Beginning"
+    },
+    "scope lens": {
+      "name": "Scope Lens",
+      "category": "Hold Item",
+      "held": true,
+      "effect": "An item to be held by a Pokémon. It's a lens for scoping out weak points. It boosts the holder's critical-hit ratio.",
+      "location": "Shop, 1000 VP"
+    },
+    "sharp beak": {
+      "name": "Sharp Beak",
+      "category": "Hold Item",
+      "held": true,
+      "effect": "An item to be held by a Pokémon. It's a long, sharp beak that boosts the power of the holder's Flying-type moves.",
+      "location": "Shop, 700 VP"
+    },
+    "shed shell": {
+      "name": "Shed Shell",
+      "category": "Hold Item",
+      "held": true,
+      "effect": "An item to be held by a Pokémon. Hard and sturdy, this discarded carapace enables the holder to switch out of battle without fail.",
+      "location": "Shop, 700 VP"
+    },
+    "shell bell": {
+      "name": "Shell Bell",
+      "category": "Hold Item",
+      "held": true,
+      "effect": "An item to be held by a Pokémon. The holder restores a little HP to itself every time it inflicts damage with an attack.",
+      "location": "Shop, 700 VP"
+    },
+    "silk scarf": {
+      "name": "Silk Scarf",
+      "category": "Hold Item",
+      "held": true,
+      "effect": "An item to be held by a Pokémon. It's a sumptuous scarf that boosts the power of the holder's Normal-type moves.",
+      "location": "Shop, 700 VP"
+    },
+    "silver powder": {
+      "name": "Silver Powder",
+      "category": "Hold Item",
+      "held": true,
+      "effect": "An item to be held by a Pokémon. It's a shiny silver powder that boosts the power of the holder's Bug-type moves.",
+      "location": "Shop, 700 VP"
+    },
+    "smooth rock": {
+      "name": "Smooth Rock",
+      "category": "Hold Item",
+      "held": true,
+      "effect": "An item to be held by a Pokémon. When the holder changes the weather to a sandstorm, the storm will persist for longer than usual.",
+      "location": "Shop, 700 VP"
+    },
+    "soft sand": {
+      "name": "Soft Sand",
+      "category": "Hold Item",
+      "held": true,
+      "effect": "An item to be held by a Pokémon. This loose, silky sand boosts the power of the holder's Ground-type moves.",
+      "location": "Shop, 700 VP"
+    },
+    "spell tag": {
+      "name": "Spell Tag",
+      "category": "Hold Item",
+      "held": true,
+      "effect": "An item to be held by a Pokémon. It's a sinister, eerie tag that boosts the power of the holder's Ghost-type moves.",
+      "location": "Shop, 700 VP"
+    },
+    "twisted spoon": {
+      "name": "Twisted Spoon",
+      "category": "Hold Item",
+      "held": true,
+      "effect": "An item to be held by a Pokémon. This spoon is imbued with telekinetic energy and boosts the power of the holder's Psychic-type moves.",
+      "location": "Shop, 700 VP"
+    },
+    "white herb": {
+      "name": "White Herb",
+      "category": "Hold Item",
+      "held": true,
+      "effect": "An item to be held by a Pokémon. It will restore any lowered stat in battle—but only once.",
+      "location": "Beginning"
+    },
+    "wide lens": {
+      "name": "Wide Lens",
+      "category": "Hold Item",
+      "held": true,
+      "effect": "An item to be held by a Pokémon. It's a magnifying lens that slightly boosts the accuracy of the holder's moves.",
+      "location": "Shop, 700 VP"
+    },
+    "wise glasses": {
+      "name": "Wise Glasses",
+      "category": "Hold Item",
+      "held": true,
+      "effect": "An item to be held by a Pokémon. This thick pair of glasses slightly boosts the power of the holder's special moves.",
+      "location": "Shop, 700 VP"
+    },
+    "zoom lens": {
+      "name": "Zoom Lens",
+      "category": "Hold Item",
+      "held": true,
+      "effect": "An item to be held by a Pokémon. When the holder acts after its target, its move will be more accurate than usual.",
+      "location": "Shop, 700 VP"
+    },
+    "abomasite": {
+      "name": "Abomasite",
+      "category": "Mega Stone",
+      "held": true,
+      "effect": "One of a variety of mysterious Mega Stones. An Abomasnow holding this stone will be able to Mega Evolve during battle.",
+      "location": "Mega Evolution Tutorial"
+    },
+    "absolite": {
+      "name": "Absolite",
+      "category": "Mega Stone",
+      "held": true,
+      "effect": "One of a variety of mysterious Mega Stones. An Absol holding this stone will be able to Mega Evolve during battle.",
+      "location": "Shop, 2000 VP"
+    },
+    "aerodactylite": {
+      "name": "Aerodactylite",
+      "category": "Mega Stone",
+      "held": true,
+      "effect": "One of a variety of mysterious Mega Stones. An Aerodactyl holding this stone will be able to Mega Evolve during battle.",
+      "location": "Shop, 2000 VP"
+    },
+    "aggronite": {
+      "name": "Aggronite",
+      "category": "Mega Stone",
+      "held": true,
+      "effect": "One of a variety of mysterious Mega Stones. An Aggron holding this stone will be able to Mega Evolve during battle.",
+      "location": "Mega Evolution Tutorial"
+    },
+    "alakazite": {
+      "name": "Alakazite",
+      "category": "Mega Stone",
+      "held": true,
+      "effect": "One of a variety of mysterious Mega Stones. An Alakazam holding this stone will be able to Mega Evolve during battle.",
+      "location": "Shop, 2000 VP"
+    },
+    "altarianite": {
+      "name": "Altarianite",
+      "category": "Mega Stone",
+      "held": true,
+      "effect": "One of a variety of mysterious Mega Stones. An Altaria holding this stone will be able to Mega Evolve during battle.",
+      "location": "Shop, 2000 VP"
+    },
+    "ampharosite": {
+      "name": "Ampharosite",
+      "category": "Mega Stone",
+      "held": true,
+      "effect": "One of a variety of mysterious Mega Stones. An Ampharos holding this stone will be able to Mega Evolve during battle.",
+      "location": "Shop, 2000 VP"
+    },
+    "audinite": {
+      "name": "Audinite",
+      "category": "Mega Stone",
+      "held": true,
+      "effect": "One of a variety of mysterious Mega Stones. An Audino holding this stone will be able to Mega Evolve during battle.",
+      "location": "Shop, 2000 VP"
+    },
+    "banettite": {
+      "name": "Banettite",
+      "category": "Mega Stone",
+      "held": true,
+      "effect": "One of a variety of mysterious Mega Stones. A Banette holding this stone will be able to Mega Evolve during battle.",
+      "location": "Shop, 2000 VP"
+    },
+    "barbaracite": {
+      "name": "Barbaracite",
+      "category": "Mega Stone",
+      "held": true,
+      "effect": "One of a variety of mysterious Mega Stones. A Barbaracle holding this stone will be able to Mega Evolve during battle.",
+      "location": "Shop, 2000 VP"
+    },
+    "beedrillite": {
+      "name": "Beedrillite",
+      "category": "Mega Stone",
+      "held": true,
+      "effect": "One of a variety of mysterious Mega Stones. A Beedrill holding this stone will be able to Mega Evolve during battle.",
+      "location": "Mega Evolution Tutorial"
+    },
+    "blastoisinite": {
+      "name": "Blastoisinite",
+      "category": "Mega Stone",
+      "held": true,
+      "effect": "One of a variety of mysterious Mega Stones. A Blastoise holding this stone will be able to Mega Evolve during battle.",
+      "location": "Shop, 2000 VP"
+    },
+    "blazikenite": {
+      "name": "Blazikenite",
+      "category": "Mega Stone",
+      "held": true,
+      "effect": "One of a variety of mysterious Mega Stones. A Blaziken holding this stone will be able to Mega Evolve during battle.",
+      "location": "Shop, 2000 VP"
+    },
+    "cameruptite": {
+      "name": "Cameruptite",
+      "category": "Mega Stone",
+      "held": true,
+      "effect": "One of a variety of mysterious Mega Stones. A Camerupt holding this stone will be able to Mega Evolve during battle.",
+      "location": "Shop, 2000 VP"
+    },
+    "chandelurite": {
+      "name": "Chandelurite",
+      "category": "Mega Stone",
+      "held": true,
+      "effect": "One of a variety of mysterious Mega Stones. A Chandelure holding this stone will be able to Mega Evolve during battle.",
+      "location": "Shop, 2000 VP"
+    },
+    "charizardite x": {
+      "name": "Charizardite X",
+      "category": "Mega Stone",
+      "held": true,
+      "effect": "One of a variety of mysterious Mega Stones. A Charizard holding this stone will be able to Mega Evolve during battle.",
+      "location": "Shop, 2000 VP"
+    },
+    "charizardite y": {
+      "name": "Charizardite Y",
+      "category": "Mega Stone",
+      "held": true,
+      "effect": "One of a variety of mysterious Mega Stones. A Charizard holding this stone will be able to Mega Evolve during battle.",
+      "location": "Shop, 2000 VP"
+    },
+    "chesnaughtite": {
+      "name": "Chesnaughtite",
+      "category": "Mega Stone",
+      "held": true,
+      "effect": "One of a variety of mysterious Mega Stones. A Chesnaught holding this stone will be able to Mega Evolve during battle.",
+      "location": "Deposit a Chesnaught from Pokémon Legends: Z-AShop, 2000 VP"
+    },
+    "chimechite": {
+      "name": "Chimechite",
+      "category": "Mega Stone",
+      "held": true,
+      "effect": "One of a variety of mysterious Mega Stones. A Chimecho holding this stone will be able to Mega Evolve during battle.",
+      "location": "Shop, 2000 VP"
+    },
+    "clefablite": {
+      "name": "Clefablite",
+      "category": "Mega Stone",
+      "held": true,
+      "effect": "One of a variety of mysterious Mega Stones. A Clefable holding this stone will be able to Mega Evolve during battle.",
+      "location": "Shop, 2000 VP"
+    },
+    "crabominite": {
+      "name": "Crabominite",
+      "category": "Mega Stone",
+      "held": true,
+      "effect": "One of a variety of mysterious Mega Stones. A Crabominable holding this stone will be able to Mega Evolve during battle.",
+      "location": "Shop, 2000 VP"
+    },
+    "delphoxite": {
+      "name": "Delphoxite",
+      "category": "Mega Stone",
+      "held": true,
+      "effect": "One of a variety of mysterious Mega Stones. A Delphox holding this stone will be able to Mega Evolve during battle.",
+      "location": "Deposit a Delphox from Pokémon Legends: Z-AShop, 2000 VP"
+    },
+    "dragalgite": {
+      "name": "Dragalgite",
+      "category": "Mega Stone",
+      "held": true,
+      "effect": "One of a variety of mysterious Mega Stones. A Dragalge holding this stone will be able to Mega Evolve during battle.",
+      "location": "Shop, 2000 VP"
+    },
+    "dragoninite": {
+      "name": "Dragoninite",
+      "category": "Mega Stone",
+      "held": true,
+      "effect": "One of a variety of mysterious Mega Stones. A Dragonite holding this stone will be able to Mega Evolve during battle.",
+      "location": "Shop, 2000 VP"
+    },
+    "drampanite": {
+      "name": "Drampanite",
+      "category": "Mega Stone",
+      "held": true,
+      "effect": "One of a variety of mysterious Mega Stones. A Drampa holding this stone will be able to Mega Evolve during battle.",
+      "location": "Shop, 2000 VP"
+    },
+    "eelektrossite": {
+      "name": "Eelektrossite",
+      "category": "Mega Stone",
+      "held": true,
+      "effect": "One of a variety of mysterious Mega Stones. An Eelektross holding this stone will be able to Mega Evolve during battle.",
+      "location": "Shop, 2000 VP"
+    },
+    "emboarite": {
+      "name": "Emboarite",
+      "category": "Mega Stone",
+      "held": true,
+      "effect": "One of a variety of mysterious Mega Stones. An Emboar holding this stone will be able to Mega Evolve during battle.",
+      "location": "Shop, 2000 VP"
+    },
+    "excadrite": {
+      "name": "Excadrite",
+      "category": "Mega Stone",
+      "held": true,
+      "effect": "One of a variety of mysterious Mega Stones. An Excadrill holding this stone will be able to Mega Evolve during battle.",
+      "location": "Shop, 2000 VP"
+    },
+    "falinksite": {
+      "name": "Falinksite",
+      "category": "Mega Stone",
+      "held": true,
+      "effect": "One of a variety of mysterious Mega Stones. A Falinks holding this stone will be able to Mega Evolve during battle.",
+      "location": "Shop, 2000 VP"
+    },
+    "feraligite": {
+      "name": "Feraligite",
+      "category": "Mega Stone",
+      "held": true,
+      "effect": "One of a variety of mysterious Mega Stones. A Feraligatr holding this stone will be able to Mega Evolve during battle.",
+      "location": "Shop, 2000 VP"
+    },
+    "floettite": {
+      "name": "Floettite",
+      "category": "Mega Stone",
+      "held": true,
+      "effect": "One of a variety of mysterious Mega Stones. A special Floette holding this stone will be able to Mega Evolve during battle.",
+      "location": "Deposit a Floette Eternal Flower from Pokémon Legends: Z-A"
+    },
+    "froslassite": {
+      "name": "Froslassite",
+      "category": "Mega Stone",
+      "held": true,
+      "effect": "One of a variety of mysterious Mega Stones. A Froslass holding this stone will be able to Mega Evolve during battle.",
+      "location": "Shop, 2000 VP"
+    },
+    "galladite": {
+      "name": "Galladite",
+      "category": "Mega Stone",
+      "held": true,
+      "effect": "One of a variety of mysterious Mega Stones. A Gallade holding this stone will be able to Mega Evolve during battle.",
+      "location": "Shop, 2000 VP"
+    },
+    "garchompite": {
+      "name": "Garchompite",
+      "category": "Mega Stone",
+      "held": true,
+      "effect": "One of a variety of mysterious Mega Stones. A Garchomp holding this stone will be able to Mega Evolve during battle.",
+      "location": "Mega Evolution Tutorial"
+    },
+    "gardevoirite": {
+      "name": "Gardevoirite",
+      "category": "Mega Stone",
+      "held": true,
+      "effect": "One of a variety of mysterious Mega Stones. A Gardevoir holding this stone will be able to Mega Evolve during battle.",
+      "location": "Shop, 2000 VP"
+    },
+    "gengarite": {
+      "name": "Gengarite",
+      "category": "Mega Stone",
+      "held": true,
+      "effect": "One of a variety of mysterious Mega Stones. A Gengar holding this stone will be able to Mega Evolve during battle.",
+      "location": "Shop, 2000 VP"
+    },
+    "glalitite": {
+      "name": "Glalitite",
+      "category": "Mega Stone",
+      "held": true,
+      "effect": "One of a variety of mysterious Mega Stones. A Glalie holding this stone will be able to Mega Evolve during battle.",
+      "location": "Shop, 2000 VP"
+    },
+    "glimmoranite": {
+      "name": "Glimmoranite",
+      "category": "Mega Stone",
+      "held": true,
+      "effect": "One of a variety of mysterious Mega Stones. A Glimmora holding this stone will be able to Mega Evolve during battle.",
+      "location": "Shop, 2000 VP"
+    },
+    "golurkite": {
+      "name": "Golurkite",
+      "category": "Mega Stone",
+      "held": true,
+      "effect": "One of a variety of mysterious Mega Stones. A Golurk holding this stone will be able to Mega Evolve during battle.",
+      "location": "Shop, 2000 VP"
+    },
+    "greninjite": {
+      "name": "Greninjite",
+      "category": "Mega Stone",
+      "held": true,
+      "effect": "One of a variety of mysterious Mega Stones. A Greninja holding this stone will be able to Mega Evolve during battle.",
+      "location": "Deposit a Greninja from Pokémon Legends: Z-AShop, 2000 VP"
+    },
+    "gyaradosite": {
+      "name": "Gyaradosite",
+      "category": "Mega Stone",
+      "held": true,
+      "effect": "One of a variety of mysterious Mega Stones. A Gyarados holding this stone will be able to Mega Evolve during battle.",
+      "location": "Mega Evolution Tutorial"
+    },
+    "hawluchanite": {
+      "name": "Hawluchanite",
+      "category": "Mega Stone",
+      "held": true,
+      "effect": "One of a variety of mysterious Mega Stones. A Hawlucha holding this stone will be able to Mega Evolve during battle.",
+      "location": "Shop, 2000 VP"
+    },
+    "heracronite": {
+      "name": "Heracronite",
+      "category": "Mega Stone",
+      "held": true,
+      "effect": "One of a variety of mysterious Mega Stones. A Heracross holding this stone will be able to Mega Evolve during battle.",
+      "location": "Mega Evolution Tutorial"
+    },
+    "houndoominite": {
+      "name": "Houndoominite",
+      "category": "Mega Stone",
+      "held": true,
+      "effect": "One of a variety of mysterious Mega Stones. A Houndoom holding this stone will be able to Mega Evolve during battle.",
+      "location": "Shop, 2000 VP"
+    },
+    "kangaskhanite": {
+      "name": "Kangaskhanite",
+      "category": "Mega Stone",
+      "held": true,
+      "effect": "One of a variety of mysterious Mega Stones. A Kangaskhan holding this stone will be able to Mega Evolve during battle.",
+      "location": "Shop, 2000 VP"
+    },
+    "lopunnite": {
+      "name": "Lopunnite",
+      "category": "Mega Stone",
+      "held": true,
+      "effect": "One of a variety of mysterious Mega Stones. A Lopunny holding this stone will be able to Mega Evolve during battle.",
+      "location": "Shop, 2000 VP"
+    },
+    "lucarionite": {
+      "name": "Lucarionite",
+      "category": "Mega Stone",
+      "held": true,
+      "effect": "One of a variety of mysterious Mega Stones. A Lucario holding this stone will be able to Mega Evolve during battle.",
+      "location": "Shop, 2000 VP"
+    },
+    "malamarite": {
+      "name": "Malamarite",
+      "category": "Mega Stone",
+      "held": true,
+      "effect": "One of a variety of mysterious Mega Stones. A Malamar holding this stone will be able to Mega Evolve during battle.",
+      "location": "Shop, 2000 VP"
+    },
+    "manectite": {
+      "name": "Manectite",
+      "category": "Mega Stone",
+      "held": true,
+      "effect": "One of a variety of mysterious Mega Stones. A Manectric holding this stone will be able to Mega Evolve during battle.",
+      "location": "Mega Evolution Tutorial"
+    },
+    "mawilite": {
+      "name": "Mawilite",
+      "category": "Mega Stone",
+      "held": true,
+      "effect": "One of a variety of mysterious Mega Stones. A Mawile holding this stone will be able to Mega Evolve during battle.",
+      "location": "Shop, 2000 VP"
+    },
+    "medichamite": {
+      "name": "Medichamite",
+      "category": "Mega Stone",
+      "held": true,
+      "effect": "One of a variety of mysterious Mega Stones. A Medicham holding this stone will be able to Mega Evolve during battle.",
+      "location": "Shop, 2000 VP"
+    },
+    "meganiumite": {
+      "name": "Meganiumite",
+      "category": "Mega Stone",
+      "held": true,
+      "effect": "One of a variety of mysterious Mega Stones. A Meganium holding this stone will be able to Mega Evolve during battle.",
+      "location": "Shop, 2000 VP"
+    },
+    "meowsticite": {
+      "name": "Meowsticite",
+      "category": "Mega Stone",
+      "held": true,
+      "effect": "One of a variety of mysterious Mega Stones. A Meowstic holding this stone will be able to Mega Evolve during battle.",
+      "location": "Shop, 2000 VP"
+    },
+    "metagrossite": {
+      "name": "Metagrossite",
+      "category": "Mega Stone",
+      "held": true,
+      "effect": "One of a variety of mysterious Mega Stones. A Metagross holding this stone will be able to Mega Evolve during battle.",
+      "location": "Shop, 2000 VP"
+    },
+    "pidgeotite": {
+      "name": "Pidgeotite",
+      "category": "Mega Stone",
+      "held": true,
+      "effect": "One of a variety of mysterious Mega Stones. A Pidgeot holding this stone will be able to Mega Evolve during battle.",
+      "location": "Shop, 2000 VP"
+    },
+    "pinsirite": {
+      "name": "Pinsirite",
+      "category": "Mega Stone",
+      "held": true,
+      "effect": "One of a variety of mysterious Mega Stones. A Pinsir holding this stone will be able to Mega Evolve during battle.",
+      "location": "Shop, 2000 VP"
+    },
+    "pyroarite": {
+      "name": "Pyroarite",
+      "category": "Mega Stone",
+      "held": true,
+      "effect": "One of a variety of mysterious Mega Stones. A Pyroar holding this stone will be able to Mega Evolve during battle.",
+      "location": "Shop, 2000 VP"
+    },
+    "raichunite x": {
+      "name": "Raichunite X",
+      "category": "Mega Stone",
+      "held": true,
+      "effect": "One of a variety of mysterious Mega Stones. A Raichu holding this stone will be able to Mega Evolve during battle.",
+      "location": "Special Gift"
+    },
+    "raichunite y": {
+      "name": "Raichunite Y",
+      "category": "Mega Stone",
+      "held": true,
+      "effect": "One of a variety of mysterious Mega Stones. A Raichu holding this stone will be able to Mega Evolve during battle.",
+      "location": "Special Gift"
+    },
+    "sablenite": {
+      "name": "Sablenite",
+      "category": "Mega Stone",
+      "held": true,
+      "effect": "One of a variety of mysterious Mega Stones. A Sableye holding this stone will be able to Mega Evolve during battle.",
+      "location": "Shop, 2000 VP"
+    },
+    "sceptilite": {
+      "name": "Sceptilite",
+      "category": "Mega Stone",
+      "held": true,
+      "effect": "One of a variety of mysterious Mega Stones. A Sceptile holding this stone will be able to Mega Evolve during battle.",
+      "location": "Shop, 2000 VP"
+    },
+    "scizorite": {
+      "name": "Scizorite",
+      "category": "Mega Stone",
+      "held": true,
+      "effect": "One of a variety of mysterious Mega Stones. A Scizor holding this stone will be able to Mega Evolve during battle.",
+      "location": "Shop, 2000 VP"
+    },
+    "scolipite": {
+      "name": "Scolipite",
+      "category": "Mega Stone",
+      "held": true,
+      "effect": "One of a variety of mysterious Mega Stones. A Scolipede holding this stone will be able to Mega Evolve during battle.",
+      "location": "Shop, 2000 VP"
+    },
+    "scovillainite": {
+      "name": "Scovillainite",
+      "category": "Mega Stone",
+      "held": true,
+      "effect": "One of a variety of mysterious Mega Stones. A Scovillain holding this stone will be able to Mega Evolve during battle.",
+      "location": "Shop, 2000 VP"
+    },
+    "scraftinite": {
+      "name": "Scraftinite",
+      "category": "Mega Stone",
+      "held": true,
+      "effect": "One of a variety of mysterious Mega Stones. A Scrafty holding this stone will be able to Mega Evolve during battle.",
+      "location": "Shop, 2000 VP"
+    },
+    "sharpedonite": {
+      "name": "Sharpedonite",
+      "category": "Mega Stone",
+      "held": true,
+      "effect": "One of a variety of mysterious Mega Stones. A Sharpedo holding this stone will be able to Mega Evolve during battle.",
+      "location": "Shop, 2000 VP"
+    },
+    "skarmorite": {
+      "name": "Skarmorite",
+      "category": "Mega Stone",
+      "held": true,
+      "effect": "One of a variety of mysterious Mega Stones. A Skarmory holding this stone will be able to Mega Evolve during battle.",
+      "location": "Shop, 2000 VP"
+    },
+    "slowbronite": {
+      "name": "Slowbronite",
+      "category": "Mega Stone",
+      "held": true,
+      "effect": "One of a variety of mysterious Mega Stones. A Slowbro holding this stone will be able to Mega Evolve during battle. It won't work for a Galarian Slowbro, however.",
+      "location": "Shop, 2000 VP"
+    },
+    "staraptite": {
+      "name": "Staraptite",
+      "category": "Mega Stone",
+      "held": true,
+      "effect": "One of a variety of mysterious Mega Stones. A Staraptor holding this stone will be able to Mega Evolve during battle.",
+      "location": "Shop, 2000 VP"
+    },
+    "starminite": {
+      "name": "Starminite",
+      "category": "Mega Stone",
+      "held": true,
+      "effect": "One of a variety of mysterious Mega Stones. A Starmie holding this stone will be able to Mega Evolve during battle.",
+      "location": "Shop, 2000 VP"
+    },
+    "steelixite": {
+      "name": "Steelixite",
+      "category": "Mega Stone",
+      "held": true,
+      "effect": "One of a variety of mysterious Mega Stones. A Steelix holding this stone will be able to Mega Evolve during battle.",
+      "location": "Mega Evolution Tutorial"
+    },
+    "swampertite": {
+      "name": "Swampertite",
+      "category": "Mega Stone",
+      "held": true,
+      "effect": "One of a variety of mysterious Mega Stones. A Swampert holding this stone will be able to Mega Evolve during battle.",
+      "location": "Shop, 2000 VP"
+    },
+    "tyranitarite": {
+      "name": "Tyranitarite",
+      "category": "Mega Stone",
+      "held": true,
+      "effect": "One of a variety of mysterious Mega Stones. A Tyranitar holding this stone will be able to Mega Evolve during battle.",
+      "location": "Shop, 2000 VP"
+    },
+    "venusaurite": {
+      "name": "Venusaurite",
+      "category": "Mega Stone",
+      "held": true,
+      "effect": "One of a variety of mysterious Mega Stones. A Venusaur holding this stone will be able to Mega Evolve during battle.",
+      "location": "Shop, 2000 VP"
+    },
+    "victreebelite": {
+      "name": "Victreebelite",
+      "category": "Mega Stone",
+      "held": true,
+      "effect": "One of a variety of mysterious Mega Stones. A Victreebel holding this stone will be able to Mega Evolve during battle.",
+      "location": "Shop, 2000 VP"
+    },
+    "aspear berry": {
+      "name": "Aspear Berry",
+      "category": "Berry",
+      "held": true,
+      "effect": "If a Pokémon holds one of these Berries, it will be able to thaw itself after being frozen.",
+      "location": "Shop, 400 VP"
+    },
+    "babiri berry": {
+      "name": "Babiri Berry",
+      "category": "Berry",
+      "held": true,
+      "effect": "If a Pokémon holding this Berry is hit with a supereffective Steel-type move, the power of that move will be weakened.",
+      "location": "Shop, 400 VP"
+    },
+    "charti berry": {
+      "name": "Charti Berry",
+      "category": "Berry",
+      "held": true,
+      "effect": "If a Pokémon holding this Berry is hit with a supereffective Rock-type move, the power of that move will be weakened.",
+      "location": "Shop, 400 VP"
+    },
+    "cheri berry": {
+      "name": "Cheri Berry",
+      "category": "Berry",
+      "held": true,
+      "effect": "If a Pokémon holds one of these Berries, it will be able to free itself from paralysis.",
+      "location": "Shop, 400 VP"
+    },
+    "chesto berry": {
+      "name": "Chesto Berry",
+      "category": "Berry",
+      "held": true,
+      "effect": "If a Pokémon holds one of these Berries, it will be able to shake off its drowsiness.",
+      "location": "Shop, 400 VP"
+    },
+    "chilan berry": {
+      "name": "Chilan Berry",
+      "category": "Berry",
+      "held": true,
+      "effect": "If a Pokémon holding this Berry is hit with a Normal-type move, the power of that move will be weakened.",
+      "location": "Shop, 400 VP"
+    },
+    "chople berry": {
+      "name": "Chople Berry",
+      "category": "Berry",
+      "held": true,
+      "effect": "If a Pokémon holding this Berry is hit with a supereffective Fighting-type move, the power of that move will be weakened.",
+      "location": "Shop, 400 VP"
+    },
+    "coba berry": {
+      "name": "Coba Berry",
+      "category": "Berry",
+      "held": true,
+      "effect": "If a Pokémon holding this Berry is hit with a supereffective Flying-type move, the power of that move will be weakened.",
+      "location": "Shop, 400 VP"
+    },
+    "colbur berry": {
+      "name": "Colbur Berry",
+      "category": "Berry",
+      "held": true,
+      "effect": "If a Pokémon holding this Berry is hit with a supereffective Dark-type move, the power of that move will be weakened.",
+      "location": "Shop, 400 VP"
+    },
+    "haban berry": {
+      "name": "Haban Berry",
+      "category": "Berry",
+      "held": true,
+      "effect": "If a Pokémon holding this Berry is hit with a supereffective Dragon-type move, the power of that move will be weakened.",
+      "location": "Shop, 400 VP"
+    },
+    "kasib berry": {
+      "name": "Kasib Berry",
+      "category": "Berry",
+      "held": true,
+      "effect": "If a Pokémon holding this Berry is hit with a supereffective Ghost-type move, the power of that move will be weakened.",
+      "location": "Shop, 400 VP"
+    },
+    "kebia berry": {
+      "name": "Kebia Berry",
+      "category": "Berry",
+      "held": true,
+      "effect": "If a Pokémon holding this Berry is hit with a supereffective Poison-type move, the power of that move will be weakened.",
+      "location": "Shop, 400 VP"
+    },
+    "leppa berry": {
+      "name": "Leppa Berry",
+      "category": "Berry",
+      "held": true,
+      "effect": "If a Pokémon holds one of these Berries, it will be able to restore 10 PP to a move.",
+      "location": "Shop, 400 VP"
+    },
+    "lum berry": {
+      "name": "Lum Berry",
+      "category": "Berry",
+      "held": true,
+      "effect": "If a Pokémon holds one of these Berries, it will be able to cure itself of any status condition it may have.",
+      "location": "Beginning"
+    },
+    "occa berry": {
+      "name": "Occa Berry",
+      "category": "Berry",
+      "held": true,
+      "effect": "If a Pokémon holding this Berry is hit with a supereffective Fire-type move, the power of that move will be weakened.",
+      "location": "Shop, 400 VP"
+    },
+    "oran berry": {
+      "name": "Oran Berry",
+      "category": "Berry",
+      "held": true,
+      "effect": "If a Pokémon holds one of these Berries, it will be able to restore 10 HP to itself.",
+      "location": "Shop, 400 VP"
+    },
+    "passho berry": {
+      "name": "Passho Berry",
+      "category": "Berry",
+      "held": true,
+      "effect": "If a Pokémon holding this Berry is hit with a supereffective Water-type move, the power of that move will be weakened.",
+      "location": "Shop, 400 VP"
+    },
+    "payapa berry": {
+      "name": "Payapa Berry",
+      "category": "Berry",
+      "held": true,
+      "effect": "If a Pokémon holding this Berry is hit with a supereffective Psychic-type move, the power of that move will be weakened.",
+      "location": "Shop, 400 VP"
+    },
+    "pecha berry": {
+      "name": "Pecha Berry",
+      "category": "Berry",
+      "held": true,
+      "effect": "If a Pokémon holds one of these Berries, it will be able to lift the effects of being poisoned from itself.",
+      "location": "Shop, 400 VP"
+    },
+    "persim berry": {
+      "name": "Persim Berry",
+      "category": "Berry",
+      "held": true,
+      "effect": "If a Pokémon holds one of these Berries, it will be able to cure itself of confusion.",
+      "location": "Shop, 400 VP"
+    },
+    "rawst berry": {
+      "name": "Rawst Berry",
+      "category": "Berry",
+      "held": true,
+      "effect": "If a Pokémon holds one of these Berries, it will be able to cure itself of a burn.",
+      "location": "Shop, 400 VP"
+    },
+    "rindo berry": {
+      "name": "Rindo Berry",
+      "category": "Berry",
+      "held": true,
+      "effect": "If a Pokémon holding this Berry is hit with a supereffective Grass-type move, the power of that move will be weakened.",
+      "location": "Shop, 400 VP"
+    },
+    "roseli berry": {
+      "name": "Roseli Berry",
+      "category": "Berry",
+      "held": true,
+      "effect": "If a Pokémon holding this Berry is hit with a supereffective Fairy-type move, the power of that move will be weakened.",
+      "location": "Shop, 400 VP"
+    },
+    "shuca berry": {
+      "name": "Shuca Berry",
+      "category": "Berry",
+      "held": true,
+      "effect": "If a Pokémon holding this Berry is hit with a supereffective Ground-type move, the power of that move will be weakened.",
+      "location": "Shop, 400 VP"
+    },
+    "sitrus berry": {
+      "name": "Sitrus Berry",
+      "category": "Berry",
+      "held": true,
+      "effect": "If a Pokémon holds one of these Berries, it will be able to restore a small amount of HP to itself.",
+      "location": "Beginning"
+    },
+    "tanga berry": {
+      "name": "Tanga Berry",
+      "category": "Berry",
+      "held": true,
+      "effect": "If a Pokémon holding this Berry is hit with a supereffective Bug-type move, the power of that move will be weakened.",
+      "location": "Shop, 400 VP"
+    },
+    "wacan berry": {
+      "name": "Wacan Berry",
+      "category": "Berry",
+      "held": true,
+      "effect": "If a Pokémon holding this Berry is hit with a supereffective Electric-type move, the power of that move will be weakened.",
+      "location": "Shop, 400 VP"
+    },
+    "yache berry": {
+      "name": "Yache Berry",
+      "category": "Berry",
+      "held": true,
+      "effect": "If a Pokémon holding this Berry is hit with a supereffective Ice-type move, the power of that move will be weakened.",
+      "location": "Shop, 400 VP"
+    },
+    "bug-type affinity ticket": {
+      "name": "Bug-Type Affinity Ticket",
+      "category": "Miscellaneous",
+      "held": false,
+      "effect": "A ticket that makes you more likely to meet Bug-type Pokémon in the next lineup.",
+      "location": "Achievements"
+    },
+    "dark-type affinity ticket": {
+      "name": "Dark-Type Affinity Ticket",
+      "category": "Miscellaneous",
+      "held": false,
+      "effect": "A ticket that makes you more likely to meet Dark-type Pokémon in the next lineup.",
+      "location": "Achievements"
+    },
+    "dragon-type affinity ticket": {
+      "name": "Dragon-Type Affinity Ticket",
+      "category": "Miscellaneous",
+      "held": false,
+      "effect": "A ticket that makes you more likely to meet Dragon-type Pokémon in the next lineup.",
+      "location": "Achievements"
+    },
+    "electric-type affinity ticket": {
+      "name": "Electric-Type Affinity Ticket",
+      "category": "Miscellaneous",
+      "held": false,
+      "effect": "A ticket that makes you more likely to meet Electric-type Pokémon in the next lineup.",
+      "location": "Achievements"
+    },
+    "fairy-type affinity ticket": {
+      "name": "Fairy-Type Affinity Ticket",
+      "category": "Miscellaneous",
+      "held": false,
+      "effect": "A ticket that makes you more likely to meet Fairy-type Pokémon in the next lineup.",
+      "location": "Achievements"
+    },
+    "fighting-type affinity ticket": {
+      "name": "Fighting-Type Affinity Ticket",
+      "category": "Miscellaneous",
+      "held": false,
+      "effect": "A ticket that makes you more likely to meet Fighting-type Pokémon in the next lineup.",
+      "location": "Achievements"
+    },
+    "fire-type affinity ticket": {
+      "name": "Fire-Type Affinity Ticket",
+      "category": "Miscellaneous",
+      "held": false,
+      "effect": "A ticket that makes you more likely to meet Fire-type Pokémon in the next lineup.",
+      "location": "Achievements"
+    },
+    "flying-type affinity ticket": {
+      "name": "Flying-Type Affinity Ticket",
+      "category": "Miscellaneous",
+      "held": false,
+      "effect": "A ticket that makes you more likely to meet Flying-type Pokémon in the next lineup.",
+      "location": "Achievements"
+    },
+    "ghost-type affinity ticket": {
+      "name": "Ghost-Type Affinity Ticket",
+      "category": "Miscellaneous",
+      "held": false,
+      "effect": "A ticket that makes you more likely to meet Ghost-type Pokémon in the next lineup.",
+      "location": "Achievements"
+    },
+    "grass-type affinity ticket": {
+      "name": "Grass-Type Affinity Ticket",
+      "category": "Miscellaneous",
+      "held": false,
+      "effect": "A ticket that makes you more likely to meet Grass-type Pokémon in the next lineup.",
+      "location": "Achievements"
+    },
+    "ground-type affinity ticket": {
+      "name": "Ground-Type Affinity Ticket",
+      "category": "Miscellaneous",
+      "held": false,
+      "effect": "A ticket that makes you more likely to meet Ground-type Pokémon in the next lineup.",
+      "location": "Achievements"
+    },
+    "ice-type affinity ticket": {
+      "name": "Ice-Type Affinity Ticket",
+      "category": "Miscellaneous",
+      "held": false,
+      "effect": "A ticket that makes you more likely to meet Ice-type Pokémon in the next lineup.",
+      "location": "Achievements"
+    },
+    "normal-type affinity ticket": {
+      "name": "Normal-Type Affinity Ticket",
+      "category": "Miscellaneous",
+      "held": false,
+      "effect": "A ticket that makes you more likely to meet Normal-type Pokémon in the next lineup.",
+      "location": "Achievements"
+    },
+    "poison-type affinity ticket": {
+      "name": "Poison-Type Affinity Ticket",
+      "category": "Miscellaneous",
+      "held": false,
+      "effect": "A ticket that makes you more likely to meet Poison-type Pokémon in the next lineup.",
+      "location": "Achievements"
+    },
+    "psychic-type affinity ticket": {
+      "name": "Psychic-Type Affinity Ticket",
+      "category": "Miscellaneous",
+      "held": false,
+      "effect": "A ticket that makes you more likely to meet Psychic-type Pokémon in the next lineup.",
+      "location": "Achievements"
+    },
+    "quick coupon": {
+      "name": "Quick Coupon",
+      "category": "Miscellaneous",
+      "held": false,
+      "effect": "A ticket that can be used to reduce the wait time in Recruit Ranch",
+      "location": "MissionsBattle PassAchievements"
+    },
+    "rock-type affinity ticket": {
+      "name": "Rock-Type Affinity Ticket",
+      "category": "Miscellaneous",
+      "held": false,
+      "effect": "A ticket that makes you more likely to meet Rock-type Pokémon in the next lineup.",
+      "location": "Achievements"
+    },
+    "steel-type affinity ticket": {
+      "name": "Steel-Type Affinity Ticket",
+      "category": "Miscellaneous",
+      "held": false,
+      "effect": "A ticket that makes you more likely to meet Steel-type Pokémon in the next lineup.",
+      "location": "Achievements"
+    },
+    "teammate ticket": {
+      "name": "Teammate Ticket",
+      "category": "Miscellaneous",
+      "held": false,
+      "effect": "A ticket that can be used to recruit a Pokémon at Recruit Ranch",
+      "location": "MissionsBattle PassAchievements"
+    },
+    "training ticket": {
+      "name": "Training Ticket",
+      "category": "Miscellaneous",
+      "held": false,
+      "effect": "A ticket that can be used to train a Pokémon without using Victory Points",
+      "location": "MissionsBattle PassAchievements"
+    },
+    "water-type affinity ticket": {
+      "name": "Water-Type Affinity Ticket",
+      "category": "Miscellaneous",
+      "held": false,
+      "effect": "A ticket that makes you more likely to meet Water-type Pokémon in the next lineup.",
+      "location": "Achievements"
+    }
+  }
+}

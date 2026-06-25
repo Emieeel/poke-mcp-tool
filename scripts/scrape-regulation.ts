@@ -22,6 +22,7 @@ import { writeFileSync, mkdirSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import * as cheerio from 'cheerio';
+import { scrapeItems, ITEMS_URL } from './scrape-champions-items.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const REGULATIONS_DIR = join(__dirname, '..', 'regulations');
@@ -198,6 +199,30 @@ async function main() {
   const legalPokemon = roster.map((r) => ({ name: r.name }));
   console.error(`[scrape] Full roster: ${legalPokemon.length} Pokémon.`);
 
+  // Legal held items = the Champions held-item catalog (Hold Items + Mega Stones + Berries).
+  // Item legality is regulation-scoped, but Champions publishes no per-regulation item bans,
+  // so the legal pool for this regulation is the full held-item catalog. We reuse the items
+  // scraper to source it (see scrape-champions-items.ts).
+  console.error(`[scrape] Fetching held-item catalog from ${ITEMS_URL}`);
+  let legalItems: { name: string }[] = [];
+  try {
+    const { items, warnings } = await scrapeItems();
+    for (const w of warnings) console.error(`[scrape] item note: ${w}`);
+    legalItems = items.filter((i) => i.held).map((i) => ({ name: i.name }));
+    console.error(`[scrape] Held-item catalog: ${legalItems.length} legal items.`);
+    if (legalItems.length < 50) {
+      console.error(
+        `[scrape] WARNING: only ${legalItems.length} held items parsed — the items page markup ` +
+          `may have changed. Writing what was found; PLEASE VERIFY.`,
+      );
+    }
+  } catch (err) {
+    console.error(
+      `[scrape] WARNING: failed to fetch held items (${(err as Error).message}). ` +
+        `Writing the regulation WITHOUT a legalItems list; item-legality checks will be unavailable.`,
+    );
+  }
+
   // Defensiveness: loud warning if either source looks suspiciously thin, but still write.
   if (legalPokemon.length < 50) {
     console.error(
@@ -217,7 +242,9 @@ async function main() {
     'no Restricted Pokémon. bannedPokemon lists specific Mega forms excluded from this ' +
     'format (their base species remain legal). newlyUseable (in meta) is what this ' +
     'regulation newly added. No per-move legality is published, so legalMoves is omitted ' +
-    'and move-legality checks are unavailable for this regulation.';
+    'and move-legality checks are unavailable for this regulation. legalItems is the full ' +
+    'Champions held-item catalog (Hold Items, Mega Stones, Berries); the format publishes no ' +
+    'per-item bans, so bannedItems is empty.';
 
   const output = {
     meta: {
@@ -228,6 +255,7 @@ async function main() {
       validTo: parsed.validTo,
       source: url,
       rosterSource: DEX_INDEX_URL,
+      itemSource: ITEMS_URL,
       scrapedAt: new Date().toISOString(),
       listScope: 'full-roster',
       // What this regulation newly introduced (from the reg page) — handy context.
@@ -235,7 +263,11 @@ async function main() {
     },
     legalPokemon,
     // legalMoves intentionally omitted: the source has no per-move legality data.
+    // legalItems omitted entirely if the held-item fetch failed, so item-legality checks
+    // report "unavailable" rather than falsely claiming everything is illegal.
+    ...(legalItems.length > 0 ? { legalItems } : {}),
     bannedPokemon,
+    bannedItems: [] as { name: string; notes: string }[],
     notes,
   };
 
@@ -244,6 +276,7 @@ async function main() {
   writeFileSync(outFile, JSON.stringify(output, null, 2) + '\n', 'utf8');
   console.error(
     `[scrape] Wrote ${outFile} — ${legalPokemon.length} legal, ${bannedPokemon.length} banned, ` +
+      `${legalItems.length} legal items, ` +
       `${parsed.newlyUseable.length} newly-useable, dates ${parsed.validFrom ?? '?'}..${parsed.validTo ?? '?'}.`,
   );
 }

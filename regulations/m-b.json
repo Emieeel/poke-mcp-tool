@@ -7,7 +7,8 @@
     "validTo": "2026-09-02",
     "source": "https://www.serebii.net/pokemonchampions/rankedbattle/regulationm-b.shtml",
     "rosterSource": "https://www.serebii.net/pokedex-champions/",
-    "scrapedAt": "2026-06-17T17:01:34.400Z",
+    "itemSource": "https://www.serebii.net/pokemonchampions/items.shtml",
+    "scrapedAt": "2026-06-17T19:35:37.922Z",
     "listScope": "full-roster",
     "newlyUseable": [
       "Mega Raichu X",
@@ -673,6 +674,452 @@
       "name": "Hydrapple"
     }
   ],
+  "legalItems": [
+    {
+      "name": "Big Root"
+    },
+    {
+      "name": "Black Belt"
+    },
+    {
+      "name": "Black Glasses"
+    },
+    {
+      "name": "Bright Powder"
+    },
+    {
+      "name": "Charcoal"
+    },
+    {
+      "name": "Choice Scarf"
+    },
+    {
+      "name": "Damp Rock"
+    },
+    {
+      "name": "Dragon Fang"
+    },
+    {
+      "name": "Expert Belt"
+    },
+    {
+      "name": "Fairy Feather"
+    },
+    {
+      "name": "Focus Band"
+    },
+    {
+      "name": "Focus Sash"
+    },
+    {
+      "name": "Hard Stone"
+    },
+    {
+      "name": "Heat Rock"
+    },
+    {
+      "name": "Icy Rock"
+    },
+    {
+      "name": "Iron Ball"
+    },
+    {
+      "name": "King's Rock"
+    },
+    {
+      "name": "Leftovers"
+    },
+    {
+      "name": "Life Orb"
+    },
+    {
+      "name": "Light Ball"
+    },
+    {
+      "name": "Light Clay"
+    },
+    {
+      "name": "Magnet"
+    },
+    {
+      "name": "Mental Herb"
+    },
+    {
+      "name": "Metal Coat"
+    },
+    {
+      "name": "Metronome"
+    },
+    {
+      "name": "Miracle Seed"
+    },
+    {
+      "name": "Muscle Band"
+    },
+    {
+      "name": "Mystic Water"
+    },
+    {
+      "name": "Never-Melt Ice"
+    },
+    {
+      "name": "Poison Barb"
+    },
+    {
+      "name": "Quick Claw"
+    },
+    {
+      "name": "Scope Lens"
+    },
+    {
+      "name": "Sharp Beak"
+    },
+    {
+      "name": "Shed Shell"
+    },
+    {
+      "name": "Shell Bell"
+    },
+    {
+      "name": "Silk Scarf"
+    },
+    {
+      "name": "Silver Powder"
+    },
+    {
+      "name": "Smooth Rock"
+    },
+    {
+      "name": "Soft Sand"
+    },
+    {
+      "name": "Spell Tag"
+    },
+    {
+      "name": "Twisted Spoon"
+    },
+    {
+      "name": "White Herb"
+    },
+    {
+      "name": "Wide Lens"
+    },
+    {
+      "name": "Wise Glasses"
+    },
+    {
+      "name": "Zoom Lens"
+    },
+    {
+      "name": "Abomasite"
+    },
+    {
+      "name": "Absolite"
+    },
+    {
+      "name": "Aerodactylite"
+    },
+    {
+      "name": "Aggronite"
+    },
+    {
+      "name": "Alakazite"
+    },
+    {
+      "name": "Altarianite"
+    },
+    {
+      "name": "Ampharosite"
+    },
+    {
+      "name": "Audinite"
+    },
+    {
+      "name": "Banettite"
+    },
+    {
+      "name": "Barbaracite"
+    },
+    {
+      "name": "Beedrillite"
+    },
+    {
+      "name": "Blastoisinite"
+    },
+    {
+      "name": "Blazikenite"
+    },
+    {
+      "name": "Cameruptite"
+    },
+    {
+      "name": "Chandelurite"
+    },
+    {
+      "name": "Charizardite X"
+    },
+    {
+      "name": "Charizardite Y"
+    },
+    {
+      "name": "Chesnaughtite"
+    },
+    {
+      "name": "Chimechite"
+    },
+    {
+      "name": "Clefablite"
+    },
+    {
+      "name": "Crabominite"
+    },
+    {
+      "name": "Delphoxite"
+    },
+    {
+      "name": "Dragalgite"
+    },
+    {
+      "name": "Dragoninite"
+    },
+    {
+      "name": "Drampanite"
+    },
+    {
+      "name": "Eelektrossite"
+    },
+    {
+      "name": "Emboarite"
+    },
+    {
+      "name": "Excadrite"
+    },
+    {
+      "name": "Falinksite"
+    },
+    {
+      "name": "Feraligite"
+    },
+    {
+      "name": "Floettite"
+    },
+    {
+      "name": "Froslassite"
+    },
+    {
+      "name": "Galladite"
+    },
+    {
+      "name": "Garchompite"
+    },
+    {
+      "name": "Gardevoirite"
+    },
+    {
+      "name": "Gengarite"
+    },
+    {
+      "name": "Glalitite"
+    },
+    {
+      "name": "Glimmoranite"
+    },
+    {
+      "name": "Golurkite"
+    },
+    {
+      "name": "Greninjite"
+    },
+    {
+      "name": "Gyaradosite"
+    },
+    {
+      "name": "Hawluchanite"
+    },
+    {
+      "name": "Heracronite"
+    },
+    {
+      "name": "Houndoominite"
+    },
+    {
+      "name": "Kangaskhanite"
+    },
+    {
+      "name": "Lopunnite"
+    },
+    {
+      "name": "Lucarionite"
+    },
+    {
+      "name": "Malamarite"
+    },
+    {
+      "name": "Manectite"
+    },
+    {
+      "name": "Mawilite"
+    },
+    {
+      "name": "Medichamite"
+    },
+    {
+      "name": "Meganiumite"
+    },
+    {
+      "name": "Meowsticite"
+    },
+    {
+      "name": "Metagrossite"
+    },
+    {
+      "name": "Pidgeotite"
+    },
+    {
+      "name": "Pinsirite"
+    },
+    {
+      "name": "Pyroarite"
+    },
+    {
+      "name": "Raichunite X"
+    },
+    {
+      "name": "Raichunite Y"
+    },
+    {
+      "name": "Sablenite"
+    },
+    {
+      "name": "Sceptilite"
+    },
+    {
+      "name": "Scizorite"
+    },
+    {
+      "name": "Scolipite"
+    },
+    {
+      "name": "Scovillainite"
+    },
+    {
+      "name": "Scraftinite"
+    },
+    {
+      "name": "Sharpedonite"
+    },
+    {
+      "name": "Skarmorite"
+    },
+    {
+      "name": "Slowbronite"
+    },
+    {
+      "name": "Staraptite"
+    },
+    {
+      "name": "Starminite"
+    },
+    {
+      "name": "Steelixite"
+    },
+    {
+      "name": "Swampertite"
+    },
+    {
+      "name": "Tyranitarite"
+    },
+    {
+      "name": "Venusaurite"
+    },
+    {
+      "name": "Victreebelite"
+    },
+    {
+      "name": "Aspear Berry"
+    },
+    {
+      "name": "Babiri Berry"
+    },
+    {
+      "name": "Charti Berry"
+    },
+    {
+      "name": "Cheri Berry"
+    },
+    {
+      "name": "Chesto Berry"
+    },
+    {
+      "name": "Chilan Berry"
+    },
+    {
+      "name": "Chople Berry"
+    },
+    {
+      "name": "Coba Berry"
+    },
+    {
+      "name": "Colbur Berry"
+    },
+    {
+      "name": "Haban Berry"
+    },
+    {
+      "name": "Kasib Berry"
+    },
+    {
+      "name": "Kebia Berry"
+    },
+    {
+      "name": "Leppa Berry"
+    },
+    {
+      "name": "Lum Berry"
+    },
+    {
+      "name": "Occa Berry"
+    },
+    {
+      "name": "Oran Berry"
+    },
+    {
+      "name": "Passho Berry"
+    },
+    {
+      "name": "Payapa Berry"
+    },
+    {
+      "name": "Pecha Berry"
+    },
+    {
+      "name": "Persim Berry"
+    },
+    {
+      "name": "Rawst Berry"
+    },
+    {
+      "name": "Rindo Berry"
+    },
+    {
+      "name": "Roseli Berry"
+    },
+    {
+      "name": "Shuca Berry"
+    },
+    {
+      "name": "Sitrus Berry"
+    },
+    {
+      "name": "Tanga Berry"
+    },
+    {
+      "name": "Wacan Berry"
+    },
+    {
+      "name": "Yache Berry"
+    }
+  ],
   "bannedPokemon": [
     {
       "name": "Mega Garchomp Z",
@@ -683,5 +1130,6 @@
       "notes": "Excluded Mega form (base Lucario is legal). Source: Game8."
     }
   ],
-  "notes": "legalPokemon is the full Champions Pokédex (all Pokémon transferable via Pokémon HOME), which is the legal pool for this regulation; per the official rules there are no Restricted Pokémon. bannedPokemon lists specific Mega forms excluded from this format (their base species remain legal). newlyUseable (in meta) is what this regulation newly added. No per-move legality is published, so legalMoves is omitted and move-legality checks are unavailable for this regulation."
+  "bannedItems": [],
+  "notes": "legalPokemon is the full Champions Pokédex (all Pokémon transferable via Pokémon HOME), which is the legal pool for this regulation; per the official rules there are no Restricted Pokémon. bannedPokemon lists specific Mega forms excluded from this format (their base species remain legal). newlyUseable (in meta) is what this regulation newly added. No per-move legality is published, so legalMoves is omitted and move-legality checks are unavailable for this regulation. legalItems is the full Champions held-item catalog (Hold Items, Mega Stones, Berries); the format publishes no per-item bans, so bannedItems is empty."
 }

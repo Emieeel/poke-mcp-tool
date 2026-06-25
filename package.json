@@ -12,6 +12,7 @@
     "start": "node dist/index.js",
     "scrape": "tsx scripts/scrape-regulation.ts",
     "scrape:dex": "tsx scripts/scrape-champions-dex.ts",
+    "scrape:items": "tsx scripts/scrape-champions-items.ts",
     "test": "tsx test/smoke.ts"
   },
   "dependencies": {

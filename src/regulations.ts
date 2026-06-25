@@ -11,6 +11,7 @@ import { dirname, join } from 'node:path';
 import { z } from 'zod';
 import { nameKey, baseSpeciesKey } from './names.js';
 import { getPokemonMoves } from './dex.js';
+import { itemKey } from './items.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 // dist/regulations.js -> ../regulations ; src/regulations.ts -> ../regulations
@@ -38,7 +39,14 @@ export const regulationSchema = z.object({
   // legalMoves is OPTIONAL: if the source doesn't express per-move legality we omit it
   // rather than fabricate, and legality checks then only cover Pokémon.
   legalMoves: z.array(z.string()).optional(),
+  // legalItems is OPTIONAL and regulation-scoped: the set of items a Pokémon may legally hold
+  // in THIS regulation. Populated by the scraper from the Champions held-item catalog. If
+  // absent (e.g. a partial scrape), item-legality checks are unavailable rather than guessed.
+  legalItems: z.array(z.object({ name: z.string(), notes: z.string().optional() })).optional(),
   bannedPokemon: z.array(z.object({ name: z.string(), notes: z.string().optional() }))
+    .default([]),
+  // Specific items banned in this regulation even though they're in the held-item catalog.
+  bannedItems: z.array(z.object({ name: z.string(), notes: z.string().optional() }))
     .default([]),
   notes: z.string().optional(),
 });
@@ -102,7 +110,44 @@ export interface LegalityResult {
   pokemonNote?: string;
   moves?: { move: string; legal: boolean }[];
   moveLegalityAvailable: boolean;
+  items?: { item: string; legal: boolean; note?: string }[];
+  itemLegalityAvailable: boolean;
   notes: string[];
+}
+
+export interface ItemLegality {
+  legal: boolean;
+  /** True when the regulation publishes a legal-items list to check against. */
+  available: boolean;
+  note?: string;
+}
+
+/**
+ * Whether a single item is legal to hold in a regulation. Legal = on the regulation's
+ * legalItems allowlist AND not on its bannedItems list. If the regulation has no legalItems
+ * list (e.g. a partial scrape), legality is "unavailable" rather than guessed.
+ *
+ * Item legality is regulation-scoped, mirroring Pokémon/move legality — see checkLegality.
+ */
+export function checkItemLegality(reg: Regulation, item: string): ItemLegality {
+  const wanted = itemKey(item);
+  const banned = reg.bannedItems.find((i) => itemKey(i.name) === wanted);
+  if (banned) {
+    return { legal: false, available: true, note: banned.notes || `Banned in ${reg.meta.name}.` };
+  }
+  if (!reg.legalItems || reg.legalItems.length === 0) {
+    return {
+      legal: false,
+      available: false,
+      note:
+        `Regulation ${reg.meta.id} has no legal-items list loaded (possibly a partial ` +
+        `scrape). Cannot confirm item legality — re-run \`npm run scrape -- ${reg.meta.id}\`.`,
+    };
+  }
+  const hit = reg.legalItems.find((i) => itemKey(i.name) === wanted);
+  return hit
+    ? { legal: true, available: true, note: hit.notes || undefined }
+    : { legal: false, available: true, note: `"${item}" is not on the legal-items list for ${reg.meta.name}.` };
 }
 
 /**
@@ -113,6 +158,7 @@ export function checkLegality(
   regulationId: string,
   pokemon: string,
   moves?: string[],
+  items?: string[],
 ): LegalityResult {
   const reg = loadRegulation(regulationId);
   const wantedPoke = nameKey(pokemon);
@@ -177,6 +223,30 @@ export function checkLegality(
     }
   }
 
+  // Item legality is regulation-scoped: an item is legal iff it's on this regulation's
+  // legalItems allowlist (and not separately banned). The list is the Champions held-item
+  // catalog; the format publishes no per-item bans, so legality is essentially "is it a real
+  // Champions held item", but the check is still resolved against THIS regulation's data.
+  const itemLegalityAvailable = Boolean(reg.legalItems && reg.legalItems.length > 0) || reg.bannedItems.length > 0;
+  let itemResults: { item: string; legal: boolean; note?: string }[] | undefined;
+  if (items && items.length > 0) {
+    itemResults = items.map((it) => {
+      const r = checkItemLegality(reg, it);
+      return { item: it, legal: r.legal, note: r.note };
+    });
+    if (reg.legalItems && reg.legalItems.length > 0) {
+      notes.push(
+        `Item legality reflects this regulation's legal held-item list ` +
+          `(${reg.legalItems.length} items); the format publishes no separate per-item bans.`,
+      );
+    } else {
+      notes.push(
+        `Regulation ${reg.meta.id} has no legal-items list loaded, so item legality cannot ` +
+          `be checked. Re-run \`npm run scrape -- ${reg.meta.id}\`.`,
+      );
+    }
+  }
+
   // Surface the regulation file's own top-level notes (e.g. scope/limitation warnings).
   if (reg.notes) notes.push(reg.notes);
 
@@ -188,6 +258,8 @@ export function checkLegality(
     pokemonNote: legalEntry?.notes || banned?.notes,
     moves: moveResults,
     moveLegalityAvailable,
+    items: itemResults,
+    itemLegalityAvailable,
     notes,
   };
 }
