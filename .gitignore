@@ -12,3 +12,5 @@ data/*.sample.json
 
 # Internal design/spec doc — kept locally, not published.
 spec.md
+# Local working plan — kept locally, not published.
+PLAN.md
