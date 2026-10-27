@@ -81,6 +81,8 @@ server.registerTool(
       'Champions (VGC-style, defaults to Doubles). Wraps the trusted @smogon/calc engine, ' +
       'so abilities (Contrary, Intimidate, ...), items, weather, terrain, Tera, crits, ' +
       'multi-hit, screens and Doubles spread reduction are all handled correctly. ' +
+      'Pass isCrit: true for the damage of a critical hit (moves that always crit, like ' +
+      'Flower Trick, crit without it). ' +
       'For moves whose power builds up over a battle — Rage Fist (per hit taken), Last ' +
       'Respects (per fainted ally) — pass moveContext so the base power scales correctly; ' +
       'or pin any variable-power move with moveContext.basePowerOverride. ' +
@@ -100,6 +102,14 @@ server.registerTool(
         .describe(
           'Battle-history context for moves whose base power accumulates (Rage Fist, Last ' +
           'Respects), or a raw basePowerOverride for any other variable-power move.',
+        ),
+      isCrit: z
+        .boolean()
+        .optional()
+        .describe(
+          'Calculate a critical hit: x1.5 (x2.25 with Sniper), ignoring the defender\'s ' +
+          'positive Def/SpD boosts, the attacker\'s negative Atk/SpA drops, and screens. ' +
+          'Battle Armor / Shell Armor still block it. Defaults to false.',
         ),
     },
   },

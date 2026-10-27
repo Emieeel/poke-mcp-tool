@@ -392,6 +392,8 @@ export function calculateDamage(args: {
   move: string;
   field?: FieldInput;
   moveContext?: MoveContextInput;
+  /** Force a critical hit. Always-crit moves (Flower Trick, Wicked Blow, ...) crit regardless. */
+  isCrit?: boolean;
 }): DamageResult {
   const g = gen();
   const notes: string[] = [];
@@ -444,7 +446,13 @@ export function calculateDamage(args: {
   }
   if (basePower !== probe.bp) moveOverrides.basePower = basePower;
 
-  const move = new Move(g, args.move, { overrides: moveOverrides as any });
+  // isCrit is a constructor option (not an override); Move.clone() carries it through, so the
+  // engine applies the full crit package: x1.5 (x2.25 with Sniper), ignoring the defender's
+  // positive defensive boosts, the attacker's negative offensive boosts, and screens.
+  const move = new Move(g, args.move, {
+    overrides: moveOverrides as any,
+    isCrit: Boolean(args.isCrit),
+  });
 
   const field = buildField(args.field);
   // Offensive abilities that act as if a weather is present (Mega Sol -> Sun). Set it on the
@@ -506,6 +514,19 @@ export function calculateDamage(args: {
   if (field.terrain) notes.push(`Terrain "${field.terrain}" in effect.`);
   if (attacker.teraType) notes.push(`Attacker Terastallized to ${attacker.teraType}.`);
   if (bypassingProtect) notes.push('Piercing Drill bypassed Protect; damage is 1/4 of the full hit.');
+  if (move.isCrit) {
+    // Same precondition the engine checks before applying the crit (mechanics/gen789).
+    if (defender.hasAbility('Battle Armor', 'Shell Armor')) {
+      notes.push(`Critical hit requested, but ${defender.ability} prevents critical hits, so this is a normal hit.`);
+    } else if (args.isCrit) {
+      notes.push(
+        'Critical hit: x1.5 damage (x2.25 with Sniper), ignoring the defender\'s positive ' +
+        'Def/SpD boosts, the attacker\'s negative Atk/SpA drops, and Reflect/Light Screen/Aurora Veil.',
+      );
+    } else {
+      notes.push(`${move.name} always lands a critical hit.`);
+    }
+  }
 
   // Type effectiveness, reconciled against what the engine actually dealt. A 0-damage hit whose
   // TYPE matchup isn't 0x was blocked by something else (Levitate, Flash Fire, Air Balloon,

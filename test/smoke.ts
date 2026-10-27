@@ -169,6 +169,41 @@ async function main() {
     check('basePowerOverride surfaced in notes', ovr.parsed.notes.some((n: string) => /forced to 350 BP/.test(n)), ovr.parsed.notes);
   }
 
+  // 1a'. Critical hits on request. The engine applies the whole crit package (x1.5, Sniper's
+  // extra x1.5, ignoring screens), and Battle Armor / Shell Armor still block it.
+  console.log('\ncalculate_damage (critical hits):');
+  {
+    const snipe = (ability: string, isCrit?: boolean, field?: Record<string, unknown>) =>
+      callJson(client, 'calculate_damage', {
+        attacker: { name: 'Inteleon', level: 50, nature: 'Timid', ability, statPoints: { spa: 32, spe: 32 } },
+        defender: { name: 'Incineroar', level: 50, statPoints: { hp: 32 } },
+        move: 'Snipe Shot',
+        ...(isCrit === undefined ? {} : { isCrit }),
+        ...(field ? { field } : {}),
+      });
+    const normal = await snipe('Torrent');
+    const crit = await snipe('Torrent', true);
+    const sniperCrit = await snipe('Sniper', true);
+    const ratio = crit.parsed.damageRange.max / normal.parsed.damageRange.max;
+    const sniperRatio = sniperCrit.parsed.damageRange.max / normal.parsed.damageRange.max;
+    check('isCrit raises damage by ~x1.5', ratio > 1.4 && ratio < 1.6, { normal: normal.parsed.damageRange, crit: crit.parsed.damageRange });
+    check('Sniper crit is ~x2.25', sniperRatio > 2.1 && sniperRatio < 2.4, { sniperCrit: sniperCrit.parsed.damageRange });
+    check('crit calc string says "on a critical hit"', /on a critical hit/.test(crit.parsed.description), crit.parsed.description);
+    check('crit surfaced in notes', crit.parsed.notes.some((n: string) => /^Critical hit:/.test(n)), crit.parsed.notes);
+    const screenCrit = await snipe('Torrent', true, { isLightScreen: true });
+    check('a crit ignores Light Screen', screenCrit.parsed.damageRange.max === crit.parsed.damageRange.max, { withScreen: screenCrit.parsed.damageRange, without: crit.parsed.damageRange });
+
+    const armorArgs = {
+      attacker: { name: 'Garchomp', level: 50, nature: 'Adamant', statPoints: { atk: 32 } },
+      defender: { name: 'Mega Scolipede', level: 50, ability: 'Shell Armor' },
+      move: 'Earthquake',
+    };
+    const armorNormal = await callJson(client, 'calculate_damage', armorArgs);
+    const armorCrit = await callJson(client, 'calculate_damage', { ...armorArgs, isCrit: true });
+    check('Shell Armor blocks a requested crit', armorCrit.parsed.damageRange.max === armorNormal.parsed.damageRange.max, { normal: armorNormal.parsed.damageRange, crit: armorCrit.parsed.damageRange });
+    check('blocked crit explained in notes', armorCrit.parsed.notes.some((n: string) => /prevents critical hits/.test(n)), armorCrit.parsed.notes);
+  }
+
   // 1c. Offensive-ability parity with the canonical CHAMP calculator, for Champions-original
   // abilities @smogon/calc doesn't know natively (Mega Sol, Dragonize). We make the ENGINE apply
   // them — Mega Sol as Sun on the field (so Weather Ball becomes 100 BP Fire, Fire ×1.5, ...),
