@@ -1,0 +1,2187 @@
+{
+  "meta": {
+    "game": "Pokémon Champions",
+    "source": "https://www.serebii.net/pokedex-champions/",
+    "newAbilitiesSource": "https://www.serebii.net/pokemonchampions/newabilities.shtml",
+    "scrapedAt": "2026-10-27T18:18:56.014Z",
+    "count": 215,
+    "note": "Every ability a Champions Pokémon can have, with its Champions description (from the Pokédex pages) and whether it is new in Champions."
+  },
+  "abilities": {
+    "Adaptability": {
+      "name": "Adaptability",
+      "effect": "Increases the Same Type Attack Bonus from *1.5 to *2.",
+      "isNew": false,
+      "pokemon": [
+        "Mega Beedrill",
+        "Mega Lucario",
+        "Dragalge",
+        "Basculegion",
+        "Mega Glimmora"
+      ]
+    },
+    "Aerilate": {
+      "name": "Aerilate",
+      "effect": "Increases the power of Normal-type moves by 20%. It then changes those moves to Flying-type.",
+      "isNew": false,
+      "pokemon": [
+        "Mega Pinsir",
+        "Mega Salamence"
+      ]
+    },
+    "Aftermath": {
+      "name": "Aftermath",
+      "effect": "The foe that dealt the final hit loses 1/4 of its maximum HP if the move made physical contact.",
+      "isNew": false,
+      "pokemon": [
+        "Garbodor"
+      ]
+    },
+    "Analytic": {
+      "name": "Analytic",
+      "effect": "Attack power increases by 30% if the Pokémon is the last Pokémon to attack this turn",
+      "isNew": false,
+      "pokemon": [
+        "Starmie",
+        "Watchog"
+      ]
+    },
+    "Anger Point": {
+      "name": "Anger Point",
+      "effect": "Increases Attack to maximum level upon taking a critical hit.",
+      "isNew": false,
+      "pokemon": [
+        "Tauros",
+        "Camerupt",
+        "Krookodile",
+        "Crabominable"
+      ]
+    },
+    "Anticipation": {
+      "name": "Anticipation",
+      "effect": "Warns when the foe knows 1-hit KO or super-effective moves.",
+      "isNew": false,
+      "pokemon": [
+        "Toxicroak",
+        "Hatterene"
+      ]
+    },
+    "Armor Tail": {
+      "name": "Armor Tail",
+      "effect": "The mysterious tail covering the Pokémon's head makes opponents unable to use priority moves against the Pokémon or its allies.",
+      "isNew": false,
+      "pokemon": [
+        "Farigiraf"
+      ]
+    },
+    "Aroma Veil": {
+      "name": "Aroma Veil",
+      "effect": "Protects itself and its allies from attacks that limit their move choices.",
+      "isNew": false,
+      "pokemon": [
+        "Aromatisse",
+        "Alcremie"
+      ]
+    },
+    "Aura Guard": {
+      "name": "Aura Guard",
+      "effect": "Reduces the amount of damage received by moves that make physical contact by 50%",
+      "isNew": true,
+      "pokemon": [
+        "Mega Lucario Z"
+      ]
+    },
+    "Battle Armor": {
+      "name": "Battle Armor",
+      "effect": "Opponent’s moves cannot Critical Hit.",
+      "isNew": false,
+      "pokemon": [
+        "Perrserker",
+        "Falinks"
+      ]
+    },
+    "Berserk": {
+      "name": "Berserk",
+      "effect": "Boosts the Pokémon's Sp. Atk stat when it takes a hit that causes its HP to become half or less.",
+      "isNew": false,
+      "pokemon": [
+        "Drampa",
+        "Mega Drampa"
+      ]
+    },
+    "Big Pecks": {
+      "name": "Big Pecks",
+      "effect": "Protects the Pokémon from Defense-lowering effects.",
+      "isNew": false,
+      "pokemon": [
+        "Pidgeot"
+      ]
+    },
+    "Blaze": {
+      "name": "Blaze",
+      "effect": "When HP is below 1/3rd its maximum, power of Fire-type moves is increased by 50%.",
+      "isNew": false,
+      "pokemon": [
+        "Charizard",
+        "Typhlosion",
+        "Blaziken",
+        "Infernape",
+        "Emboar",
+        "Simisear",
+        "Delphox",
+        "Incineroar",
+        "Cinderace",
+        "Skeledirge"
+      ]
+    },
+    "Bulletproof": {
+      "name": "Bulletproof",
+      "effect": "Protects the Pokémon from some ball and bomb moves.",
+      "isNew": false,
+      "pokemon": [
+        "Chesnaught",
+        "Mega Chesnaught",
+        "Kommo-o"
+      ]
+    },
+    "Cheek Pouch": {
+      "name": "Cheek Pouch",
+      "effect": "Restores HP as well when the Pokémon eats a Berry.",
+      "isNew": false,
+      "pokemon": [
+        "Diggersby",
+        "Dedenne",
+        "Maushold"
+      ]
+    },
+    "Chlorophyll": {
+      "name": "Chlorophyll",
+      "effect": "When sunny, the Pokémon’s Speed doubles.",
+      "isNew": false,
+      "pokemon": [
+        "Venusaur",
+        "Vileplume",
+        "Victreebel",
+        "Leafeon",
+        "Whimsicott",
+        "Scovillain"
+      ]
+    },
+    "Clear Body": {
+      "name": "Clear Body",
+      "effect": "Opponents’ moves which lower this Pokémon’s stats have no effect. However this Pokémon may lower its own stats with its own moves.",
+      "isNew": false,
+      "pokemon": [
+        "Metagross",
+        "Dragapult",
+        "Garganacl"
+      ]
+    },
+    "Cloud Nine": {
+      "name": "Cloud Nine",
+      "effect": "All weather effects are negated while the Pokémon is on the field.",
+      "isNew": false,
+      "pokemon": [
+        "Altaria",
+        "Drampa"
+      ]
+    },
+    "Competitive": {
+      "name": "Competitive",
+      "effect": "Raises Sp. Atk stat by two stages whenever a stat is lowered",
+      "isNew": false,
+      "pokemon": [
+        "Wigglytuff",
+        "Milotic",
+        "Empoleon",
+        "Meowstic"
+      ]
+    },
+    "Compoundeyes": {
+      "name": "Compoundeyes",
+      "effect": "Raises the Pokémon’s accuracy by 30%.",
+      "isNew": false,
+      "pokemon": [
+        "Vivillon"
+      ]
+    },
+    "Contrary": {
+      "name": "Contrary",
+      "effect": "Moves used on the Pokémon that raise stats lower the stats, while the moves that lower the stats raise the stat",
+      "isNew": false,
+      "pokemon": [
+        "Mega Staraptor",
+        "Serperior",
+        "Malamar",
+        "Mega Malamar"
+      ]
+    },
+    "Corrosion": {
+      "name": "Corrosion",
+      "effect": "The Pokémon can poison the target even if it's a Steel or Poison type.",
+      "isNew": false,
+      "pokemon": [
+        "Salazzle",
+        "Glimmora"
+      ]
+    },
+    "Cud Chew": {
+      "name": "Cud Chew",
+      "effect": "When the Pokémon eats a Berry, it will regurgitate that Berry at the end of the next turn and eat it one more time.",
+      "isNew": false,
+      "pokemon": [
+        "Tauros",
+        "Farigiraf"
+      ]
+    },
+    "Curious Medicine": {
+      "name": "Curious Medicine",
+      "effect": "When the Pokémon is brought into battle, any stat alterations of allies are removed",
+      "isNew": false,
+      "pokemon": [
+        "Slowking"
+      ]
+    },
+    "Cursed Body": {
+      "name": "Cursed Body",
+      "effect": "When a move hits the Pokémon, that move has a 30% chance of getting disabled",
+      "isNew": false,
+      "pokemon": [
+        "Gengar",
+        "Banette",
+        "Froslass",
+        "Polteageist",
+        "Dragapult"
+      ]
+    },
+    "Cute Charm": {
+      "name": "Cute Charm",
+      "effect": "The opponent has a 30% chance of being induced with Attract when using an attack, that requires physical contact, against this Pokémon.",
+      "isNew": false,
+      "pokemon": [
+        "Clefable",
+        "Wigglytuff",
+        "Milotic",
+        "Lopunny",
+        "Sylveon"
+      ]
+    },
+    "Damp": {
+      "name": "Damp",
+      "effect": "Explosion, Selfdestruct, Mind Blown & Misty Explosion will not work while the Pokémon is on the field.",
+      "isNew": false,
+      "pokemon": [
+        "Politoed",
+        "Swampert",
+        "Bellibolt"
+      ]
+    },
+    "Defiant": {
+      "name": "Defiant",
+      "effect": "Attack is raised by two stages when the Pokémon has its stats lowered. Doesn't work on self inflicted stat drops or drops from allies",
+      "isNew": false,
+      "pokemon": [
+        "Farfetch'd",
+        "Passimian",
+        "Falinks",
+        "Mega Falinks",
+        "Annihilape",
+        "Kingambit"
+      ]
+    },
+    "Disguise": {
+      "name": "Disguise",
+      "effect": "Once per battle, the Pokémon can withstand one damaging attack without receiving any damage. Damage inflicted through entry hazards, weather or status conditions will not break the disguise. Damage from Confusion will break the Disguise. It causes 1/8th of max Hit Point damage when it breaks",
+      "isNew": false,
+      "pokemon": [
+        "Mimikyu"
+      ]
+    },
+    "Dragonize": {
+      "name": "Dragonize",
+      "effect": "The Pokémon's Normal-type moves become Dragon-type moves and their power is boosted by 20%.",
+      "isNew": true,
+      "pokemon": [
+        "Mega Feraligatr"
+      ]
+    },
+    "Drizzle": {
+      "name": "Drizzle",
+      "effect": "Weather changes to Heavy Rain when the Pokémon enters the battle. As of X & Y, this lasts 5 turns.",
+      "isNew": false,
+      "pokemon": [
+        "Politoed",
+        "Pelipper"
+      ]
+    },
+    "Drought": {
+      "name": "Drought",
+      "effect": "Weather changes to Intense Sunshine when the Pokémon enters the battle. As of X & Y, this lasts 5 turns.",
+      "isNew": false,
+      "pokemon": [
+        "Mega Charizard Y",
+        "Ninetales",
+        "Torkoal"
+      ]
+    },
+    "Dry Skin": {
+      "name": "Dry Skin",
+      "effect": "HP is restored when hit by Water-type moves or when it is raining but also makes the Pokémon weak to Fire-type moves and reduces HP during strong sunlight.",
+      "isNew": false,
+      "pokemon": [
+        "Toxicroak",
+        "Heliolisk"
+      ]
+    },
+    "Early Bird": {
+      "name": "Early Bird",
+      "effect": "Sleep conditions lasts for half as long, rounding down. For example, half of three turns is 1.5, which rounds down to one turn. When the number of turns to sleep is one, half of this rounded down is zero, and the Pokémon wakes up instantly.",
+      "isNew": false,
+      "pokemon": [
+        "Kangaskhan",
+        "Houndoom"
+      ]
+    },
+    "Earth Eater": {
+      "name": "Earth Eater",
+      "effect": "The user recovers 25% of its maximum Hit Points when a Ground-type move is used against it",
+      "isNew": false,
+      "pokemon": [
+        "Orthworm"
+      ]
+    },
+    "Eelevate": {
+      "name": "Eelevate",
+      "effect": "The Pokémon floats off the ground, making it immune to Ground-type moves, as well as the Spikes, Toxic Spikes, and Sticky Web statuses. When the Pokémon knocks out a target with an attack, its highest stat is boosted by 1 stage.",
+      "isNew": true,
+      "pokemon": [
+        "Mega Eelektross"
+      ]
+    },
+    "Effect Spore": {
+      "name": "Effect Spore",
+      "effect": "The opponent has a 10% chance of being induced by PARALYZE, POISON, or SLEEP when using an attack, that requires physical contact, against this Pokémon.",
+      "isNew": false,
+      "pokemon": [
+        "Vileplume"
+      ]
+    },
+    "Electric Surge": {
+      "name": "Electric Surge",
+      "effect": "Activates Electric Terrain for 5 turns when the Pokémon enters a battle.",
+      "isNew": false,
+      "pokemon": [
+        "Mega Raichu X",
+        "Pincurchin"
+      ]
+    },
+    "Electromorphosis": {
+      "name": "Electromorphosis",
+      "effect": "The Pokémon becomes charged when it takes damage, boosting the power of the next Electric-type move the Pokémon uses.",
+      "isNew": false,
+      "pokemon": [
+        "Bellibolt"
+      ]
+    },
+    "Emergency Exit": {
+      "name": "Emergency Exit",
+      "effect": "When the Pokémon's Hit Points hit 50% or less, the Pokémon will switch out. Works once per battle. The Pokémon will not switch out if it drops below 50% due to Confusion, Weather, use of Substitute or when the damage inflicted is by a Pokémon with the Sheer Force ability. It will not activate if health is brought back up above 50% due to a hold item",
+      "isNew": false,
+      "pokemon": [
+        "Golisopod"
+      ]
+    },
+    "Fairy Aura": {
+      "name": "Fairy Aura",
+      "effect": "Powers up every Pokémon in play's Fairy-type moves by 33%",
+      "isNew": false,
+      "pokemon": [
+        "Mega Floette"
+      ]
+    },
+    "Filter": {
+      "name": "Filter",
+      "effect": "Damage by super-effective moves is reduced by 25%.",
+      "isNew": false,
+      "pokemon": [
+        "Mr. Mime",
+        "Mega Aggron"
+      ]
+    },
+    "Fire Mane": {
+      "name": "Fire Mane",
+      "effect": "Boosts the power of the Pokémon's Fire-type moves by 50%.",
+      "isNew": true,
+      "pokemon": [
+        "Mega Pyroar"
+      ]
+    },
+    "Flame Body": {
+      "name": "Flame Body",
+      "effect": "The opponent has a 30% chance of being induced with Burn when using an attack, that requires physical contact, against this Pokémon.",
+      "isNew": false,
+      "pokemon": [
+        "Chandelure",
+        "Volcarona",
+        "Talonflame"
+      ]
+    },
+    "Flash Fire": {
+      "name": "Flash Fire",
+      "effect": "Activates when user is hit by a damaging Fire-type move (including Fire-type Hidden Power). Once activated, user’s Fire-type moves deal 1.5 times damage. While this ability is in effect, this Pokémon is immune to damage from Fire-type attacks and Fire-type Hidden Power (accuracy and effect from these moves are ignored). For Fire-type Pokémon with this ability, Will-O-Wisp activates this ability without having an effect.",
+      "isNew": false,
+      "pokemon": [
+        "Ninetales",
+        "Arcanine",
+        "Flareon",
+        "Typhlosion",
+        "Houndoom",
+        "Chandelure",
+        "Armarouge",
+        "Ceruledge"
+      ]
+    },
+    "Flower Veil": {
+      "name": "Flower Veil",
+      "effect": "Ally Grass-type Pokémon are protected from status conditions and the lowering of their stats.",
+      "isNew": false,
+      "pokemon": [
+        "Floette",
+        "Florges"
+      ]
+    },
+    "Fluffy": {
+      "name": "Fluffy",
+      "effect": "Halves the damage taken from moves that make direct contact, but doubles that of Fire-type moves.",
+      "isNew": false,
+      "pokemon": [
+        "Houndstone"
+      ]
+    },
+    "Forecast": {
+      "name": "Forecast",
+      "effect": "This Pokémon’ changes its form and type if Harsh Sunlight, Heavy Rain or Snow is in effect.",
+      "isNew": false,
+      "pokemon": [
+        "Castform"
+      ]
+    },
+    "Forewarn": {
+      "name": "Forewarn",
+      "effect": "Reveals the foe’s strongest move.",
+      "isNew": false,
+      "pokemon": [
+        "Musharna"
+      ]
+    },
+    "Friend Guard": {
+      "name": "Friend Guard",
+      "effect": "In Double battles, the damage that ally Pokémon receive from attacks is reduced by 25%.",
+      "isNew": false,
+      "pokemon": [
+        "Vivillon",
+        "Maushold"
+      ]
+    },
+    "Frisk": {
+      "name": "Frisk",
+      "effect": "Reveals the foe’s held item.",
+      "isNew": false,
+      "pokemon": [
+        "Wigglytuff",
+        "Typhlosion",
+        "Banette",
+        "Trevenant",
+        "Gourgeist",
+        "Noivern",
+        "Grimmsnarl",
+        "Wyrdeer",
+        "Espathra"
+      ]
+    },
+    "Fur Coat": {
+      "name": "Fur Coat",
+      "effect": "Halves the damage from physical moves onto this Pokémon.",
+      "isNew": false,
+      "pokemon": [
+        "Persian",
+        "Furfrou"
+      ]
+    },
+    "Gale Wings": {
+      "name": "Gale Wings",
+      "effect": "All Flying-type moves have their Speed Priority increased by 1 if the Pokémon's Hit Points are at maximum",
+      "isNew": false,
+      "pokemon": [
+        "Talonflame"
+      ]
+    },
+    "Gluttony": {
+      "name": "Gluttony",
+      "effect": "The Pokémon will use a berry when its Hit Points are below 50%.",
+      "isNew": false,
+      "pokemon": [
+        "Victreebel",
+        "Snorlax",
+        "Swalot",
+        "Simisage",
+        "Simisear",
+        "Simipour",
+        "Flapple",
+        "Appletun"
+      ]
+    },
+    "Good as Gold": {
+      "name": "Good as Gold",
+      "effect": "A body of pure, solid gold gives the Pokémon full immunity to other Pokémon's status moves.",
+      "isNew": false,
+      "pokemon": [
+        "Gholdengo"
+      ]
+    },
+    "Gooey": {
+      "name": "Gooey",
+      "effect": "Lowers the opponent's Speed by one stage when it makes physical contact.",
+      "isNew": false,
+      "pokemon": [
+        "Goodra"
+      ]
+    },
+    "Grass Pelt": {
+      "name": "Grass Pelt",
+      "effect": "Increases Defense by 50% when battling on Grass or if the move Grassy Terrain is in effect",
+      "isNew": false,
+      "pokemon": [
+        "Gogoat"
+      ]
+    },
+    "Grassy Surge": {
+      "name": "Grassy Surge",
+      "effect": "Activates Grassy Terrain for 5 turns when the Pokémon enters a battle.",
+      "isNew": false,
+      "pokemon": [
+        "Rillaboom"
+      ]
+    },
+    "Guard Dog": {
+      "name": "Guard Dog",
+      "effect": "Boosts the Pokémon's Attack stat if intimidated. Moves and items that would force the Pokémon to switch out also fail to work.",
+      "isNew": false,
+      "pokemon": [
+        "Mabosstiff"
+      ]
+    },
+    "Guts": {
+      "name": "Guts",
+      "effect": "Attack is increased by 50% when induced with a status (BURN, PARALYZE, SLEEP, POISON, FREEZE). Burn’s effect of lowering Attack is not applied.",
+      "isNew": false,
+      "pokemon": [
+        "Machamp",
+        "Flareon",
+        "Heracross",
+        "Luxray",
+        "Conkeldurr",
+        "Squawkabilly"
+      ]
+    },
+    "Harvest": {
+      "name": "Harvest",
+      "effect": "The Pokémon has a 50% chance of restoring a consumed berry. During sunshine, this chance increases to 100%",
+      "isNew": false,
+      "pokemon": [
+        "Trevenant",
+        "Arboliva"
+      ]
+    },
+    "Healer": {
+      "name": "Healer",
+      "effect": "At the end of the turn, there is a 30% chance of either Ally being healed from a status condition",
+      "isNew": false,
+      "pokemon": [
+        "Audino",
+        "Mega Audino",
+        "Aromatisse",
+        "Hatterene"
+      ]
+    },
+    "Heatproof": {
+      "name": "Heatproof",
+      "effect": "Damage from Fire-type moves and the Burn status is halved.",
+      "isNew": false,
+      "pokemon": [
+        "Sinistcha"
+      ]
+    },
+    "Heavy Metal": {
+      "name": "Heavy Metal",
+      "effect": "Doubles the Pokémon's weight.",
+      "isNew": false,
+      "pokemon": [
+        "Aggron"
+      ]
+    },
+    "Hospitality": {
+      "name": "Hospitality",
+      "effect": "Heals up to 25% of its partner Pokémon's Maximum Hit Points when it enters battle",
+      "isNew": false,
+      "pokemon": [
+        "Sinistcha"
+      ]
+    },
+    "Huge Power": {
+      "name": "Huge Power",
+      "effect": "The Pokémon's Attack stat is doubled while it has this ability.",
+      "isNew": false,
+      "pokemon": [
+        "Mega Starmie",
+        "Azumarill",
+        "Mega Mawile",
+        "Diggersby"
+      ]
+    },
+    "Hunger Switch": {
+      "name": "Hunger Switch",
+      "effect": "The Pokémon changes its form, alternating between its Full Belly Mode and Hangry Mode after the end of each turn.",
+      "isNew": false,
+      "pokemon": [
+        "Morpeko"
+      ]
+    },
+    "Hustle": {
+      "name": "Hustle",
+      "effect": "Damage from physical attacks is increased by 50%, but average accuracy is only 80%.",
+      "isNew": false,
+      "pokemon": [
+        "Flapple",
+        "Squawkabilly"
+      ]
+    },
+    "Hydration": {
+      "name": "Hydration",
+      "effect": "All status problems: Burn, Paralysis, Sleep, Frozen and Poison, are healed when raining.",
+      "isNew": false,
+      "pokemon": [
+        "Vaporeon",
+        "Goodra"
+      ]
+    },
+    "Hyper Cutter": {
+      "name": "Hyper Cutter",
+      "effect": "Opponent cannot lower this Pokémon’s Attack value. This Pokémon may still lower its own Attack value using a move of by itself.",
+      "isNew": false,
+      "pokemon": [
+        "Pinsir",
+        "Mawile",
+        "Gliscor",
+        "Crabominable"
+      ]
+    },
+    "Ice Body": {
+      "name": "Ice Body",
+      "effect": "HP is restored by 1/16th of maximum HP when its Snowing.",
+      "isNew": false,
+      "pokemon": [
+        "Glalie",
+        "Glaceon",
+        "Vanilluxe",
+        "Avalugg",
+        "Mr. Rime",
+        "Baxcalibur"
+      ]
+    },
+    "Illuminate": {
+      "name": "Illuminate",
+      "effect": "By Iluminating its surroundings, the Pokémon prevents its accuracy from being lowered",
+      "isNew": false,
+      "pokemon": [
+        "Starmie",
+        "Watchog"
+      ]
+    },
+    "Illusion": {
+      "name": "Illusion",
+      "effect": "When sent out into battle, it takes the name and appearance of the last non-fainted Pokémon within your party. It breaks when an attack does damage on the Pokémon but not from Weather Effects or Entry Hazards.",
+      "isNew": false,
+      "pokemon": [
+        "Zoroark"
+      ]
+    },
+    "Immunity": {
+      "name": "Immunity",
+      "effect": "The Pokémon cannot be Poisoned while having this ability.",
+      "isNew": false,
+      "pokemon": [
+        "Snorlax"
+      ]
+    },
+    "Imposter": {
+      "name": "Imposter",
+      "effect": "When sent into battle, the Pokémon automatically transforms into a random opponent that is on the field.",
+      "isNew": false,
+      "pokemon": [
+        "Ditto"
+      ]
+    },
+    "Infiltrator": {
+      "name": "Infiltrator",
+      "effect": "The protections and stat boosts caused by the moves Substitute, Reflect, Light Screen and Safeguard by the opponent are ignored.",
+      "isNew": false,
+      "pokemon": [
+        "Spiritomb",
+        "Whimsicott",
+        "Chandelure",
+        "Mega Chandelure",
+        "Meowstic",
+        "Malamar",
+        "Noivern",
+        "Dragapult"
+      ]
+    },
+    "Innards Out": {
+      "name": "Innards Out",
+      "effect": "Damages the attacker landing the finishing hit by the amount equal to its last HP.",
+      "isNew": false,
+      "pokemon": [
+        "Mega Victreebel"
+      ]
+    },
+    "Inner Focus": {
+      "name": "Inner Focus",
+      "effect": "This Pokémon will not flinch. Does not prevent flinching with Focus Punch. Also prevents stats from being lowered by the ability Intimidate",
+      "isNew": false,
+      "pokemon": [
+        "Alakazam",
+        "Farfetch'd",
+        "Kangaskhan",
+        "Dragonite",
+        "Umbreon",
+        "Glalie",
+        "Lucario",
+        "Mega Gallade",
+        "Mudsdale",
+        "Oranguru",
+        "Indeedee",
+        "Annihilape"
+      ]
+    },
+    "Insomnia": {
+      "name": "Insomnia",
+      "effect": "The Pokémon cannot be put to Sleep while having this ability.",
+      "isNew": false,
+      "pokemon": [
+        "Ariados",
+        "Banette",
+        "Gourgeist",
+        "Scovillain"
+      ]
+    },
+    "Intimidate": {
+      "name": "Intimidate",
+      "effect": "Upon entering battle or receiving the ability, the opponent’s Attack lowers one stage. In a Double Battle, both opponents’ Attack are lowered. Pokémon with the Clear Body, Hyper Cutter, or White Smoke ability are unaffected. In a link battle, if both sides switch on the same turn, and first player sends out a Pokémon with Intimidate, the opponent’s Attack will be lowered before the opponent’s Pokémon switches.",
+      "isNew": false,
+      "pokemon": [
+        "Arbok",
+        "Arcanine",
+        "Tauros",
+        "Gyarados",
+        "Qwilfish",
+        "Mawile",
+        "Mega Manectric",
+        "Salamence",
+        "Staraptor",
+        "Luxray",
+        "Krookodile",
+        "Scrafty",
+        "Mega Scrafty",
+        "Incineroar",
+        "Wyrdeer",
+        "Overqwil",
+        "Squawkabilly",
+        "Mabosstiff"
+      ]
+    },
+    "Iron Fist": {
+      "name": "Iron Fist",
+      "effect": "The power of punching moves is increased by 20%. This stacks with Punching Glove.",
+      "isNew": false,
+      "pokemon": [
+        "Infernape",
+        "Conkeldurr",
+        "Golurk",
+        "Pangoro",
+        "Crabominable",
+        "Mega Crabominable",
+        "Pawmot"
+      ]
+    },
+    "Justified": {
+      "name": "Justified",
+      "effect": "Attack is raised by one stage when the Pokémon is hit by a Dark-type move",
+      "isNew": false,
+      "pokemon": [
+        "Arcanine",
+        "Absol",
+        "Lucario",
+        "Gallade"
+      ]
+    },
+    "Keen Eye": {
+      "name": "Keen Eye",
+      "effect": "Opponent cannot lower this Pokémon’s accuracy. The Pokémon ignores evasion boosts of the opponent",
+      "isNew": false,
+      "pokemon": [
+        "Pidgeot",
+        "Farfetch'd",
+        "Skarmory",
+        "Pelipper",
+        "Sableye",
+        "Watchog",
+        "Meowstic",
+        "Toucannon",
+        "Lycanroc"
+      ]
+    },
+    "Klutz": {
+      "name": "Klutz",
+      "effect": "The Pokémon cannot receive any effect of hold items except those that affect experience, EVs, friendship etc. such as Amulet Coin, Soothe Bell, Lucky Egg, Exp.Share, Macho Brace or the Power Items.",
+      "isNew": false,
+      "pokemon": [
+        "Lopunny",
+        "Audino",
+        "Golurk"
+      ]
+    },
+    "Leaf Guard": {
+      "name": "Leaf Guard",
+      "effect": "Prevents the Pokémon from being afflicted by status conditions during strong sunlight.",
+      "isNew": false,
+      "pokemon": [
+        "Meganium",
+        "Leafeon",
+        "Tsareena"
+      ]
+    },
+    "Levitate": {
+      "name": "Levitate",
+      "effect": "Damage dealing Ground-type moves have no effect on this Pokémon. Cannot be trapped by Arena Trap ability. Takes no damage from Spikes.",
+      "isNew": false,
+      "pokemon": [
+        "Chimecho",
+        "Mega Chimecho",
+        "Mega Garchomp Z",
+        "Rotom",
+        "Eelektross",
+        "Hydreigon",
+        "Mega Delphox"
+      ]
+    },
+    "Libero": {
+      "name": "Libero",
+      "effect": "Before the Pokémon uses a move, it becomes a pure Pokémon of that type. This only works once per switch in.",
+      "isNew": false,
+      "pokemon": [
+        "Cinderace"
+      ]
+    },
+    "Light Metal": {
+      "name": "Light Metal",
+      "effect": "Halves the Pokémon's weight.",
+      "isNew": false,
+      "pokemon": [
+        "Scizor",
+        "Metagross"
+      ]
+    },
+    "Lightning Rod": {
+      "name": "Lightning Rod",
+      "effect": "Electric-type moves are drawn to this Pokémon. Electric-type moves will do no damage and the Pokémon's SP ATK is raised one stage.",
+      "isNew": false,
+      "pokemon": [
+        "Pikachu",
+        "Raichu",
+        "Mega Sceptile",
+        "Manectric",
+        "Rhyperior",
+        "Pincurchin"
+      ]
+    },
+    "Limber": {
+      "name": "Limber",
+      "effect": "The Pokémon cannot be Paralysed while having this ability.",
+      "isNew": false,
+      "pokemon": [
+        "Persian",
+        "Ditto",
+        "Lopunny",
+        "Liepard",
+        "Stunfisk",
+        "Hawlucha",
+        "Toxapex",
+        "Grapploct"
+      ]
+    },
+    "Liquid Ooze": {
+      "name": "Liquid Ooze",
+      "effect": "When the opponent absorbs Hit Points from this Pokémon, the opponent instead loses Hit Points.",
+      "isNew": false,
+      "pokemon": [
+        "Swalot"
+      ]
+    },
+    "Liquid Voice": {
+      "name": "Liquid Voice",
+      "effect": "All sound-based moves become Water-type moves.",
+      "isNew": false,
+      "pokemon": [
+        "Primarina"
+      ]
+    },
+    "Long Reach": {
+      "name": "Long Reach",
+      "effect": "The Pokémon uses its moves without making contact with the target.",
+      "isNew": false,
+      "pokemon": [
+        "Decidueye"
+      ]
+    },
+    "Magic Bounce": {
+      "name": "Magic Bounce",
+      "effect": "Reflects non-attacking moves used on the Pokémon back to the attacking Pokémon",
+      "isNew": false,
+      "pokemon": [
+        "Mega Clefable",
+        "Espeon",
+        "Mega Sableye",
+        "Mega Absol",
+        "Hatterene"
+      ]
+    },
+    "Magic Guard": {
+      "name": "Magic Guard",
+      "effect": "Prevents all no damage except from direct-attack moves, excluding damage self inflicted from Substitute, Belly Drum, Curse & Pain Split.",
+      "isNew": false,
+      "pokemon": [
+        "Clefable",
+        "Alakazam",
+        "Reuniclus"
+      ]
+    },
+    "Magician": {
+      "name": "Magician",
+      "effect": "The Pokémon steals the held item of a Pokémon it hits with a move.",
+      "isNew": false,
+      "pokemon": [
+        "Delphox",
+        "Klefki"
+      ]
+    },
+    "Magma Armor": {
+      "name": "Magma Armor",
+      "effect": "This Pokémon cannot be Frozen while having this ability.",
+      "isNew": false,
+      "pokemon": [
+        "Camerupt"
+      ]
+    },
+    "Marvel Scale": {
+      "name": "Marvel Scale",
+      "effect": "Defense is increased by 50% when induced with a status (BURN, PARALYZE, SLEEP, POISON, FREEZE).",
+      "isNew": false,
+      "pokemon": [
+        "Milotic"
+      ]
+    },
+    "Mega Launcher": {
+      "name": "Mega Launcher",
+      "effect": "Increases the power of Aura and Pulse moves by 50%",
+      "isNew": false,
+      "pokemon": [
+        "Mega Blastoise",
+        "Clawitzer"
+      ]
+    },
+    "Mega Sol": {
+      "name": "Mega Sol",
+      "effect": "Even when the sunlight has not turned harsh, the Pokémon can use its moves as if the weather were harsh sunlight.",
+      "isNew": true,
+      "pokemon": [
+        "Mega Meganium"
+      ]
+    },
+    "Merciless": {
+      "name": "Merciless",
+      "effect": "The Pokémon's attacks become critical hits if the target is poisoned.",
+      "isNew": false,
+      "pokemon": [
+        "Toxapex"
+      ]
+    },
+    "Mimicry": {
+      "name": "Mimicry",
+      "effect": "Changes to Electric-type in Electric Terrain, Psychic-type in Psychic Terrain, Grass-type in Grassy Terrain and Fairy type in Fairy-terrain. The type reverts to normal when the terrain ends.",
+      "isNew": false,
+      "pokemon": [
+        "Stunfisk"
+      ]
+    },
+    "Minus": {
+      "name": "Minus",
+      "effect": "When battling with Plus or Minus, Special Attack increases by 50%.",
+      "isNew": false,
+      "pokemon": [
+        "Manectric",
+        "Toxtricity"
+      ]
+    },
+    "Mirror Armor": {
+      "name": "Mirror Armor",
+      "effect": "Bounces back only the stat-lowering effects that the Pokémon receives.",
+      "isNew": false,
+      "pokemon": [
+        "Corviknight"
+      ]
+    },
+    "Mold Breaker": {
+      "name": "Mold Breaker",
+      "effect": "The Pokémon's moves are not affected by foe’s abilities during battle",
+      "isNew": false,
+      "pokemon": [
+        "Pinsir",
+        "Mega Gyarados",
+        "Mega Ampharos",
+        "Rampardos",
+        "Mega Emboar",
+        "Excadrill",
+        "Pangoro",
+        "Hawlucha",
+        "Basculegion",
+        "Tinkaton"
+      ]
+    },
+    "Moody": {
+      "name": "Moody",
+      "effect": "At the end of every turn, a random stat (except Accuracy and Evasion) is raised by two stages while another is lowered by one stage.",
+      "isNew": false,
+      "pokemon": [
+        "Glalie",
+        "Scovillain"
+      ]
+    },
+    "Motor Drive": {
+      "name": "Motor Drive",
+      "effect": "The Pokémon takes no damage from Electric-type attacks and Speed raises by one level.",
+      "isNew": false,
+      "pokemon": [
+        "Emolga"
+      ]
+    },
+    "Moxie": {
+      "name": "Moxie",
+      "effect": "Attack is raised by one stage when the Pokémon knocks out another Pokémon",
+      "isNew": false,
+      "pokemon": [
+        "Pinsir",
+        "Gyarados",
+        "Heracross",
+        "Salamence",
+        "Krookodile",
+        "Scrafty",
+        "Pyroar",
+        "Quaquaval"
+      ]
+    },
+    "Multiscale": {
+      "name": "Multiscale",
+      "effect": "Reduces damage afflicted to the Pokémon by 50% if at maximum HP",
+      "isNew": false,
+      "pokemon": [
+        "Dragonite",
+        "Mega Dragonite"
+      ]
+    },
+    "Mummy": {
+      "name": "Mummy",
+      "effect": "Contact with the Pokémon changes the attacker's Ability to Mummy.",
+      "isNew": false,
+      "pokemon": [
+        "Cofagrigus"
+      ]
+    },
+    "Natural Cure": {
+      "name": "Natural Cure",
+      "effect": "The Pokémon’s status (BURN, PARALYZE, SLEEP, POISON, FREEZE) is healed when withdrawn from battle.",
+      "isNew": false,
+      "pokemon": [
+        "Starmie",
+        "Altaria",
+        "Roserade",
+        "Trevenant",
+        "Pawmot"
+      ]
+    },
+    "No Guard": {
+      "name": "No Guard",
+      "effect": "The accuracy of all moves known by this Pokémon and all Pokémon targeting this Pokémon raises to 100%",
+      "isNew": false,
+      "pokemon": [
+        "Mega Pidgeot",
+        "Mega Raichu Y",
+        "Machamp",
+        "Golurk",
+        "Mega Hawlucha",
+        "Lycanroc"
+      ]
+    },
+    "Oblivious": {
+      "name": "Oblivious",
+      "effect": "The Pokémon cannot be under the Attract condition, Intimidated, or be taunted, while having this ability.",
+      "isNew": false,
+      "pokemon": [
+        "Slowbro",
+        "Slowking",
+        "Mamoswine",
+        "Salazzle"
+      ]
+    },
+    "Opportunist": {
+      "name": "Opportunist",
+      "effect": "If an opponent's stat is boosted, the Pokémon seizes the opportunity to boost the same stat for itself.",
+      "isNew": false,
+      "pokemon": [
+        "Espathra"
+      ]
+    },
+    "Overcoat": {
+      "name": "Overcoat",
+      "effect": "Protects Pokémon from Weather Effects and Powder moves such as Sleep Powder, Poison Powder etc.",
+      "isNew": false,
+      "pokemon": [
+        "Forretress",
+        "Reuniclus",
+        "Kommo-o"
+      ]
+    },
+    "Overgrow": {
+      "name": "Overgrow",
+      "effect": "When HP is below 1/3rd its maximum, power of Grass-type moves is increased by 50%.",
+      "isNew": false,
+      "pokemon": [
+        "Venusaur",
+        "Meganium",
+        "Sceptile",
+        "Torterra",
+        "Serperior",
+        "Simisage",
+        "Chesnaught",
+        "Decidueye",
+        "Rillaboom",
+        "Meowscarada"
+      ]
+    },
+    "Own Tempo": {
+      "name": "Own Tempo",
+      "effect": "The Pokémon cannot be Confused while having this ability. Blocks Intimidate",
+      "isNew": false,
+      "pokemon": [
+        "Slowbro",
+        "Slowking",
+        "Avalugg",
+        "Mudsdale",
+        "Indeedee",
+        "Tinkaton"
+      ]
+    },
+    "Parental Bond": {
+      "name": "Parental Bond",
+      "effect": "Every move used by the Pokémon will hit twice. The damage inflicted by the second hit is reduced to 25%. If the move used is a damaging move, each hit is capable of afflicting Secondary Effects and Critical Hits",
+      "isNew": false,
+      "pokemon": [
+        "Mega Kangaskhan"
+      ]
+    },
+    "Pickpocket": {
+      "name": "Pickpocket",
+      "effect": "When a Pokémon makes physical contact with the Pokémon, the item of the opponent is stolen.",
+      "isNew": false,
+      "pokemon": [
+        "Weavile",
+        "Barbaracle",
+        "Grimmsnarl",
+        "Tinkaton"
+      ]
+    },
+    "Pickup": {
+      "name": "Pickup",
+      "effect": "Has a 10% chance of finding and holding an item after battle. Will not work if this Pokémon is already holding an item. From Black & White, it allows for the user to pick up the item of its opponent or ally if they used up the item in battle.",
+      "isNew": false,
+      "pokemon": [
+        "Diggersby",
+        "Dedenne",
+        "Gourgeist"
+      ]
+    },
+    "Piercing Drill": {
+      "name": "Piercing Drill",
+      "effect": "When the Pokémon uses contact moves, it can hit even targets that are protecting themselves, dealing 1/4 of the damage that the move would otherwise deal. Everything aside from the target's protective effects is still triggered.",
+      "isNew": true,
+      "pokemon": [
+        "Mega Excadrill"
+      ]
+    },
+    "Pixilate": {
+      "name": "Pixilate",
+      "effect": "Increases the power of Normal-type moves by 20%. It then changes those moves to Fairy-type.",
+      "isNew": false,
+      "pokemon": [
+        "Mega Gardevoir",
+        "Mega Altaria",
+        "Sylveon"
+      ]
+    },
+    "Plus": {
+      "name": "Plus",
+      "effect": "When battling with Plus or Minus, Special Attack increases by 50%.",
+      "isNew": false,
+      "pokemon": [
+        "Ampharos",
+        "Dedenne",
+        "Toxtricity"
+      ]
+    },
+    "Poison Heal": {
+      "name": "Poison Heal",
+      "effect": "HP is restored by 1/8th the maximum HP every turn while the Pokémon has the Poison condition.",
+      "isNew": false,
+      "pokemon": [
+        "Gliscor"
+      ]
+    },
+    "Poison Point": {
+      "name": "Poison Point",
+      "effect": "The opponent has a 30% chance of being induced with Poison when using an attack, that requires physical contact, against this Pokémon.",
+      "isNew": false,
+      "pokemon": [
+        "Qwilfish",
+        "Roserade",
+        "Scolipede",
+        "Dragalge",
+        "Overqwil"
+      ]
+    },
+    "Poison Touch": {
+      "name": "Poison Touch",
+      "effect": "When the Pokémon attacks its opponents with a move that causes Physical Contact, there is a 30% chance that the target is Poisoned.",
+      "isNew": false,
+      "pokemon": [
+        "Toxicroak",
+        "Dragalge",
+        "Sneasler"
+      ]
+    },
+    "Prankster": {
+      "name": "Prankster",
+      "effect": "Status category moves have their Speed Priority increased by 1. Moves increased by this that are used on Dark-type opponents will fail.",
+      "isNew": false,
+      "pokemon": [
+        "Sableye",
+        "Mega Banette",
+        "Liepard",
+        "Whimsicott",
+        "Meowstic",
+        "Klefki",
+        "Grimmsnarl"
+      ]
+    },
+    "Pressure": {
+      "name": "Pressure",
+      "effect": "When this Pokémon is hit by a move, the opponent’s PP lowers by 2 rather than 1.",
+      "isNew": false,
+      "pokemon": [
+        "Aerodactyl",
+        "Absol",
+        "Spiritomb",
+        "Weavile",
+        "Corviknight",
+        "Sneasler",
+        "Kingambit"
+      ]
+    },
+    "Protean": {
+      "name": "Protean",
+      "effect": "Before the Pokémon uses a move, it becomes a pure Pokémon of that type. This only works once per switch in.",
+      "isNew": false,
+      "pokemon": [
+        "Greninja",
+        "Mega Greninja",
+        "Meowscarada"
+      ]
+    },
+    "Psychic Surge": {
+      "name": "Psychic Surge",
+      "effect": "Activates Psychic Terrain for 5 turns when the Pokémon enters a battle.",
+      "isNew": false,
+      "pokemon": [
+        "Indeedee"
+      ]
+    },
+    "Punk Rock": {
+      "name": "Punk Rock",
+      "effect": "Increases the damage of Sound based moves by 30%. Reduces damage taken by this Pokémon by Sound based moves by 50%.",
+      "isNew": false,
+      "pokemon": [
+        "Toxtricity"
+      ]
+    },
+    "Pure Power": {
+      "name": "Pure Power",
+      "effect": "The Pokémon’s Attack stat is doubled in battle while having this ability.",
+      "isNew": false,
+      "pokemon": [
+        "Medicham",
+        "Mega Medicham"
+      ]
+    },
+    "Purifying Salt": {
+      "name": "Purifying Salt",
+      "effect": "The Pokémon's pure salt protects it from status conditions and halves the damage taken from Ghost-type moves.",
+      "isNew": false,
+      "pokemon": [
+        "Garganacl"
+      ]
+    },
+    "Queenly Majesty": {
+      "name": "Queenly Majesty",
+      "effect": "Prevents the opponent from using moves with increased Speed Priority on this Pokémon or its allies.",
+      "isNew": false,
+      "pokemon": [
+        "Tsareena"
+      ]
+    },
+    "Quick Draw": {
+      "name": "Quick Draw",
+      "effect": "At the start of each turn, this Pokémon has a 30% chance of moving first in the Speed Priority Bracket",
+      "isNew": false,
+      "pokemon": [
+        "Slowbro"
+      ]
+    },
+    "Quick Feet": {
+      "name": "Quick Feet",
+      "effect": "Speed is increased by 50% when induced with a status (Burn, Poison, Sleep, Frozen & Paralysis). If Paralysed, the speed drop is ignored.",
+      "isNew": false,
+      "pokemon": [
+        "Jolteon"
+      ]
+    },
+    "Rain Dish": {
+      "name": "Rain Dish",
+      "effect": "If Heavy Rain weather is in effect, recovers 1/16th max Hit Points at the end of the turn.",
+      "isNew": false,
+      "pokemon": [
+        "Blastoise",
+        "Pelipper"
+      ]
+    },
+    "Rattled": {
+      "name": "Rattled",
+      "effect": "Speed is raised by one stage when the Pokémon is hit by a Bug-type, Ghost-type or Dark-type move or is Intimidated",
+      "isNew": false,
+      "pokemon": [
+        "Persian"
+      ]
+    },
+    "Receiver": {
+      "name": "Receiver",
+      "effect": "The Pokémon copies the Ability of a defeated ally.",
+      "isNew": false,
+      "pokemon": [
+        "Passimian"
+      ]
+    },
+    "Reckless": {
+      "name": "Reckless",
+      "effect": "The power of moves that have recoil damage is increased by 20%.",
+      "isNew": false,
+      "pokemon": [
+        "Staraptor",
+        "Rhyperior",
+        "Emboar"
+      ]
+    },
+    "Refrigerate": {
+      "name": "Refrigerate",
+      "effect": "Increases the power of Normal-type moves by 20%. It then changes those moves to Ice-type.",
+      "isNew": false,
+      "pokemon": [
+        "Mega Glalie",
+        "Aurorus"
+      ]
+    },
+    "Regenerator": {
+      "name": "Regenerator",
+      "effect": "When the Pokémon switches out of battle, up to 33.3% of its maximum Hit Points are restored",
+      "isNew": false,
+      "pokemon": [
+        "Slowbro",
+        "Slowking",
+        "Audino",
+        "Reuniclus",
+        "Mega Dragalge",
+        "Toxapex",
+        "Hydrapple"
+      ]
+    },
+    "Ripen": {
+      "name": "Ripen",
+      "effect": "Ripens Berries and doubles their effect.",
+      "isNew": false,
+      "pokemon": [
+        "Flapple",
+        "Appletun"
+      ]
+    },
+    "Rivalry": {
+      "name": "Rivalry",
+      "effect": "Attack & Special Attack is increased by 25% if the foe is of the same gender; Attack & Special Attack is decreased by 25% if the foe is of the opposite gender.",
+      "isNew": false,
+      "pokemon": [
+        "Luxray",
+        "Pyroar"
+      ]
+    },
+    "Rock Head": {
+      "name": "Rock Head",
+      "effect": "Does not receive recoil damage from recoil-causing damages.",
+      "isNew": false,
+      "pokemon": [
+        "Arcanine",
+        "Aerodactyl",
+        "Steelix",
+        "Aggron",
+        "Tyrantrum"
+      ]
+    },
+    "Rough Skin": {
+      "name": "Rough Skin",
+      "effect": "The opponent is hurt by 1/8th of his maxium Hit Points of recoil when using an attack, that requires physical contact, against this Pokémon.",
+      "isNew": false,
+      "pokemon": [
+        "Sharpedo",
+        "Garchomp"
+      ]
+    },
+    "Run Away": {
+      "name": "Run Away",
+      "effect": "Enables the Pokémon to ignore any effects that would usually prevent it from switching out of battle and being replaced by another party Pokémon.",
+      "isNew": false,
+      "pokemon": [
+        "Thievul"
+      ]
+    },
+    "Sand Force": {
+      "name": "Sand Force",
+      "effect": "Ground-type, Rock-type & Steel-type moves have their power increased by 30% in a Sandstorm and will not receive damage",
+      "isNew": false,
+      "pokemon": [
+        "Mega Steelix",
+        "Mega Garchomp",
+        "Hippowdon",
+        "Excadrill"
+      ]
+    },
+    "Sand Rush": {
+      "name": "Sand Rush",
+      "effect": "Speed is doubled within a sandstorm",
+      "isNew": false,
+      "pokemon": [
+        "Excadrill",
+        "Lycanroc",
+        "Houndstone"
+      ]
+    },
+    "Sand Spit": {
+      "name": "Sand Spit",
+      "effect": "The Pokémon creates a sandstorm when it's hit by an attack.",
+      "isNew": false,
+      "pokemon": [
+        "Sandaconda"
+      ]
+    },
+    "Sand Stream": {
+      "name": "Sand Stream",
+      "effect": "Sandstorm blows when the Pokémon enters battle. As of X & Y, this lasts 5 turns.",
+      "isNew": false,
+      "pokemon": [
+        "Tyranitar",
+        "Mega Tyranitar",
+        "Hippowdon"
+      ]
+    },
+    "Sand Veil": {
+      "name": "Sand Veil",
+      "effect": "Raises the Pokémon’s evasion during a sandstorm by one level.",
+      "isNew": false,
+      "pokemon": [
+        "Garchomp",
+        "Gliscor",
+        "Stunfisk",
+        "Heliolisk",
+        "Sandaconda",
+        "Orthworm"
+      ]
+    },
+    "Sap Sipper": {
+      "name": "Sap Sipper",
+      "effect": "Attack is raised by one stage when the Pokémon is hit by a Grass-type move. User receives no damage from Grass-type attacks.",
+      "isNew": false,
+      "pokemon": [
+        "Azumarill",
+        "Gogoat",
+        "Goodra",
+        "Drampa",
+        "Wyrdeer",
+        "Farigiraf"
+      ]
+    },
+    "Scrappy": {
+      "name": "Scrappy",
+      "effect": "Allows the Pokémon to hit Ghost-type Pokémon with Normal-type and Fighting-type moves. Blocks Intimidate",
+      "isNew": false,
+      "pokemon": [
+        "Kangaskhan",
+        "Mega Lopunny",
+        "Pangoro",
+        "Decidueye",
+        "Sirfetch'd"
+      ]
+    },
+    "Screen Cleaner": {
+      "name": "Screen Cleaner",
+      "effect": "When the Pokémon enters a battle, the effects of Light Screen, Reflect, and Aurora Veil are nullified for both opposing and ally Pokémon.",
+      "isNew": false,
+      "pokemon": [
+        "Mr. Rime"
+      ]
+    },
+    "Seed Sower": {
+      "name": "Seed Sower",
+      "effect": "Turns the ground into Grassy Terrain when the Pokémon is hit by an attack.",
+      "isNew": false,
+      "pokemon": [
+        "Arboliva"
+      ]
+    },
+    "Shadow Tag": {
+      "name": "Shadow Tag",
+      "effect": "The opponent cannot run nor switch while this Pokémon is in play. The opponent may still switch by using Baton Pass, U-turn or Volt Switch, if it is holding a Shed Shell or is a Ghost-type.",
+      "isNew": false,
+      "pokemon": [
+        "Mega Gengar"
+      ]
+    },
+    "Sharpness": {
+      "name": "Sharpness",
+      "effect": "Increases the power of Slicing moves used by this Pokémon by 50%",
+      "isNew": false,
+      "pokemon": [
+        "Mega Absol Z",
+        "Gallade",
+        "Samurott",
+        "Kleavor"
+      ]
+    },
+    "Shed Skin": {
+      "name": "Shed Skin",
+      "effect": "Every turn, it has a 1 in 3 chance of healing from a status condition (BURN, PARALYZE, SLEEP, POISON, FREEZE).",
+      "isNew": false,
+      "pokemon": [
+        "Arbok",
+        "Scrafty",
+        "Sandaconda"
+      ]
+    },
+    "Sheer Force": {
+      "name": "Sheer Force",
+      "effect": "Moves with a secondary effect are increased in power by 30% but lose their secondary effect",
+      "isNew": false,
+      "pokemon": [
+        "Tauros",
+        "Feraligatr",
+        "Steelix",
+        "Mawile",
+        "Mega Camerupt",
+        "Rampardos",
+        "Conkeldurr",
+        "Toucannon",
+        "Kleavor",
+        "Squawkabilly"
+      ]
+    },
+    "Shell Armor": {
+      "name": "Shell Armor",
+      "effect": "Opponent’s moves cannot Critical Hit.",
+      "isNew": false,
+      "pokemon": [
+        "Mega Slowbro",
+        "Torkoal",
+        "Torterra",
+        "Samurott",
+        "Mega Scolipede",
+        "Goodra"
+      ]
+    },
+    "Shield Dust": {
+      "name": "Shield Dust",
+      "effect": "Damaging moves used by the opponent will not have an additional effect.",
+      "isNew": false,
+      "pokemon": [
+        "Vivillon"
+      ]
+    },
+    "Skill Link": {
+      "name": "Skill Link",
+      "effect": "Moves that attack 2-5 times always hit 5 times.",
+      "isNew": false,
+      "pokemon": [
+        "Mega Heracross",
+        "Toucannon"
+      ]
+    },
+    "Slush Rush": {
+      "name": "Slush Rush",
+      "effect": "Doubles the Pokémon's Speed when Snow is in effect",
+      "isNew": false,
+      "pokemon": [
+        "Beartic"
+      ]
+    },
+    "Sniper": {
+      "name": "Sniper",
+      "effect": "Power of critical-hit moves is increased to 225% rather than 150%.",
+      "isNew": false,
+      "pokemon": [
+        "Beedrill",
+        "Ariados",
+        "Barbaracle",
+        "Inteleon"
+      ]
+    },
+    "Snow Cloak": {
+      "name": "Snow Cloak",
+      "effect": "Raises the Pokémon’s evasion during a Snowstorm by one level.",
+      "isNew": false,
+      "pokemon": [
+        "Ninetales",
+        "Glaceon",
+        "Mamoswine",
+        "Froslass",
+        "Beartic"
+      ]
+    },
+    "Snow Warning": {
+      "name": "Snow Warning",
+      "effect": "Snowstorm blows when the Pokémon enters battle. As of X & Y, this lasts 5 turns.",
+      "isNew": false,
+      "pokemon": [
+        "Ninetales",
+        "Abomasnow",
+        "Mega Abomasnow",
+        "Mega Froslass",
+        "Vanilluxe",
+        "Aurorus"
+      ]
+    },
+    "Solar Power": {
+      "name": "Solar Power",
+      "effect": "During sunshine, the Pokémon’s Special Attack raises to 1.5 times but HP decreases by 1/8th the maximum HP every turn.",
+      "isNew": false,
+      "pokemon": [
+        "Charizard",
+        "Mega Houndoom",
+        "Heliolisk"
+      ]
+    },
+    "Solid Rock": {
+      "name": "Solid Rock",
+      "effect": "Damage by super-effective moves is reduced by 25%.",
+      "isNew": false,
+      "pokemon": [
+        "Camerupt",
+        "Rhyperior"
+      ]
+    },
+    "Soundproof": {
+      "name": "Soundproof",
+      "effect": "Unaffected by sound moves. If this Pokémon switches out with Baton Pass, Perish Song against the switched out will not be nullified.",
+      "isNew": false,
+      "pokemon": [
+        "Mr. Mime",
+        "Bastiodon",
+        "Abomasnow",
+        "Kommo-o"
+      ]
+    },
+    "Speed Boost": {
+      "name": "Speed Boost",
+      "effect": "Speed increases by one stage at the end of each turn.",
+      "isNew": false,
+      "pokemon": [
+        "Blaziken",
+        "Mega Blaziken",
+        "Sharpedo",
+        "Scolipede",
+        "Espathra"
+      ]
+    },
+    "Spicy Spray": {
+      "name": "Spicy Spray",
+      "effect": "When the Pokémon takes damage from a move, it burns the attacker.",
+      "isNew": true,
+      "pokemon": [
+        "Mega Scovillain"
+      ]
+    },
+    "Stakeout": {
+      "name": "Stakeout",
+      "effect": "Doubles the damage dealt to the target's replacement if the target switches out.",
+      "isNew": false,
+      "pokemon": [
+        "Thievul",
+        "Mabosstiff"
+      ]
+    },
+    "Stall": {
+      "name": "Stall",
+      "effect": "The Pokémon always attacks last.",
+      "isNew": false,
+      "pokemon": [
+        "Sableye"
+      ]
+    },
+    "Stalwart": {
+      "name": "Stalwart",
+      "effect": "Ignores the effects of opposing Pokémon's Abilities and moves that draw in moves.",
+      "isNew": false,
+      "pokemon": [
+        "Mega Skarmory",
+        "Archaludon"
+      ]
+    },
+    "Stamina": {
+      "name": "Stamina",
+      "effect": "Boosts the Defense stat when hit by an attack.",
+      "isNew": false,
+      "pokemon": [
+        "Mudsdale",
+        "Archaludon"
+      ]
+    },
+    "Stance Change": {
+      "name": "Stance Change",
+      "effect": "The Pokémon changes its form to Blade Forme when it uses an attack move, and changes to Shield Forme when it uses King's Shield.",
+      "isNew": false,
+      "pokemon": [
+        "Aegislash"
+      ]
+    },
+    "Static": {
+      "name": "Static",
+      "effect": "The opponent has a 30% chance of being induced with PARALYZE when using an attack, that requires physical contact, against this Pokémon.",
+      "isNew": false,
+      "pokemon": [
+        "Pikachu",
+        "Raichu",
+        "Ampharos",
+        "Manectric",
+        "Emolga",
+        "Stunfisk",
+        "Bellibolt"
+      ]
+    },
+    "Steadfast": {
+      "name": "Steadfast",
+      "effect": "Speed raises by one level every time the Pokémon flinches.",
+      "isNew": false,
+      "pokemon": [
+        "Machamp",
+        "Lucario",
+        "Gallade",
+        "Lycanroc",
+        "Sirfetch'd"
+      ]
+    },
+    "Steely Spirit": {
+      "name": "Steely Spirit",
+      "effect": "Increases the power of Steel-type moves used by the user or any Ally Pokémon by 50%",
+      "isNew": false,
+      "pokemon": [
+        "Perrserker"
+      ]
+    },
+    "Stench": {
+      "name": "Stench",
+      "effect": "If the Pokémon uses a move that deals damage on the opponent, there is a chance the opponent flinches",
+      "isNew": false,
+      "pokemon": [
+        "Garbodor"
+      ]
+    },
+    "Sticky Hold": {
+      "name": "Sticky Hold",
+      "effect": "This Pokémon’s item cannot be taken.",
+      "isNew": false,
+      "pokemon": [
+        "Swalot",
+        "Hydrapple"
+      ]
+    },
+    "Strong Jaw": {
+      "name": "Strong Jaw",
+      "effect": "Increases the power of biting moves by 50%",
+      "isNew": false,
+      "pokemon": [
+        "Mega Sharpedo",
+        "Tyrantrum",
+        "Avalugg"
+      ]
+    },
+    "Sturdy": {
+      "name": "Sturdy",
+      "effect": "The Pokémon will remain with 1 HP if it was going to be knocked out by a move when at full Hit Points, and it is immune to One Hit KO moves.",
+      "isNew": false,
+      "pokemon": [
+        "Forretress",
+        "Steelix",
+        "Skarmory",
+        "Aggron",
+        "Bastiodon",
+        "Avalugg",
+        "Garganacl",
+        "Archaludon"
+      ]
+    },
+    "Suction Cups": {
+      "name": "Suction Cups",
+      "effect": "Negates moves that force switching out.",
+      "isNew": false,
+      "pokemon": [
+        "Malamar"
+      ]
+    },
+    "Super Luck": {
+      "name": "Super Luck",
+      "effect": "Raises the critical-hit ratio of moves by one level.",
+      "isNew": false,
+      "pokemon": [
+        "Absol"
+      ]
+    },
+    "Supersweet Syrup": {
+      "name": "Supersweet Syrup",
+      "effect": "Lowers the evasion of opposing Pokémon by 1 stage when first sent into battle",
+      "isNew": false,
+      "pokemon": [
+        "Hydrapple"
+      ]
+    },
+    "Supreme Overlord": {
+      "name": "Supreme Overlord",
+      "effect": "When the Pokémon enters a battle, its Attack and Sp. Atk stats are boosted by 10% for each of the allies in its party that have already been defeated.",
+      "isNew": false,
+      "pokemon": [
+        "Kingambit"
+      ]
+    },
+    "Surge Surfer": {
+      "name": "Surge Surfer",
+      "effect": "Doubles the Pokémon's Speed stat on Electric Terrain.",
+      "isNew": false,
+      "pokemon": [
+        "Raichu"
+      ]
+    },
+    "Swarm": {
+      "name": "Swarm",
+      "effect": "When HP is below 1/3rd its maximum, power of Bug-type moves is increased by 50%.",
+      "isNew": false,
+      "pokemon": [
+        "Beedrill",
+        "Ariados",
+        "Scizor",
+        "Heracross",
+        "Scolipede",
+        "Volcarona",
+        "Kleavor"
+      ]
+    },
+    "Sweet Veil": {
+      "name": "Sweet Veil",
+      "effect": "Prevents itself and ally Pokémon from falling asleep.",
+      "isNew": false,
+      "pokemon": [
+        "Slurpuff",
+        "Tsareena",
+        "Alcremie"
+      ]
+    },
+    "Swift Swim": {
+      "name": "Swift Swim",
+      "effect": "When rainy, The Pokémon’s Speed doubles.",
+      "isNew": false,
+      "pokemon": [
+        "Qwilfish",
+        "Mega Swampert",
+        "Beartic",
+        "Basculegion",
+        "Overqwil"
+      ]
+    },
+    "Symbiosis": {
+      "name": "Symbiosis",
+      "effect": "Passes the Pokémon's hold item to its adjacent ally when that ally consumes its hold item",
+      "isNew": false,
+      "pokemon": [
+        "Floette",
+        "Florges",
+        "Oranguru"
+      ]
+    },
+    "Synchronize": {
+      "name": "Synchronize",
+      "effect": "When this Pokémon becomes Poisoned, Paralyzed, or Burned, so does the opponent. However, Fire-type and Water Veil ability Pokémon cannot be Burned, Poison-type and Steel-type and Immunity ability Pokémon cannot be Poisoned, and Limber ability Pokémon cannot be Paralyzed.",
+      "isNew": false,
+      "pokemon": [
+        "Alakazam",
+        "Espeon",
+        "Umbreon",
+        "Gardevoir",
+        "Musharna",
+        "Indeedee"
+      ]
+    },
+    "Tangled Feet": {
+      "name": "Tangled Feet",
+      "effect": "Pokémon’s evasion raises one level when Confused.",
+      "isNew": false,
+      "pokemon": [
+        "Pidgeot",
+        "Mr. Rime"
+      ]
+    },
+    "Technician": {
+      "name": "Technician",
+      "effect": "Moves with a base power of 60 or less are boosted in power by 50%",
+      "isNew": false,
+      "pokemon": [
+        "Persian",
+        "Mr. Mime",
+        "Scizor",
+        "Mega Scizor",
+        "Roserade",
+        "Toxtricity",
+        "Grapploct",
+        "Maushold"
+      ]
+    },
+    "Telepathy": {
+      "name": "Telepathy",
+      "effect": "Prevents damage from team-mates during Double battles",
+      "isNew": false,
+      "pokemon": [
+        "Gardevoir",
+        "Medicham",
+        "Musharna",
+        "Noivern",
+        "Oranguru"
+      ]
+    },
+    "Thermal Exchange": {
+      "name": "Thermal Exchange",
+      "effect": "Boosts the Attack stat when the Pokémon is hit by a Fire-type move. The Pokémon also cannot be burned.",
+      "isNew": false,
+      "pokemon": [
+        "Baxcalibur",
+        "Mega Baxcalibur"
+      ]
+    },
+    "Thick Fat": {
+      "name": "Thick Fat",
+      "effect": "Fire and Ice-type moves deal 50% damage.",
+      "isNew": false,
+      "pokemon": [
+        "Mega Venusaur",
+        "Snorlax",
+        "Azumarill",
+        "Mamoswine",
+        "Appletun"
+      ]
+    },
+    "Torrent": {
+      "name": "Torrent",
+      "effect": "When HP is below 1/3rd its maximum, power of Water-type moves is increased by 50%.",
+      "isNew": false,
+      "pokemon": [
+        "Blastoise",
+        "Feraligatr",
+        "Swampert",
+        "Empoleon",
+        "Samurott",
+        "Simipour",
+        "Greninja",
+        "Primarina",
+        "Inteleon",
+        "Quaquaval"
+      ]
+    },
+    "Tough Claws": {
+      "name": "Tough Claws",
+      "effect": "Increases the power of moves that make physical contact by 30%",
+      "isNew": false,
+      "pokemon": [
+        "Mega Charizard X",
+        "Mega Aerodactyl",
+        "Mega Metagross",
+        "Barbaracle",
+        "Mega Barbaracle",
+        "Lycanroc",
+        "Mega Golisopod",
+        "Perrserker"
+      ]
+    },
+    "Toxic Debris": {
+      "name": "Toxic Debris",
+      "effect": "Scatters poison spikes at the feet of the opposing team when the Pokémon takes damage from physical moves.",
+      "isNew": false,
+      "pokemon": [
+        "Glimmora"
+      ]
+    },
+    "Trace": {
+      "name": "Trace",
+      "effect": "Ability becomes the same as that of the opponent. Switching this Pokémon out of battle restores its original ability. In a Double Battle, a random opponent’s ability will be copied.",
+      "isNew": false,
+      "pokemon": [
+        "Mega Alakazam",
+        "Gardevoir",
+        "Mega Meowstic"
+      ]
+    },
+    "Unaware": {
+      "name": "Unaware",
+      "effect": "Foe’s stat modifications are ignored.",
+      "isNew": false,
+      "pokemon": [
+        "Clefable",
+        "Skeledirge"
+      ]
+    },
+    "Unburden": {
+      "name": "Unburden",
+      "effect": "Speed is doubled once the held item is consumed.",
+      "isNew": false,
+      "pokemon": [
+        "Sceptile",
+        "Liepard",
+        "Slurpuff",
+        "Hawlucha",
+        "Thievul",
+        "Sneasler"
+      ]
+    },
+    "Unnerve": {
+      "name": "Unnerve",
+      "effect": "The opponent Pokémon will never use their held Berry while the Pokémon is in battle.",
+      "isNew": false,
+      "pokemon": [
+        "Arbok",
+        "Persian",
+        "Aerodactyl",
+        "Houndoom",
+        "Tyranitar",
+        "Pyroar",
+        "Corviknight"
+      ]
+    },
+    "Unseen Fist": {
+      "name": "Unseen Fist",
+      "effect": "The Pokémon can deal damage with moves that make physical contact, even if the target is protected. This damage is reduced to 25%",
+      "isNew": false,
+      "pokemon": [
+        "Mega Golurk"
+      ]
+    },
+    "Vital Spirit": {
+      "name": "Vital Spirit",
+      "effect": "The Pokémon cannot be Asleep while having this ability.",
+      "isNew": false,
+      "pokemon": [
+        "Lycanroc",
+        "Annihilape"
+      ]
+    },
+    "Volt Absorb": {
+      "name": "Volt Absorb",
+      "effect": "The Pokémon heals up to 1/4 of its maximum Hit Points when hit with Electric-type moves.",
+      "isNew": false,
+      "pokemon": [
+        "Jolteon",
+        "Pawmot"
+      ]
+    },
+    "Wandering Spirit": {
+      "name": "Wandering Spirit",
+      "effect": "The Pokémon exchanges Abilities with a Pokémon that hits it with a move that makes direct contact.",
+      "isNew": false,
+      "pokemon": [
+        "Runerigus"
+      ]
+    },
+    "Water Absorb": {
+      "name": "Water Absorb",
+      "effect": "The Pokémon heals up to 1/4 of its maximum Hit Points when hit with Water-type moves.",
+      "isNew": false,
+      "pokemon": [
+        "Vaporeon",
+        "Politoed",
+        "Araquanid"
+      ]
+    },
+    "Water Bubble": {
+      "name": "Water Bubble",
+      "effect": "Decreases Fire-type move power on the Pokémon by 50%. Increases power of Water-type moves used by the Pokémon by 100% before adding STAB. Prevents Burn",
+      "isNew": false,
+      "pokemon": [
+        "Araquanid"
+      ]
+    },
+    "Weak Armor": {
+      "name": "Weak Armor",
+      "effect": "When hit by an attack, the Pokémon's Defense is lowered by one stage but Speed is increased by two stages.",
+      "isNew": false,
+      "pokemon": [
+        "Skarmory",
+        "Garbodor",
+        "Vanilluxe",
+        "Polteageist",
+        "Armarouge",
+        "Ceruledge"
+      ]
+    },
+    "White Smoke": {
+      "name": "White Smoke",
+      "effect": "Opponents’ moves which lower this Pokémon’s stats have no effect. However this Pokémon may lower its own stats with its own moves.",
+      "isNew": false,
+      "pokemon": [
+        "Torkoal"
+      ]
+    },
+    "Zero to Hero": {
+      "name": "Zero to Hero",
+      "effect": "The Pokémon transforms into its Hero Form when it switches out.",
+      "isNew": false,
+      "pokemon": [
+        "Palafin"
+      ]
+    }
+  }
+}

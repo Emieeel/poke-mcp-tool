@@ -25,6 +25,7 @@ import type { AnyNode } from 'domhandler';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const DATA_DIR = join(__dirname, '..', 'data');
 const INDEX_URL = 'https://www.serebii.net/pokedex-champions/';
+const NEW_ABILITIES_URL = 'https://www.serebii.net/pokemonchampions/newabilities.shtml';
 const entryUrl = (slug: string) => `https://www.serebii.net/pokedex-champions/${slug}/`;
 // Slugs are lowercase but can contain an apostrophe or a period (farfetch'd, mr.mime,
 // sirfetch'd, mr.rime) — omitting those from the character class silently drops those
@@ -48,6 +49,15 @@ export interface DexEntry {
   forms: Form[];
   // The Pokémon's full learnable movelist in Champions (shared by its Mega forms).
   moves: string[];
+}
+export interface AbilityEntry {
+  name: string;
+  /** Serebii's Champions description. */
+  effect: string;
+  /** True for abilities that are new in Champions (Mega Sol, Dragonize, ...). */
+  isNew: boolean;
+  /** Dex forms that can have it. */
+  pokemon: string[];
 }
 
 async function fetchText(url: string): Promise<string> {
@@ -165,6 +175,42 @@ function extractMoves($: cheerio.CheerioAPI): string[] {
   return moves.sort((a, b) => a.localeCompare(b));
 }
 
+/**
+ * Ability descriptions from a page's "Abilities" tables. The second row holds one
+ * "<a href="/abilitydex/..."><b>Name</b> (Form)</a>: description" line per ability, separated
+ * by <br>; lines without an ability link ("Female Abilities:") are sub-headings.
+ */
+export function parseAbilityEffects(html: string): Record<string, string> {
+  const $ = cheerio.load(html);
+  const out: Record<string, string> = {};
+  $('table.dextable').each((_, t) => {
+    if (!/^Abilities\s*:/.test($(t).text().replace(/\s+/g, ' ').trim())) return;
+    const info = $(t).find('td.fooinfo').first();
+    for (const part of (info.html() || '').split(/<br\s*\/?>/i)) {
+      const line = cheerio.load(`<div>${part}</div>`);
+      const link = line('a[href*="/abilitydex/"]').first();
+      const name = link.find('b').first().text().replace(/\s+/g, ' ').trim();
+      if (!name) continue;
+      link.remove();
+      const effect = line('div').text().replace(/\s+/g, ' ').trim()
+        .replace(/^:\s*/, '').replace(/\s*:$/, '').trim();
+      if (effect && !out[name]) out[name] = effect;
+    }
+  });
+  return out;
+}
+
+/** Names on the New Abilities page (rows: Name | Effect). */
+export function parseNewAbilities(html: string): string[] {
+  const $ = cheerio.load(html);
+  const names = new Set<string>();
+  $('table.tab td.fooinfo a[href*="/abilitydex/"], table.dextable td.fooinfo a[href*="/abilitydex/"]').each((_, a) => {
+    const name = $(a).text().replace(/\s+/g, ' ').trim();
+    if (name) names.add(name);
+  });
+  return [...names];
+}
+
 function extractTypes(nameTable: cheerio.Cheerio<AnyNode>, $: cheerio.CheerioAPI): string[] {
   // Types are links ending in "<type>.shtml" (under /pokedex-champions/ or /pokedex-sm/).
   const types: string[] = [];
@@ -231,6 +277,7 @@ async function main() {
   }
 
   const pokemon: Record<string, DexEntry> = {};
+  const abilityEffects: Record<string, string> = {};
   const failures: string[] = [];
   let i = 0;
   for (const { slug, num } of roster) {
@@ -238,6 +285,9 @@ async function main() {
     try {
       const html = await fetchText(entryUrl(slug));
       const entry = parsePokemonPage(html, slug);
+      for (const [name, effect] of Object.entries(parseAbilityEffects(html))) {
+        abilityEffects[name] ??= effect;
+      }
       if (num != null && entry.num == null) entry.num = num;
       pokemon[slug] = entry;
       if (entry.forms.length === 0) failures.push(`${slug} (no forms parsed)`);
@@ -272,6 +322,46 @@ async function main() {
   const outFile = join(DATA_DIR, args.length > 0 ? 'champions-dex.sample.json' : 'champions-dex.json');
   writeFileSync(outFile, JSON.stringify(output, null, 2) + '\n', 'utf8');
   console.error(`[dex] Wrote ${outFile} — ${output.meta.count} Pokémon.`);
+
+  // Abilities: every ability a dex form can have, with its Champions description.
+  const newAbilities = new Set(parseNewAbilities(await fetchText(NEW_ABILITIES_URL)));
+  if (newAbilities.size === 0) failures.push('New Abilities page: no abilities found');
+  const abilities: Record<string, AbilityEntry> = {};
+  for (const entry of Object.values(pokemon)) {
+    for (const form of entry.forms) {
+      for (const raw of form.abilities) {
+        const name = raw.replace(/\s*\(.*?\)\s*$/, '').trim();
+        if (!name) continue;
+        const a = (abilities[name] ??= {
+          name,
+          effect: abilityEffects[name] ?? '',
+          isNew: newAbilities.has(name),
+          pokemon: [],
+        });
+        if (!a.pokemon.includes(form.name)) a.pokemon.push(form.name);
+      }
+    }
+  }
+  for (const a of Object.values(abilities)) {
+    if (!a.effect) failures.push(`ability ${a.name}: no description found`);
+  }
+  const abilitiesOut = {
+    meta: {
+      game: 'Pokémon Champions',
+      source: INDEX_URL,
+      newAbilitiesSource: NEW_ABILITIES_URL,
+      scrapedAt: output.meta.scrapedAt,
+      count: Object.keys(abilities).length,
+      note:
+        'Every ability a Champions Pokémon can have, with its Champions description (from the ' +
+        'Pokédex pages) and whether it is new in Champions.',
+    },
+    abilities: Object.fromEntries(Object.entries(abilities).sort(([a], [b]) => a.localeCompare(b))),
+  };
+  const abilitiesFile = join(DATA_DIR, args.length > 0 ? 'champions-abilities.sample.json' : 'champions-abilities.json');
+  writeFileSync(abilitiesFile, JSON.stringify(abilitiesOut, null, 2) + '\n', 'utf8');
+  console.error(`[dex] Wrote ${abilitiesFile} — ${abilitiesOut.meta.count} abilities (${newAbilities.size} new in Champions).`);
+
   if (failures.length) {
     console.error(`[dex] ${failures.length} issue(s):`);
     for (const f of failures) console.error('   - ' + f);

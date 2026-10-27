@@ -15,6 +15,8 @@ import { dirname, join } from 'node:path';
 
 import { registerDexLoader } from './dex.js';
 import { registerItemsLoader } from './items.js';
+import { registerMovesLoader } from './movedata.js';
+import { registerAbilitiesLoader } from './abilitydata.js';
 import { registerRegulationLoader } from './regulations.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -24,6 +26,8 @@ const REGULATIONS_DIR = join(__dirname, '..', 'regulations');
 
 const DEX_FILE = join(DATA_DIR, 'champions-dex.json');
 const ITEMS_FILE = join(DATA_DIR, 'champions-items.json');
+const MOVES_FILE = join(DATA_DIR, 'champions-moves.json');
+const ABILITIES_FILE = join(DATA_DIR, 'champions-abilities.json');
 
 function readJson(file: string, label: string): any | null {
   if (!existsSync(file)) {
@@ -40,6 +44,8 @@ function readJson(file: string, label: string): any | null {
 
 registerDexLoader(() => readJson(DEX_FILE, 'dex'));
 registerItemsLoader(() => readJson(ITEMS_FILE, 'items'));
+registerMovesLoader(() => readJson(MOVES_FILE, 'moves'));
+registerAbilitiesLoader(() => readJson(ABILITIES_FILE, 'abilities'));
 registerRegulationLoader({
   list() {
     if (!existsSync(REGULATIONS_DIR)) return [];

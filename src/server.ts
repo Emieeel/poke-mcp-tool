@@ -1,7 +1,7 @@
 /**
  * server.ts — transport-agnostic MCP server definition for the Pokémon Champions tool.
  *
- * This module declares all 10 tools and returns a configured McpServer. It deliberately
+ * This module declares all 12 tools and returns a configured McpServer. It deliberately
  * imports NO transport (no stdio, no HTTP) and NO Node-only APIs at the top level, so it can
  * be mounted on any transport:
  *   - src/index.ts   → stdio (local subprocess; the default for desktop MCP clients)
@@ -9,8 +9,10 @@
  *   - test/smoke.ts  → in-memory transport
  *
  * Two separate datasets back this server (never conflate them):
- *   - Engine data (dex, stats, moves, type chart, damage formula): bundled in @smogon/calc.
- *   - Legality data (which Pokémon/moves are legal per Champions regulation): our own JSON.
+ *   - Engine data (stats, move power, type chart, damage formula): @smogon/calc's Champions
+ *     generation.
+ *   - Champions data scraped from Serebii (learnsets, every ability, items, move and ability
+ *     text, changes from Scarlet/Violet) and legality per regulation: our own JSON.
  */
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { z } from 'zod';
@@ -27,6 +29,8 @@ import {
 import { getPokemonInfo, cleanAbilityName } from './dex.js';
 import { getItemInfo, listItems, championsItemsMeta, type ItemCategory } from './items.js';
 import { findPokemonByMove, listLegalMoves, MOVE_CATEGORIES, type MoveCategory } from './movedex.js';
+import { getMoveInfo } from './movedata.js';
+import { getAbilityInfo } from './abilitydata.js';
 import {
   checkLegality,
   checkItemLegality,
@@ -62,7 +66,7 @@ function fail(message: string) {
 // ---- server ----------------------------------------------------------------
 
 /**
- * Build and configure the MCP server with all ten tools. Exported so any transport (stdio,
+ * Build and configure the MCP server with all twelve tools. Exported so any transport (stdio,
  * HTTP, in-memory test) can mount it without this module knowing which one is in use.
  */
 export function createServer(): McpServer {
@@ -572,6 +576,65 @@ server.registerTool(
       return ok(listLegalPokemon(regulation ?? CURRENT_REGULATION, { nameContains, type }));
     } catch (err) {
       return fail((err as Error).message);
+    }
+  },
+);
+
+// 11. get_move ---------------------------------------------------------------
+server.registerTool(
+  'get_move',
+  {
+    title: 'Look up a move (Pokémon Champions)',
+    description:
+      'Look up a move as it works in Pokémon Champions: type, category, base power, accuracy, ' +
+      'PP, priority, target, effect text, effect chance, critical-hit chance and flags ' +
+      '(contact, sound, punch, slicing, ...). "changesFromScarletViolet" lists what Champions ' +
+      'rebalanced (e.g. Snipe Shot "Base power 80 -> 85", Moonblast "Effect chance 30% -> ' +
+      '10%"), and "statusConditionNotes" gives Champions\' changed rules for a status the move ' +
+      'inflicts (e.g. paralysis). Data comes from Serebii\'s Champions move pages; the ' +
+      '"source" field shows when it fell back to @smogon/calc (numbers only, no text).',
+    inputSchema: {
+      name: z.string().describe('Move name, e.g. "Snipe Shot", "Make It Rain", "Thunder Wave".'),
+    },
+  },
+  async ({ name }) => {
+    try {
+      const info = getMoveInfo(name);
+      return info ? ok(info) : fail(`Unknown move "${name}". Check spelling (e.g. "Snipe Shot").`);
+    } catch (err) {
+      return fail(`get_move failed: ${(err as Error).message}`);
+    }
+  },
+);
+
+// 12. get_ability ------------------------------------------------------------
+server.registerTool(
+  'get_ability',
+  {
+    title: 'Look up an ability (Pokémon Champions)',
+    description:
+      'Look up an ability as described in Pokémon Champions: its effect, whether it is new in ' +
+      'Champions (Mega Sol, Dragonize, Aura Guard, ...), and which Champions Pokémon can have ' +
+      `it. Pass a regulation id (e.g. "${CURRENT_REGULATION}") to keep only the Pokémon legal ` +
+      `there — answers "who can have Intimidate in ${CURRENT_REGULATION_LABEL}?".`,
+    inputSchema: {
+      name: z.string().describe('Ability name, e.g. "Intimidate", "Aura Guard".'),
+      regulation: z
+        .string()
+        .optional()
+        .describe(`Optional regulation id (e.g. "${CURRENT_REGULATION}") to filter the Pokémon list.`),
+    },
+  },
+  async ({ name, regulation }) => {
+    try {
+      const info = getAbilityInfo(name);
+      if (!info) return fail(`Unknown ability "${name}". Check spelling (e.g. "Intimidate").`);
+      if (!regulation) return ok(info);
+      const reg = loadRegulation(regulation);
+      const pokemon = info.pokemon.filter((p) => checkLegality(reg.meta.id, p).pokemonLegal);
+      return ok({ ...info, pokemon, regulation: { id: reg.meta.id, name: reg.meta.name } });
+    } catch (err) {
+      return fail(`get_ability failed: ${(err as Error).message}`);
     }
   },
 );

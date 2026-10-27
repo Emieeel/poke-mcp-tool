@@ -11,13 +11,14 @@
  * Champions dex (data/champions-dex.json) intersected with the regulation's legal pool. We do
  * NOT fabricate a curated legal-move list.
  *
- * Move TYPE/CATEGORY/base power are enriched from the engine data bundled in @smogon/calc
- * (the same source calc.ts uses); a Champions move the engine has never heard of still appears
- * by name, just without that metadata.
+ * Move TYPE/CATEGORY/base power come from the Champions move data (data/champions-moves.json),
+ * falling back to @smogon/calc's Champions data; a move neither knows still appears by name,
+ * just without that metadata.
  */
 import { toID } from '@smogon/calc';
 import { gen } from './calc.js';
 import { getPokemonInfo } from './dex.js';
+import { championsMoveNumbers } from './movedata.js';
 import { loadRegulation, type Regulation } from './regulations.js';
 
 export interface MoveMeta {
@@ -29,8 +30,10 @@ export interface MoveMeta {
   basePower?: number;
 }
 
-/** Look up a move's type/category/base power from the @smogon/calc engine dex. */
+/** A move's type/category/base power: Champions move data first, then the engine's. */
 export function getMoveMeta(name: string): MoveMeta | undefined {
+  const champions = championsMoveNumbers(name);
+  if (champions) return champions;
   const m = gen().moves.get(toID(name)) as
     | { name: string; type?: string; category?: string; basePower?: number }
     | undefined;
@@ -190,7 +193,7 @@ export function listLegalMoves(
 
   const notes: string[] = [
     `Champions publishes no per-move bans; this is the pool of moves learnable by Pokémon ` +
-      `legal in ${reg.meta.name}. Type/category/power come from @smogon/calc's Champions data.`,
+      `legal in ${reg.meta.name}. Type/category/power come from the Champions move data.`,
   ];
   if (unresolved.length > 0) {
     notes.push(

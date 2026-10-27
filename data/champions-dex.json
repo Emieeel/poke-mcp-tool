@@ -2,9 +2,9 @@
   "meta": {
     "game": "Pokémon Champions",
     "source": "https://www.serebii.net/pokedex-champions/",
-    "scrapedAt": "2026-09-09T13:04:39.598Z",
+    "scrapedAt": "2026-10-27T18:18:56.014Z",
     "count": 231,
-    "note": "Champions-accurate engine data scraped from Serebii. Use this for per-Pokémon facts (stats/types/abilities), since @smogon/calc bundles mainline data that is wrong or missing for Champions-original Mega Evolutions."
+    "note": "Champions Pokédex scraped from Serebii: stats, types, every ability and the Champions learnset per species (the engine keeps one default ability and no learnsets)."
   },
   "pokemon": {
     "venusaur": {
@@ -13570,8 +13570,7 @@
           ],
           "abilities": [
             "Torrent",
-            "Protean (Standard)",
-            "Battle Bond (Alternate Greninja Only)"
+            "Protean"
           ],
           "baseStats": {
             "hp": 72,

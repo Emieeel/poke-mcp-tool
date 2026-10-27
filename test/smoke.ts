@@ -11,7 +11,10 @@
  */
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { InMemoryTransport } from '@modelcontextprotocol/sdk/inMemory.js';
+import { readFileSync } from 'node:fs';
+import { toID } from '@smogon/calc';
 import { createServer } from '../src/index.js';
+import { gen, engineSpeciesName } from '../src/calc.js';
 
 let failures = 0;
 function check(label: string, cond: boolean, detail?: unknown) {
@@ -37,8 +40,8 @@ async function main() {
   const toolNames = tools.tools.map((t) => t.name).sort();
   console.log('\nRegistered tools:', toolNames.join(', '));
   check(
-    'all 10 tools present',
-    ['calculate_damage', 'check_legality', 'find_pokemon_by_move', 'get_item', 'get_pokemon', 'list_items', 'list_legal_moves', 'list_legal_pokemon', 'list_regulations', 'type_effectiveness'].every(
+    'all 12 tools present',
+    ['calculate_damage', 'check_legality', 'find_pokemon_by_move', 'get_ability', 'get_item', 'get_move', 'get_pokemon', 'list_items', 'list_legal_moves', 'list_legal_pokemon', 'list_regulations', 'type_effectiveness'].every(
       (n) => toolNames.includes(n),
     ),
   );
@@ -619,6 +622,103 @@ async function main() {
     check('type filter returns only Dragon types', dragon.parsed.count > 0 && dragon.parsed.pokemon.every((p: any) => p.types.includes('Dragon')), { count: dragon.parsed.count });
     const name = await callJson(client, 'list_legal_pokemon', { nameContains: 'char' });
     check('name filter matches substring (case-insensitive)', name.parsed.count > 0 && name.parsed.pokemon.every((p: any) => /char/i.test(p.name)), { matches: name.parsed.pokemon.map((p: any) => p.name) });
+  }
+
+  // 11. get_move — Champions move data, including what changed from Scarlet/Violet.
+  console.log('\nget_move:');
+  {
+    const snipe = (await callJson(client, 'get_move', { name: 'snipe shot' })).parsed;
+    check('Snipe Shot: 85 BP Water Special from the Champions data',
+      snipe.basePower === 85 && snipe.type === 'Water' && snipe.category === 'Special' && snipe.source === 'champions-moves', snipe);
+    check('Snipe Shot: high crit ratio (1/8) and no contact', snipe.critChance === '1/8' && !snipe.flags.includes('contact'), { critChance: snipe.critChance, flags: snipe.flags });
+    check('Snipe Shot: change from S/V listed', (snipe.changesFromScarletViolet ?? []).includes('Base power 80 -> 85'), snipe.changesFromScarletViolet);
+    const moon = (await callJson(client, 'get_move', { name: 'Moonblast' })).parsed;
+    check('Moonblast: 10% Sp. Atk drop in Champions (was 30%)',
+      moon.effectChance === 10 && (moon.changesFromScarletViolet ?? []).includes('Effect chance 30% -> 10%'), moon);
+    const rain = (await callJson(client, 'get_move', { name: 'Make It Rain' })).parsed;
+    check('Make It Rain: lowers Sp. Atk by 2 in Champions', /by 2 stages/.test(rain.effect), rain.effect);
+    const twave = (await callJson(client, 'get_move', { name: 'Thunder Wave' })).parsed;
+    check('Thunder Wave: Champions paralysis rule attached', (twave.statusConditionNotes ?? []).some((n: string) => /12\.5%/.test(n)), twave.statusConditionNotes);
+    const unknown = await client.callTool({ name: 'get_move', arguments: { name: 'Not A Move' } }) as any;
+    check('unknown move is an error', unknown.isError === true);
+  }
+
+  // 12. Our Champions data (Serebii) vs the engine's Champions generation. Both describe the same
+  // game, so a difference means one side is stale (a patch landed on one first) or wrong. Known,
+  // reviewed differences are listed with the reason; a new difference fails, and so does a listed
+  // one that has gone away (so the list can't go stale).
+  console.log('\nChampions data vs the engine (cross-check):');
+  {
+    const g = gen();
+    const readData = (file: string) => JSON.parse(readFileSync(new URL(`../data/${file}`, import.meta.url), 'utf8'));
+    const sameKeys = (label: string, actual: Record<string, string>, known: Record<string, string>) => {
+      const unexpected = Object.keys(actual).filter((k) => !(k in known)).map((k) => `${k}: ${actual[k]}`);
+      const resolved = Object.keys(known).filter((k) => !(k in actual));
+      check(`${label}: no unexpected differences`, unexpected.length === 0, unexpected);
+      check(`${label}: every known difference still applies`, resolved.length === 0, resolved);
+    };
+
+    const KNOWN_SPECIES: Record<string, string> = {
+      // Our dex merges regional forms into the base entry (two types from two forms).
+      Raichu: 'merged forms', Persian: 'merged forms', Arcanine: 'merged forms', Typhlosion: 'merged forms',
+      Samurott: 'merged forms', Goodra: 'merged forms', Avalugg: 'merged forms',
+      // The engine's default ability for these Champions Megas is the base species' one.
+      'Mega Skarmory': 'engine ability', 'Mega Hawlucha': 'engine ability',
+      // Named differently in the engine (Floette-Eternal, Aegislash-Shield, Meowstic-M-Mega).
+      Floette: 'not in engine', Aegislash: 'not in engine', 'Mega Meowstic': 'not in engine',
+    };
+    const species: Record<string, string> = {};
+    const dex = readData('champions-dex.json').pokemon;
+    for (const entry of Object.values<any>(dex)) {
+      for (const form of entry.forms) {
+        if (form.types.length > 2) continue; // merged multi-form entries; see README
+        const engineName = engineSpeciesName(form.name);
+        const sp = engineName ? g.species.get(toID(engineName)) : undefined;
+        if (!sp) { species[form.name] = 'not in engine'; continue; }
+        const bs = form.baseStats;
+        const e = sp.baseStats;
+        const diffs: string[] = [];
+        if (form.types.join('/') !== sp.types.join('/')) diffs.push(`types ${form.types.join('/')} vs ${sp.types.join('/')}`);
+        if ([bs.hp, bs.atk, bs.def, bs.spa, bs.spd, bs.spe].join('/') !== [e.hp, e.atk, e.def, e.spa, e.spd, e.spe].join('/')) diffs.push('base stats');
+        const abilities = form.abilities.map((a: string) => a.replace(/\s*\(.*?\)\s*$/, ''));
+        if (sp.abilities?.[0] && !abilities.includes(sp.abilities[0])) diffs.push(`engine ability ${sp.abilities[0]}`);
+        if (diffs.length) species[form.name] = diffs.join('; ');
+      }
+    }
+    sameKeys('species', species, KNOWN_SPECIES);
+
+    const KNOWN_MOVES: Record<string, string> = {
+      Growth: 'Champions made it Grass-type; the engine still has Normal',
+      Pound: "missing from the engine's Champions move list",
+      'Dire Claw': 'engine (and NCP) treat it as slicing in Champions; Serebii does not',
+      'Dragon Cheer': 'engine (and NCP) treat it as a sound move in Champions; Serebii does not',
+      'Matcha Gotcha': 'Serebii marks it as a bullet move; the engine does not',
+      'Syrup Bomb': 'the engine marks it as a bullet move; Serebii does not',
+    };
+    const FLAGS = ['contact', 'sound', 'punch', 'bite', 'slicing', 'bullet', 'wind'];
+    const moves: Record<string, string> = {};
+    for (const m of Object.values<any>(readData('champions-moves.json').moves)) {
+      const e = g.moves.get(toID(m.name)) as any;
+      if (!e) { moves[m.name] = 'not in engine'; continue; }
+      const diffs: string[] = [];
+      if (m.type !== e.type) diffs.push(`type ${m.type} vs ${e.type}`);
+      if (m.category !== (e.category ?? 'Status')) diffs.push(`category ${m.category} vs ${e.category}`);
+      if (m.basePower !== null && e.basePower && m.basePower !== e.basePower) diffs.push(`power ${m.basePower} vs ${e.basePower}`);
+      for (const f of FLAGS) if (Boolean(m.flags[f]) !== Boolean(e.flags?.[f])) diffs.push(`${f} flag`);
+      if (diffs.length) moves[m.name] = diffs.join('; ');
+    }
+    sameKeys('moves', moves, KNOWN_MOVES);
+  }
+
+  // 13. get_ability — Champions ability text and who can have it.
+  console.log('\nget_ability:');
+  {
+    const aura = (await callJson(client, 'get_ability', { name: 'Aura Guard' })).parsed;
+    check('Aura Guard: new in Champions, Mega Lucario Z has it',
+      aura.isNewInChampions === true && aura.pokemon.includes('Mega Lucario Z') && /contact/.test(aura.effect), aura);
+    const intim = (await callJson(client, 'get_ability', { name: 'Intimidate', regulation: 'm-c' })).parsed;
+    check('Intimidate in M-C: Incineroar among the legal holders, not new',
+      intim.pokemon.includes('Incineroar') && intim.isNewInChampions === false && intim.regulation?.id === 'm-c', { count: intim.pokemon.length });
   }
 
   await client.close();

@@ -1,7 +1,7 @@
 /**
  * worker.ts — Cloudflare Workers entry point (hosted, "paste-a-URL" deployment).
  *
- * Same ten MCP tools as the stdio server (src/index.ts), exposed over the MCP **Streamable
+ * Same twelve MCP tools as the stdio server (src/index.ts), exposed over the MCP **Streamable
  * HTTP** transport so any remote MCP client can connect by URL — no local install, works from
  * Claude web/mobile, Cursor, etc.
  *
@@ -18,6 +18,8 @@ import { WebStandardStreamableHTTPServerTransport } from '@modelcontextprotocol/
 import { createServer } from './server.js';
 import { provideDexData } from './dex.js';
 import { provideItemsData } from './items.js';
+import { provideMovesData } from './movedata.js';
+import { provideAbilitiesData } from './abilitydata.js';
 import { provideRegulationData } from './regulations.js';
 
 // Data bundled into the Worker at build time (no filesystem at runtime). The `with { type:
@@ -27,12 +29,16 @@ import { provideRegulationData } from './regulations.js';
 // invisible here until it's added below.
 import dexData from '../data/champions-dex.json' with { type: 'json' };
 import itemsData from '../data/champions-items.json' with { type: 'json' };
+import movesData from '../data/champions-moves.json' with { type: 'json' };
+import abilitiesData from '../data/champions-abilities.json' with { type: 'json' };
 import mbRegulation from '../regulations/m-b.json' with { type: 'json' };
 import mcRegulation from '../regulations/m-c.json' with { type: 'json' };
 
 // Inject once, at module load (module scope persists across requests on a warm isolate).
 provideDexData(dexData);
 provideItemsData(itemsData);
+provideMovesData(movesData);
+provideAbilitiesData(abilitiesData);
 provideRegulationData('m-b', mbRegulation);
 provideRegulationData('m-c', mcRegulation);
 

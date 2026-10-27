@@ -13,6 +13,7 @@
     "scrape": "tsx scripts/scrape-regulation.ts",
     "scrape:dex": "tsx scripts/scrape-champions-dex.ts",
     "scrape:items": "tsx scripts/scrape-champions-items.ts",
+    "scrape:moves": "tsx scripts/scrape-champions-moves.ts",
     "test": "tsx test/smoke.ts",
     "dev:worker": "wrangler dev",
     "deploy:worker": "wrangler deploy"
