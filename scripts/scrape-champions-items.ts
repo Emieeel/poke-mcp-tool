@@ -3,11 +3,9 @@
  *
  *   npm run scrape:items
  *
- * WHY THIS EXISTS (same reasoning as scrape-champions-dex.ts):
- * @smogon/calc bundles a MAINLINE item list with no Champions-specific effect text, no
- * "how to obtain" info, and no notion of which items even exist in Champions. The set of
- * items a Pokémon can legally hold in Champions is its own small, Champions-specific dataset
- * — so we source it from Serebii's Champions items page, exactly like the dex.
+ * WHY THIS EXISTS: @smogon/calc's item data has no effect text, no "how to obtain" info and
+ * no categories, so we source the Champions item catalog from Serebii's Champions items page,
+ * like the dex.
  *
  * This is an on-demand script. The MCP server never runs it; it only reads the JSON output.
  *
@@ -175,8 +173,8 @@ async function main() {
       note:
         'Champions held-item catalog scraped from Serebii. Hold Items, Mega Stones, and ' +
         'Berries are items a Pokémon can hold in battle (held=true); Miscellaneous tickets ' +
-        'are not held (held=false). @smogon/calc bundles mainline items with no Champions ' +
-        'effect/location text, which is why we source this ourselves.',
+        'are not held (held=false). @smogon/calc\'s item data has no effect/location text, ' +
+        'which is why we source this ourselves.',
     },
     // Keyed by lowercased name for stable, greppable diffs.
     items: items.reduce<Record<string, Item>>((acc, i) => {

@@ -190,7 +190,7 @@ export function listLegalMoves(
 
   const notes: string[] = [
     `Champions publishes no per-move bans; this is the pool of moves learnable by Pokémon ` +
-      `legal in ${reg.meta.name}. Type/category/power come from @smogon/calc.`,
+      `legal in ${reg.meta.name}. Type/category/power come from @smogon/calc's Champions data.`,
   ];
   if (unresolved.length > 0) {
     notes.push(

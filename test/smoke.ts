@@ -56,14 +56,14 @@ async function main() {
     check('percent range is plausible (min>0, max<=300)', parsed.percentRange.min > 0 && parsed.percentRange.max <= 300, parsed.percentRange);
     check('produced a KO/hits result', typeof parsed.koChance?.hitsToKO === 'number', parsed.koChance);
     check('auto-filled attacker ability Contrary from Champions dex', parsed.notes.some((n: string) => /Contrary/.test(n)), parsed.notes);
-    // A Champions-original Mega @smogon/calc has never heard of still calcs via overrides.
+    // A Champions-original Mega (only in the engine's Champions generation) calcs.
     const orig = await callJson(client, 'calculate_damage', {
       attacker: { name: 'Mega Eelektross', level: 50, nature: 'Modest', statPoints: { spa: 32 } },
       defender: { name: 'Gholdengo', level: 50 },
       move: 'Thunderbolt',
     });
     console.log('   ', orig.parsed.description);
-    check('Champions-original Mega Eelektross calc works (overrides)', orig.parsed.percentRange.max > 0, orig.parsed.percentRange);
+    check('Champions-original Mega Eelektross calc works', orig.parsed.percentRange.max > 0, orig.parsed.percentRange);
     // Immunity (Electric vs Ground) must not crash and reports 0 damage.
     const immune = await callJson(client, 'calculate_damage', {
       attacker: { name: 'Pikachu', level: 50 }, defender: { name: 'Garchomp', level: 50 }, move: 'Thunderbolt',
@@ -204,14 +204,57 @@ async function main() {
     check('blocked crit explained in notes', armorCrit.parsed.notes.some((n: string) => /prevents critical hits/.test(n)), armorCrit.parsed.notes);
   }
 
-  // 1c. Offensive-ability parity with the canonical CHAMP calculator, for Champions-original
-  // abilities @smogon/calc doesn't know natively (Mega Sol, Dragonize). We make the ENGINE apply
-  // them — Mega Sol as Sun on the field (so Weather Ball becomes 100 BP Fire, Fire ×1.5, ...),
-  // Dragonize as a move retype + a base-power boost folded into BP — rather than post-multiplying
-  // the rolls (which mis-rounds). Damage range + percent are transcribed from the reference and
-  // must match EXACTLY. NB: the wrapper's calc string omits the Champions-original ability name
-  // (stock @smogon/calc doesn't recognize it, so it can't print it — we surface it in `notes`
-  // instead); Mega Sol's string additionally reads "in Sun" since we model the ability as Sun.
+  // 1b'. The engine's Champions generation itself: rebalanced moves, Champions-only abilities,
+  // and the Champions roster as the only pool (no silent fallback to mainline species).
+  console.log('\ncalculate_damage (Champions engine):');
+  {
+    const snipe = (moveContext?: Record<string, unknown>) =>
+      callJson(client, 'calculate_damage', {
+        attacker: { name: 'Inteleon', nature: 'Timid', ability: 'Torrent', statPoints: { spa: 32 } },
+        defender: { name: 'Incineroar', statPoints: { hp: 32 } },
+        move: 'Snipe Shot',
+        ...(moveContext ? { moveContext } : {}),
+      });
+    const champ = await snipe();
+    const at85 = await snipe({ basePowerOverride: 85 });
+    const at80 = await snipe({ basePowerOverride: 80 });
+    check('Snipe Shot uses its Champions power (85, not 80)',
+      champ.parsed.damageRange.max === at85.parsed.damageRange.max && champ.parsed.damageRange.max > at80.parsed.damageRange.max,
+      { champions: champ.parsed.damageRange, at85: at85.parsed.damageRange, at80: at80.parsed.damageRange });
+
+    // Aura Guard (Mega Lucario Z) halves contact damage, Fire contact moves included.
+    const vsLucario = (move: string, ability?: string) =>
+      callJson(client, 'calculate_damage', {
+        attacker: { name: 'Garchomp', nature: 'Adamant', statPoints: { atk: 32 } },
+        defender: { name: 'Mega Lucario Z', ...(ability ? { ability } : {}) },
+        move,
+      });
+    for (const move of ['Dragon Claw', 'Fire Fang']) {
+      const guarded = await vsLucario(move);
+      const plain = await vsLucario(move, 'Steadfast');
+      const ratio = guarded.parsed.damageRange.max / plain.parsed.damageRange.max;
+      check(`Aura Guard halves contact ${move}`, ratio > 0.45 && ratio < 0.55,
+        { auraGuard: guarded.parsed.damageRange, without: plain.parsed.damageRange });
+    }
+    const quake = await vsLucario('Earthquake');
+    const quakePlain = await vsLucario('Earthquake', 'Steadfast');
+    check('Aura Guard leaves non-contact moves alone',
+      quake.parsed.damageRange.max === quakePlain.parsed.damageRange.max,
+      { auraGuard: quake.parsed.damageRange, without: quakePlain.parsed.damageRange });
+
+    // A species outside the Champions roster is an error, not a silent mainline calc.
+    const outsider = await client.callTool({
+      name: 'calculate_damage',
+      arguments: { attacker: { name: 'Dondozo' }, defender: { name: 'Garchomp' }, move: 'Wave Crash' },
+    }) as any;
+    check('non-Champions species is rejected',
+      outsider.isError === true && /not in the Pokémon Champions Pokédex/.test(outsider.content?.[0]?.text ?? ''),
+      outsider.content?.[0]?.text);
+  }
+
+  // 1c. Parity with the canonical CHAMP calculator for Champions-original abilities (Mega Sol,
+  // Dragonize), which the engine's Champions generation models natively. Damage range + percent
+  // are transcribed from the reference and must match EXACTLY.
   console.log('\ncalculate_damage (offensive-ability parity):');
   {
     // Reference: "32+ SpA Mega Sol Mega Meganium Weather Ball (100 BP Fire) vs. 32 HP / 12+ SpD
@@ -244,8 +287,8 @@ async function main() {
       dz.parsed.damageRange.min === 117 && dz.parsed.damageRange.max === 138, dz.parsed.damageRange);
     check('Dragonize Double-Edge vs Sinistcha: percent 65.7-77.5%',
       dz.parsed.percentRange.min === 65.7 && dz.parsed.percentRange.max === 77.5, dz.parsed.percentRange);
-    check('Dragonize Double-Edge vs Sinistcha: full calc string matches (less the ability name)',
-      dz.parsed.description === '32 Atk Mega Feraligatr Double-Edge vs. 32 HP / 22 Def Sinistcha: 117-138 (65.7 - 77.5%) -- guaranteed 2HKO after Leftovers recovery',
+    check('Dragonize Double-Edge vs Sinistcha: full calc string matches',
+      dz.parsed.description === '32 Atk Dragonize Feraligatr-Mega Double-Edge vs. 32 HP / 22 Def Sinistcha: 117-138 (65.7 - 77.5%) -- guaranteed 2HKO after Leftovers recovery',
       dz.parsed.description);
     check('Dragonize note surfaced', dz.parsed.notes.some((n: string) => /Dragonize/.test(n)), dz.parsed.notes);
   }
@@ -358,14 +401,17 @@ async function main() {
         /not the type chart/.test(lev.parsed.typeEffectiveness.note ?? ''),
       lev.parsed.typeEffectiveness);
 
-    // Tera replaces the defender's typing entirely.
-    const tera = await callJson(client, 'calculate_damage', {
-      attacker: { name: 'Mega Charizard Y', level: 50 }, defender: { name: 'Mega Golisopod', level: 50, teraType: 'Water' }, move: 'Heat Wave',
-    });
-    check('Tera Water turns the 4x Fire weakness into 0.5x',
-      tera.parsed.typeEffectiveness?.multiplier === 0.5 &&
-        JSON.stringify(tera.parsed.typeEffectiveness.defenderTypes) === JSON.stringify(['Water']),
-      tera.parsed.typeEffectiveness);
+    // Champions has no Terastallization, so a teraType input is rejected rather than ignored.
+    let teraRejected = false;
+    try {
+      const tera = await callJson(client, 'calculate_damage', {
+        attacker: { name: 'Mega Charizard Y', level: 50 }, defender: { name: 'Mega Golisopod', level: 50, teraType: 'Water' }, move: 'Heat Wave',
+      });
+      teraRejected = tera.isError === true;
+    } catch {
+      teraRejected = true;
+    }
+    check('teraType input is rejected (no Tera in Champions)', teraRejected);
   }
 
   // 2. type_effectiveness — the two spec assertions.

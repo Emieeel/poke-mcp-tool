@@ -88,7 +88,7 @@ plan, or one connector on Free) or as a remote MCP server in Cursor. Config live
 
 | Tool | What it answers |
 | --- | --- |
-| `calculate_damage` | "Does my Mystic Water Blastoise OHKO that Garchomp?" — full damage/percent range, hits-to-KO, and the human-readable calc string. Auto-fills stats/typing/ability from the Champions dex (so Mega Staraptor uses Contrary, and even Champions-only Megas like Mega Eelektross calc correctly). Handles items, weather, terrain, Tera, crits (pass `isCrit` for a critical hit; Sniper and screen-ignoring included), multi-hit, and Doubles spread reduction. Every result also reports **how effective the hit was**, in the game's own words (`It's super effective!`). |
+| `calculate_damage` | "Does my Mystic Water Blastoise OHKO that Garchomp?" — full damage/percent range, hits-to-KO, and the human-readable calc string. Runs on @smogon/calc's Pokémon Champions mode: the Champions roster (Champions-only Megas like Mega Eelektross included), rebalanced moves (Snipe Shot 85 BP, ...), Champions-only abilities (Mega Sol, Dragonize, Aura Guard, ...) and Stat Points. Species outside the Champions Pokédex are rejected. Handles items, weather, terrain, crits (pass `isCrit` for a critical hit; Sniper and screen-ignoring included), multi-hit, and Doubles spread reduction. Every result also reports **how effective the hit was**, in the game's own words (`It's super effective!`). |
 | `type_effectiveness` | The multiplier (0–4x) of an attacking type against 1–2 defending types. |
 | `get_pokemon` | Base stats, typing, abilities, weight, and full **movelist** for a Pokémon (Mega forms accepted, e.g. `Staraptor-Mega`, `Mega Staraptor`, `Mega Raichu X`). Always includes a **`defensiveProfile`**: all 18 attacking types with their multipliers, split into weaknesses / resistances / immunities, plus a table per ability that changes damage taken (Levitate, Thick Fat, Heatproof, …). Pass a `regulation` id to also get legality and regulation-legal moves. |
 | `get_item` | Effect, how-to-obtain, and category (Hold Item / Mega Stone / Berry) for a held item, e.g. `Choice Scarf`, `Garchompite`, `Lum Berry`. Pass a `regulation` id to also check legality. |
@@ -113,18 +113,17 @@ in their output rather than hiding:
 - **The current regulation is `m-c`** (Sept 9 – Dec 2, 2026), and it's the default for every
   regulation-scoped tool. Earlier regulations stay queryable by passing their id (`m-b`); their
   files are frozen snapshots of what was legal then.
-- **A handful of Champions-original ability effects aren't simulated.** Stats, typing, and the
-  ability name are accurate, but a brand-new ability's special mechanic may not factor into
-  the damage number.
 - **Type matchups are never left to be worked out by hand.** `get_pokemon` returns the whole
   defensive table (all 18 types), and `calculate_damage` reports the multiplier the engine
-  actually used — so it reflects retypes (Aerilate's Flying Double-Edge, Weather Ball in sun),
-  Tera types, and move exceptions like Freeze-Dry hitting Water for 2x. When a hit does 0 damage
+  actually used — so it reflects retypes (Aerilate's Flying Double-Edge, Weather Ball in sun)
+  and move exceptions like Freeze-Dry hitting Water for 2x. When a hit does 0 damage
   for a non-type reason (Levitate, Flash Fire, Air Balloon, Protect), the output says so instead
   of blaming the type chart.
+- **There is no Terastallization in Champions**, so `calculate_damage` has no Tera input.
 - **Nine dex entries merge regional forms.** The dex scraper lumps some multi-form species
   (Rotom, Slowbro, Slowking, Tauros, Ninetales, Castform, Zoroark, Stunfisk, Decidueye) into one
-  entry with more than two types. Anything derived from that typing carries an explicit warning.
+  entry with more than two types. `get_pokemon` output derived from that typing carries an
+  explicit warning; damage calcs are unaffected, since they take typing from the engine.
 
 ## Refreshing the data
 
@@ -163,7 +162,7 @@ src/server.ts       the 10 MCP tools (transport-agnostic; no Node-only or filesy
 src/index.ts        stdio entry — mounts server.ts on stdio (the local default)
 src/worker.ts       Cloudflare Workers entry — mounts server.ts on HTTP, with data bundled in
 src/diskdata.ts     Node-only: reads the JSON datasets from disk and registers them (stdio)
-src/calc.ts         damage formula + type effectiveness
+src/calc.ts         @smogon/calc (Champions mode) wrapper + type effectiveness
 src/dex.ts          Pokémon lookups (data/champions-dex.json; injected or disk-loaded)
 src/items.ts        item lookups (data/champions-items.json; injected or disk-loaded)
 src/movedex.ts      move search, regulation-scoped

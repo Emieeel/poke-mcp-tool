@@ -1,9 +1,11 @@
 /**
  * calc.ts — thin wrapper around @smogon/calc for Pokémon Champions.
  *
- * Engine data (Pokédex, base stats, move power/type/category, type chart, ability
- * effects, and the damage formula itself) all come from the dex BUNDLED inside
- * @smogon/calc. We never reimplement the formula or hand-maintain a type chart here.
+ * @smogon/calc ships a dedicated Champions generation (gen 0): the Champions roster (Megas and
+ * alternate forms included), the rebalanced moves, the Champions-original abilities (Mega Sol,
+ * Dragonize, Aura Guard, Piercing Drill, ...), Stat Points and the Champions damage rules. Every
+ * calc runs on it. We never reimplement the formula or hand-maintain a type chart here; this
+ * file only translates tool input/output.
  */
 import {
   calculate,
@@ -23,24 +25,18 @@ import {
 // (Freeze-Dry vs Water = 2x) so a dependency bump that moves this file fails loudly.
 import { getMoveEffectiveness } from '@smogon/calc/dist/mechanics/util.js';
 import { z } from 'zod';
-import { getSpeciesOverride } from './dex.js';
-import {
-  offensiveAbility,
-  defensiveAbility,
-  typeDefenseAbility,
-  DEFENSE_NOTES_ONLY,
-  NO_DAMAGE_EFFECT,
-} from './abilities.js';
+import { getPokemonInfo, cleanAbilityName } from './dex.js';
+import { nameKey } from './names.js';
+import { typeDefenseAbility, DEFENSE_NOTES_ONLY } from './abilities.js';
 import { resolveBasePower } from './moves.js';
 
 // `Generation` isn't re-exported at the package root, so derive it from Generations.get.
 type Generation = ReturnType<typeof Generations.get>;
 
-// The latest generation the installed @smogon/calc supports. Champions descends from
-// gen 9 mechanics (Tera, etc.), so we default everything to the newest gen available.
-export const LATEST_GEN = 9;
+// @smogon/calc's generation number for Pokémon Champions.
+export const CHAMPIONS_GEN = 0;
 export function gen(): Generation {
-  return Generations.get(LATEST_GEN);
+  return Generations.get(CHAMPIONS_GEN);
 }
 
 const STATUSES = ['slp', 'psn', 'brn', 'frz', 'par', 'tox'] as const;
@@ -51,54 +47,22 @@ const WEATHERS = [
 const TERRAINS = ['Electric', 'Grassy', 'Psychic', 'Misty'] as const;
 const GAME_TYPES = ['Singles', 'Doubles'] as const;
 
+// The 18 battle types plus "???" (typeless, e.g. Struggle). Champions has no Terastallization,
+// so there is no Stellar type.
 export const TYPE_NAMES = [
   'Normal', 'Fighting', 'Flying', 'Poison', 'Ground', 'Rock', 'Bug', 'Ghost',
   'Steel', 'Fire', 'Water', 'Grass', 'Electric', 'Psychic', 'Ice', 'Dragon',
-  'Dark', 'Fairy', 'Stellar', '???',
+  'Dark', 'Fairy', '???',
 ] as const;
 
 // --- Pokémon Champions Stat Points (the EV/IV replacement) -------------------
 //
-// Champions threw out the traditional EV (0–252/stat, 510 total) and IV (0–31) systems and
-// replaced BOTH with Stat Points (SP): 1 SP = +1 to that stat at the fixed Level 50 battle
-// format, capped at 32 SP per stat and 66 SP total, and every Pokémon is treated as having
-// maxed (31) IVs. (See Serebii/Bulbapedia/Champions stat-point guides.)
-//
-// We reproduce this exactly on top of @smogon/calc's real stat formula rather than faking it:
-// with IV = 31 at Level 50, that formula bumps a stat by exactly one point at EV = 4, 12, 20,
-// …, 252 — i.e. EV = 8·SP − 4 (clamped at 0). So 32 SP maps precisely onto the 252-EV cap and
-// each SP contributes exactly one final stat point. No approximation; the engine still does
-// the math.
+// Champions replaced EVs and IVs with Stat Points (SP): 1 SP = +1 to that stat at the fixed
+// Level 50, capped at 32 SP per stat and 66 SP total. The engine's Champions generation takes
+// SP directly in the `evs` slot and prints them as-is in the calc string, so all we enforce
+// here are the caps.
 export const MAX_SP_PER_STAT = 32;
 export const MAX_SP_TOTAL = 66;
-
-// Convert Stat Points to the EV the engine expects. Unspecified stats are 0 SP (the Champions
-// default), and must yield a concrete 0 EV — a missing/undefined EV makes @smogon/calc compute
-// a NaN stat rather than defaulting to 0.
-export function spToEv(sp?: number): number {
-  return Math.max(0, 8 * (sp ?? 0) - 4);
-}
-
-// Inverse of spToEv. @smogon/calc's calc string (result.desc()) is written in EV units; we
-// translate those numbers back into Stat Points so NOTHING the tool emits speaks the old EV
-// system. The EVs the engine ever sees here are exactly {0, 4, 12, …, 252}, which invert
-// cleanly: SP = (EV + 4) / 8 for EV ≥ 4, and 0 EV → 0 SP.
-export function evToSp(ev: number): number {
-  return ev <= 0 ? 0 : Math.round((ev + 4) / 8);
-}
-
-// Stat investment in @smogon/calc's desc string looks like "252+ SpA" / "12 HP" / "0 SpD".
-// Rewrite each "<ev><+/-?> <Stat>" occurrence into Stat Points, preserving the nature marker
-// (+/-) and spacing. The trailing \s+ before the stat keeps this from matching KO text like
-// "4HKO" or move power like "150 BP".
-const DESC_STAT_INVEST = /(\d+)([+-]?)(\s+)(HP|Atk|Def|SpA|SpD|Spe)\b/g;
-export function descToStatPoints(desc: string): string {
-  return desc.replace(
-    DESC_STAT_INVEST,
-    (_m, ev: string, sign: string, ws: string, stat: string) =>
-      `${evToSp(Number(ev))}${sign}${ws}${stat}`,
-  );
-}
 
 // A per-stat Stat-Point block: 0–32 per stat, 66 total (the Champions caps).
 const statPointsSchema = z
@@ -127,9 +91,9 @@ const boostsSchema = z
   .strict();
 
 export const pokemonSchema = z.object({
-  name: z.string().describe('Species name, e.g. "Garchomp" or "Staraptor-Mega".'),
-  // Champions battles are always Level 50; keep the field configurable but default to 50.
-  level: z.number().int().min(1).max(100).default(50),
+  name: z.string().describe('Species name, e.g. "Garchomp", "Mega Raichu X" or "Raichu-Mega-X".'),
+  // Champions battles are always Level 50; the engine fixes it, so only 50 is accepted.
+  level: z.literal(50).optional().describe('Always 50 in Pokémon Champions.'),
   item: z.string().optional().describe('Held item, e.g. "Choice Band".'),
   ability: z.string().optional().describe('Ability name, e.g. "Intimidate".'),
   nature: z.string().optional().describe('Nature, e.g. "Adamant". Defaults to Serious.'),
@@ -137,16 +101,15 @@ export const pokemonSchema = z.object({
     .optional()
     .describe(
       'Pokémon Champions Stat Points (SP) per stat — the EV/IV replacement. 1 SP = +1 to ' +
-      'that stat at Level 50; max 32 per stat, 66 total. IVs do not exist in Champions ' +
-      '(treated as maxed). Defaults to 0 in every stat.',
+      'that stat at Level 50; max 32 per stat, 66 total. IVs do not exist in Champions. ' +
+      'Defaults to 0 in every stat.',
     ),
   boosts: boostsSchema.optional().describe('Stat stage boosts per stat (-6..+6).'),
-  teraType: z.enum(TYPE_NAMES).optional().describe('Tera type, if Terastallized.'),
   status: z.enum(STATUSES).optional().describe('Status condition.'),
 })
-  // Champions uses Stat Points, not EVs/IVs. Reject the legacy `evs`/`ivs` keys loudly (instead
-  // of silently ignoring them) so an old-style call fails fast and the caller switches to
-  // `statPoints` rather than wondering why their EV spread had no effect.
+  // Champions uses Stat Points, not EVs/IVs, and has no Terastallization. Reject the legacy
+  // `evs`/`ivs`/`teraType` keys loudly (instead of silently ignoring them) so an old-style call
+  // fails fast rather than leaving the caller wondering why it had no effect.
   .strict();
 
 export const fieldSchema = z
@@ -208,62 +171,64 @@ export type PokemonInput = z.infer<typeof pokemonSchema>;
 export type FieldInput = z.infer<typeof fieldSchema>;
 export type MoveContextInput = z.infer<typeof moveContextSchema>;
 
+// Engine species by name key, so Serebii-style names ("Mega Raichu X") and engine names
+// ("Raichu-Mega-X") resolve to the same Champions species. Built lazily, once.
+let engineSpeciesByKey: Map<string, string> | undefined;
+export function engineSpeciesName(name: string): string | undefined {
+  if (!engineSpeciesByKey) {
+    engineSpeciesByKey = new Map();
+    for (const s of gen().species) engineSpeciesByKey.set(nameKey(s.name), s.name);
+  }
+  return engineSpeciesByKey.get(nameKey(name));
+}
+
 function buildPokemon(
   g: Generation,
   input: PokemonInput,
-  // If set, this is the ability actually passed to @smogon/calc (an alias for a Champions
-  // ability it understands, e.g. Eelevate -> Levitate), while resolvedAbility keeps the real
-  // Champions ability name for our own logic/notes.
-  engineAbilityAlias?: string,
-): { pokemon: Pokemon; autofilled: string[]; resolvedAbility?: string } {
-  // Override species data with the Champions dex so game-original Megas (correct stats/types/
-  // ability) calc correctly even when @smogon/calc has never heard of them. User-supplied
-  // values always win; we only fill what wasn't given.
-  const override = getSpeciesOverride(input.name);
+): { pokemon: Pokemon; autofilled: string[] } {
   const autofilled: string[] = [];
-  let overrides: { baseStats: any; types: any; weightkg: number } | undefined;
-  let resolvedAbility = input.ability;
-
-  if (override) {
-    overrides = {
-      baseStats: override.baseStats,
-      types: override.types,
-      weightkg: override.weightkg ?? 0,
-    };
-    if (!resolvedAbility && override.defaultAbility) {
-      resolvedAbility = override.defaultAbility;
-      autofilled.push(`ability "${resolvedAbility}"`);
-    }
-    autofilled.push('stats/typing (Champions dex)');
+  const engineName = engineSpeciesName(input.name);
+  const info = getPokemonInfo(input.name);
+  const inChampionsDex = info?.source === 'champions-dex';
+  if (!engineName && !inChampionsDex) {
+    throw new Error(`"${input.name}" is not in the Pokémon Champions Pokédex.`);
   }
 
-  // Translate Champions Stat Points into the EVs @smogon/calc's formula expects (EV = 8·SP−4),
-  // and force maxed IVs since Champions has no IV system. The engine then produces exactly
-  // "+1 final stat per SP" at Level 50 — see the spToEv() note above.
-  const sp = input.statPoints ?? {};
-  const evs = {
-    hp: spToEv(sp.hp),
-    atk: spToEv(sp.atk),
-    def: spToEv(sp.def),
-    spa: spToEv(sp.spa),
-    spd: spToEv(sp.spd),
-    spe: spToEv(sp.spe),
-  };
-  const maxedIvs = { hp: 31, atk: 31, def: 31, spa: 31, spd: 31, spe: 31 };
+  // Default ability from the Champions dex (Serebii). The engine keeps one default ability per
+  // species and has a few Champions Megas wrong (Mega Skarmory, Mega Hawlucha); user input wins.
+  let ability = input.ability;
+  if (!ability && inChampionsDex && info.abilities[0]) {
+    ability = cleanAbilityName(info.abilities[0]);
+    autofilled.push(`ability "${ability}"`);
+  }
 
-  const pokemon = new Pokemon(g, input.name, {
-    level: input.level,
+  // A species the engine's Champions dex doesn't carry yet: calc it from Champions-dex
+  // stats/typing instead.
+  let overrides: { baseStats: any; types: any; weightkg: number } | undefined;
+  if (!engineName && inChampionsDex) {
+    overrides = { baseStats: info.baseStats, types: info.types, weightkg: info.weightkg ?? 0 };
+    autofilled.push('stats/typing (not in the engine\'s Champions dex)');
+  }
+
+  // Champions Stat Points go straight into the engine's `evs` slot (see the Stat Points note).
+  const sp = input.statPoints ?? {};
+  const pokemon = new Pokemon(g, engineName ?? input.name, {
     item: input.item as any,
-    ability: (engineAbilityAlias ?? resolvedAbility) as any,
+    ability: ability as any,
     nature: input.nature as any,
-    evs,
-    ivs: maxedIvs,
+    evs: {
+      hp: sp.hp ?? 0,
+      atk: sp.atk ?? 0,
+      def: sp.def ?? 0,
+      spa: sp.spa ?? 0,
+      spd: sp.spd ?? 0,
+      spe: sp.spe ?? 0,
+    },
     boosts: input.boosts,
-    teraType: input.teraType as any,
     status: (input.status ?? '') as any,
     ...(overrides ? { overrides: overrides as any } : {}),
   });
-  return { pokemon, autofilled, resolvedAbility };
+  return { pokemon, autofilled };
 }
 
 function buildField(input?: FieldInput): Field {
@@ -291,7 +256,7 @@ function buildField(input?: FieldInput): Field {
 export interface MoveEffectivenessResult {
   /** The move's type AS RESOLVED by the engine (after Aerilate, Weather Ball in sun, ...). */
   moveType: string;
-  /** The defender's types actually used (its Tera type alone, if Terastallized). */
+  /** The defender's types. */
   defenderTypes: string[];
   multiplier: number;
   perType: TypeMultiplier[];
@@ -300,8 +265,6 @@ export interface MoveEffectivenessResult {
   /** The line the game prints for this hit, e.g. "It's super effective!". */
   message: string;
   note?: string;
-  /** Set when the defender's typing is suspect (see MERGED_FORM_WARNING). */
-  warning?: string;
 }
 
 export interface DamageResult {
@@ -321,7 +284,7 @@ export interface DamageResult {
 /**
  * Type effectiveness for a hit that was just calculated. Read off the ENGINE's own effectiveness
  * function and the RESOLVED move/defender on the result, so it accounts for ability retypes
- * (Aerilate making Double-Edge Flying), weather retypes (Weather Ball in sun), Tera types and
+ * (Aerilate making Double-Edge Flying), weather retypes (Weather Ball in sun) and
  * move-specific exceptions (Freeze-Dry, Flying Press) — and therefore can never contradict the
  * damage rolls it is printed next to.
  */
@@ -339,8 +302,7 @@ function resolveMoveEffectiveness(
     atk.hasAbility?.('Scrappy') || atk.hasAbility?.("Mind's Eye") || field.defenderSide?.isForesight,
   );
   const isRingTarget = Boolean(def.hasItem?.('Ring Target') && !def.hasAbility?.('Klutz'));
-  const tera = def.teraType && def.teraType !== 'Stellar' ? (def.teraType as string) : undefined;
-  const defenderTypes: string[] = (tera ? [tera] : (def.types as string[])).filter(Boolean);
+  const defenderTypes: string[] = (def.types as string[]).filter(Boolean);
 
   const perType: TypeMultiplier[] = defenderTypes.map((type) => ({
     type,
@@ -353,7 +315,6 @@ function resolveMoveEffectiveness(
     multiplier = 1;
     notes.push('Iron Ball grounds the defender, so its Ground immunity does not apply.');
   }
-  if (tera) notes.push(`Defender is Terastallized to ${tera}, so only that type is used for effectiveness.`);
   if (mv.category === 'Status') notes.push('Status move: this is the type matchup, not damage dealt.');
 
   return {
@@ -364,8 +325,6 @@ function resolveMoveEffectiveness(
     label: effectivenessLabel(multiplier),
     message: effectivenessMessage(multiplier, result.defender.name),
     note: notes.length ? notes.join(' ') : undefined,
-    // Only meaningful when the defender's real typing was used; a Tera type is a single type.
-    warning: tera ? undefined : mergedFormWarning(defenderTypes),
   };
 }
 
@@ -398,103 +357,29 @@ export function calculateDamage(args: {
   const g = gen();
   const notes: string[] = [];
 
-  // Resolve Champions-original abilities before building calc objects.
-  const atkAbilityEffect = offensiveAbility(args.attacker.ability);
-  const defAbilityEffect = defensiveAbility(args.defender.ability);
-
-  // Defensive ability: pass engine alias so @smogon/calc models the effect natively.
-  const { pokemon: defender, autofilled: defAuto } = buildPokemon(
-    g, args.defender, defAbilityEffect?.engineAlias,
-  );
-  if (defAbilityEffect) notes.push(defAbilityEffect.note);
-
-  // Offensive ability: no engine alias needed (we post-process), but still build normally.
   const { pokemon: attacker, autofilled: atkAuto } = buildPokemon(g, args.attacker);
+  const { pokemon: defender, autofilled: defAuto } = buildPokemon(g, args.defender);
 
-  // Build the move. IMPORTANT: calculate() internally calls move.clone(), and clone() rebuilds
-  // the move from its name + `overrides` ONLY — a post-construction `move.bp = ` or
-  // `move.type = ` is silently discarded by that clone. So every adjustment we want the engine
-  // to actually apply (retype for STAB/effectiveness, scaled base power) MUST go through the
-  // constructor's `overrides`, not a mutation. We probe once to read the move's canonical
-  // name/type, then build the real move with whatever overrides we need.
+  // Battle-history base power (Rage Fist, Last Respects, basePowerOverride). IMPORTANT:
+  // calculate() clones the move, and clone() rebuilds it from its name + `overrides` ONLY, so a
+  // post-construction `move.bp =` would be discarded — the BP must go in through `overrides`.
   const probe = new Move(g, args.move);
-  const originalMoveType = probe.type;
-  const moveOverrides: { type?: string; basePower?: number } = {};
-
-  // Offensive ability retype (e.g. Dragonize turns Normal moves Dragon) — via overrides so the
-  // engine computes type effectiveness + STAB on the NEW type.
-  const resolvedMoveType =
-    atkAbilityEffect?.moveTypeChange && probe.type === atkAbilityEffect.moveTypeChange.from
-      ? atkAbilityEffect.moveTypeChange.to
-      : probe.type;
-  if (resolvedMoveType !== probe.type) {
-    moveOverrides.type = resolvedMoveType;
-  }
-
-  // Base power, resolved in one place so the engine sees the final number (it clones the move
-  // and only honors `overrides`). Start from the move's own BP, scale it for battle-history
-  // moves / caller overrides (Rage Fist, Last Respects, basePowerOverride), then fold in any
-  // "+X% power" offensive ability (Fire Mane, Dragonize) — the game applies these as a
-  // base-power modifier, which matches the reference calculator exactly. probe.name is
-  // canonical even for aliased forms.
   const bpResolved = resolveBasePower(probe.name, args.moveContext);
   if (bpResolved) notes.push(bpResolved.note);
-  let basePower = bpResolved?.bp ?? probe.bp;
-  if (atkAbilityEffect?.bpMultiplier) {
-    const mult = atkAbilityEffect.bpMultiplier(resolvedMoveType, originalMoveType);
-    if (mult !== 1) basePower = Math.max(1, Math.round(basePower * mult));
-  }
-  if (basePower !== probe.bp) moveOverrides.basePower = basePower;
 
   // isCrit is a constructor option (not an override); Move.clone() carries it through, so the
   // engine applies the full crit package: x1.5 (x2.25 with Sniper), ignoring the defender's
   // positive defensive boosts, the attacker's negative offensive boosts, and screens.
   const move = new Move(g, args.move, {
-    overrides: moveOverrides as any,
+    ...(bpResolved ? { overrides: { basePower: bpResolved.bp } as any } : {}),
     isCrit: Boolean(args.isCrit),
   });
 
   const field = buildField(args.field);
-  // Offensive abilities that act as if a weather is present (Mega Sol -> Sun). Set it on the
-  // field so the engine applies the full weather package, but never override a real weather the
-  // caller already specified.
-  if (atkAbilityEffect?.weather && !(field as any).weather) {
-    (field as any).weather = atkAbilityEffect.weather;
-  }
-
-  // Handle Piercing Drill: if defender is protected and the move is contact, we still calc
-  // through but will scale damage to the bypass fraction afterward.
-  const isProtected = Boolean(args.field?.isProtected);
-  const isContact = Boolean((move as any).flags?.contact);
-  let bypassingProtect = false;
-  if (atkAbilityEffect?.bypassProtect && isProtected && isContact) {
-    // Remove Protect from the field so the engine computes full damage (we scale after).
-    (field.defenderSide as any).isProtected = false;
-    bypassingProtect = true;
-  }
-
   const result = calculate(g, attacker, defender, move, field);
 
   // result.damage can be a number, an array of rolls, or (rarely) nested arrays.
-  let rolls = normalizeRolls(result.damage as number | number[]);
-
-  // NB: offensive-ability power boosts (Fire Mane, Dragonize) are already folded into the move's
-  // base power above, and weather effects (Mega Sol) into the field, so the engine has applied
-  // them natively here — nothing to post-multiply.
-
-  // Apply Piercing Drill bypass fraction.
-  if (bypassingProtect && atkAbilityEffect?.bypassProtect) {
-    const frac = atkAbilityEffect.bypassProtect.fraction;
-    rolls = rolls.map((r) => Math.max(1, Math.round(r * frac)));
-  }
-
-  if (atkAbilityEffect) notes.push(atkAbilityEffect.note);
-
-  // Surface NO_DAMAGE_EFFECT abilities as notes (recognized but don't alter the calc).
-  const atkNoDmg = args.attacker.ability ? NO_DAMAGE_EFFECT[args.attacker.ability] : undefined;
-  const defNoDmg = args.defender.ability ? NO_DAMAGE_EFFECT[args.defender.ability] : undefined;
-  if (atkNoDmg) notes.push(atkNoDmg);
-  if (defNoDmg) notes.push(defNoDmg);
+  const rolls = normalizeRolls(result.damage as number | number[]);
 
   const min = rolls.length ? Math.min(...rolls) : 0;
   const max = rolls.length ? Math.max(...rolls) : 0;
@@ -512,8 +397,6 @@ export function calculateDamage(args: {
   if (defender.ability) notes.push(`Defender ability "${defender.ability}" applied by the engine.`);
   if (field.weather) notes.push(`Weather "${field.weather}" in effect.`);
   if (field.terrain) notes.push(`Terrain "${field.terrain}" in effect.`);
-  if (attacker.teraType) notes.push(`Attacker Terastallized to ${attacker.teraType}.`);
-  if (bypassingProtect) notes.push('Piercing Drill bypassed Protect; damage is 1/4 of the full hit.');
   if (move.isCrit) {
     // Same precondition the engine checks before applying the crit (mechanics/gen789).
     if (defender.hasAbility('Battle Armor', 'Shell Armor')) {
@@ -559,9 +442,7 @@ export function calculateDamage(args: {
     description = `${attacker.name} ${move.name} vs. ${defender.name}: 0 damage (no effect / immune).`;
     ko = { chance: 0, n: 0, text: 'no damage' };
   } else {
-    // result.desc() writes stat investment in EV units; translate it back into Champions
-    // Stat Points so the calc string never exposes the old EV/IV system.
-    description = descToStatPoints(result.desc());
+    description = result.desc();
     ko = result.kochance();
   }
 
@@ -607,13 +488,10 @@ export interface TypeEffectivenessResult {
 }
 
 /**
- * The 18 real battle types, in canonical order. TYPE_NAMES additionally carries "Stellar" and
- * "???", which are Tera/typeless markers rather than types a defender can be hit by, so they
- * are excluded from defensive profiles.
+ * The 18 real battle types, in canonical order. TYPE_NAMES additionally carries "???", the
+ * typeless marker, which no defender can be hit by, so it is excluded from defensive profiles.
  */
-export const BATTLE_TYPES: string[] = TYPE_NAMES.filter(
-  (t) => t !== 'Stellar' && t !== '???',
-);
+export const BATTLE_TYPES: string[] = TYPE_NAMES.filter((t) => t !== '???');
 
 /** One attacking type vs 1–2 defending types, straight off the bundled type chart. */
 function chartMultiplier(

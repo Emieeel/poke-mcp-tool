@@ -1,16 +1,13 @@
 /**
- * dex.ts — Pokémon CHAMPIONS engine dex lookups.
+ * dex.ts — Pokémon CHAMPIONS Pokédex lookups.
  *
  * Source of truth is data/champions-dex.json, scraped from Serebii's Champions Pokédex
- * (see scripts/scrape-champions-dex.ts). We use THIS instead of @smogon/calc's bundled dex
- * because @smogon/calc ships mainline data that is wrong or missing for Champions-original
- * Mega Evolutions (e.g. Champions' Mega Staraptor has Contrary; @smogon/calc says Intimidate).
+ * (see scripts/scrape-champions-dex.ts). It carries what the engine's Champions dex doesn't:
+ * every ability a species can have (the engine keeps one default) and its Champions learnset.
  *
  * If the Champions dex file is missing or doesn't contain a requested form, we fall back to
- * @smogon/calc's bundled dex so the tool still answers (and flag the source in the result).
- *
- * @smogon/calc remains the engine for the damage *formula* (see calc.ts) — only per-Pokémon
- * facts (stats/types/abilities/weight) are sourced here.
+ * the engine's Champions dex (@smogon/calc gen 0) so the tool still answers, without
+ * learnsets (and flag the source in the result).
  */
 import { toID } from '@smogon/calc';
 import { gen } from './calc.js';
@@ -55,33 +52,6 @@ export interface PokemonInfo {
   otherForms?: string[];
 }
 
-/**
- * Champions-accurate species data used to OVERRIDE @smogon/calc when building a Pokémon for
- * a damage calc, so game-original Megas (correct stats/types/ability) calc correctly even
- * when @smogon/calc has never heard of them. Returns null if the form isn't in the dex.
- */
-export interface SpeciesOverride {
-  name: string;
-  types: string[];
-  baseStats: RawForm['baseStats'];
-  weightkg: number | null;
-  /** Primary ability (parenthetical form annotations stripped), for a sensible default. */
-  defaultAbility?: string;
-}
-export function getSpeciesOverride(name: string): SpeciesOverride | null {
-  const idx = loadIndex();
-  const hit = idx?.byKey.get(nameKey(name));
-  if (!hit) return null;
-  const { form } = hit;
-  return {
-    name: form.name,
-    types: form.types,
-    baseStats: form.baseStats,
-    weightkg: form.weightkg,
-    defaultAbility: cleanAbility(form.abilities[0]),
-  };
-}
-
 // Serebii sometimes annotates abilities with the form they belong to, e.g.
 // "Lightning Rod (Raichu)" or "Psychic Surge (Female)". Strip the parenthetical so lookups keyed
 // on the bare ability name (@smogon/calc, our own ability tables) recognize it.
@@ -89,7 +59,6 @@ export function cleanAbilityName(a?: string): string | undefined {
   if (!a) return undefined;
   return a.replace(/\s*\(.*?\)\s*$/, '').trim() || undefined;
 }
-const cleanAbility = cleanAbilityName;
 
 // Lazily build a name -> form index from the Champions dex so lookups are O(1) and tolerant
 // of naming conventions (Mega word order, hyphens, casing).
@@ -170,7 +139,7 @@ export function getPokemonInfo(name: string): PokemonInfo | null {
   return getFromSmogon(name);
 }
 
-// Fallback: read from @smogon/calc's bundled (mainline) dex.
+// Fallback: the engine's Champions dex (@smogon/calc gen 0), which has no learnsets.
 function getFromSmogon(name: string): PokemonInfo | null {
   const g = gen();
   const species = g.species.get(toID(name));

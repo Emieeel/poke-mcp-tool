@@ -79,7 +79,9 @@ server.registerTool(
     description:
       'Calculate the damage one Pokémon deals to another with a given move in Pokémon ' +
       'Champions (VGC-style, defaults to Doubles). Wraps the trusted @smogon/calc engine, ' +
-      'so abilities (Contrary, Intimidate, ...), items, weather, terrain, Tera, crits, ' +
+      'running its Pokémon Champions mode (Champions roster, rebalanced moves, Champions-only ' +
+      'abilities, Stat Points), so abilities (Contrary, Intimidate, ...), items, weather, ' +
+      'terrain, crits, ' +
       'multi-hit, screens and Doubles spread reduction are all handled correctly. ' +
       'Pass isCrit: true for the damage of a critical hit (moves that always crit, like ' +
       'Flower Trick, crit without it). ' +
@@ -90,7 +92,7 @@ server.registerTool(
       'Returns the damage range, percent range, hits-to-KO, and the human-readable calc string. ' +
       'ALSO returns "typeEffectiveness": the multiplier this hit actually used (with the ' +
       "in-game line — \"It's super effective!\", \"It's not very effective...\") read off the " +
-      'engine itself, so it accounts for ability/weather retypes and Tera. Never state a type ' +
+      'engine itself, so it accounts for ability/weather retypes. Never state a type ' +
       'matchup from memory — read it from this field.',
     inputSchema: {
       attacker: pokemonSchema.describe('The attacking Pokémon and its set.'),
@@ -158,8 +160,8 @@ server.registerTool(
     description:
       'Look up a Pokémon by name (Mega forms accepted, e.g. "Staraptor-Mega" or "Mega ' +
       'Staraptor") in Pokémon Champions: returns base stats, typing, abilities, and weight. ' +
-      'Data comes from the Champions Pokédex (Serebii) so game-original Mega Evolutions are ' +
-      'accurate — e.g. Mega Staraptor has Contrary, which @smogon/calc gets wrong. Also ' +
+      'Data comes from the Champions Pokédex (Serebii), including game-original Mega ' +
+      'Evolutions (e.g. Mega Staraptor has Contrary). Also ' +
       'returns the Pokémon\'s full learnable movelist ("moves"). ' +
       'ALWAYS returns "defensiveProfile": the complete defensive matchup table for its typing ' +
       '— every one of the 18 attacking types with its multiplier, split into weaknesses, ' +

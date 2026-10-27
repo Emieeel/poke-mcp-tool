@@ -3,8 +3,8 @@
  *
  * Source of truth is data/champions-items.json, scraped from Serebii's Champions items page
  * (see scripts/scrape-champions-items.ts). We use THIS instead of @smogon/calc's bundled item
- * list because @smogon/calc ships a MAINLINE item set with no Champions effect text, no
- * "how to obtain" info, and no notion of which items even exist in Champions.
+ * list because @smogon/calc's item data has no effect text, no "how to obtain" info and no
+ * categories.
  *
  * If the Champions items file is missing or doesn't contain a requested item, we fall back to
  * @smogon/calc's bundled item list so the tool still answers (flagging the source).
@@ -124,7 +124,7 @@ export function getItemInfo(name: string): ItemInfo | null {
   return getFromSmogon(name);
 }
 
-// Fallback: confirm the item exists in @smogon/calc's bundled (mainline) item list. That data
+// Fallback: confirm the item exists in the engine's Champions item list. That data
 // has no effect/location text, so those come back empty — flagged by source='smogon-calc'.
 function getFromSmogon(name: string): ItemInfo | null {
   const g = gen();
@@ -152,7 +152,7 @@ export interface ItemListFilter {
 /**
  * Browse the Champions item catalog, optionally filtered. Returns null if the catalog isn't
  * available (only the @smogon/calc fallback exists, which can't be enumerated meaningfully
- * for Champions — it's mainline data with no Champions effect/location/category).
+ * for Champions — it has no effect/location/category).
  */
 export function listItems(filter: ItemListFilter = {}): ItemInfo[] | null {
   const idx = loadIndex();

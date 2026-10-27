@@ -4,13 +4,10 @@
  *   npm run scrape:dex                 # scrape the whole roster (from the dex index)
  *   npm run scrape:dex -- staraptor    # scrape just one or more slugs (for testing)
  *
- * WHY THIS EXISTS (and contradicts the original "never scrape engine data" rule):
- * @smogon/calc's bundled dex is MAINLINE data. Pokémon Champions has game-original Mega
- * Evolutions (Mega Staraptor, Mega Raichu X/Y, Mega Eelektross, ...) whose abilities/stats
- * differ from — or don't exist in — @smogon/calc. Example: Champions' Mega Staraptor has
- * Contrary, but @smogon/calc says Intimidate. So for Champions-accurate stats/types/
- * abilities we source the dex from Serebii's Champions Pokédex. @smogon/calc is still the
- * engine for the damage *formula* (calculate_damage) — only the per-Pokémon facts move here.
+ * WHY THIS EXISTS: @smogon/calc's Champions generation carries stats and typing for the
+ * Champions roster, but only one default ability per species and no learnsets. Serebii's
+ * Champions Pokédex has every ability a species can have and its Champions learnset, so we
+ * source those here. @smogon/calc stays the engine for damage calcs.
  *
  * This is an on-demand script. The MCP server never runs it; it only reads the JSON output.
  *
@@ -263,9 +260,9 @@ async function main() {
       scrapedAt: new Date().toISOString(),
       count: Object.keys(pokemon).length,
       note:
-        'Champions-accurate engine data scraped from Serebii. Use this for per-Pokémon ' +
-        'facts (stats/types/abilities), since @smogon/calc bundles mainline data that is ' +
-        'wrong or missing for Champions-original Mega Evolutions.',
+        'Champions Pokédex scraped from Serebii: stats, types, every ability and the ' +
+        'Champions learnset per species (the engine keeps one default ability and no ' +
+        'learnsets).',
     },
     pokemon,
   };
