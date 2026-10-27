@@ -1,40 +1,35 @@
 /**
  * names.ts — canonical key for matching Pokémon names across naming conventions.
  *
- * Reconciles Mega-form word order so "Mega Sceptile" (Serebii), "Sceptile-Mega"
- * (@smogon/calc), and "sceptilemega" collapse to one key — and "Mega Raichu X" /
- * "Raichu-Mega-X" both become "raichuxmega" — without letting "Mega Raichu X" collide
- * with plain "Raichu".
+ * Serebii and @smogon/calc write forms differently; these all collapse to one key:
+ *   - Mega word order: "Mega Sceptile" / "Sceptile-Mega" -> "sceptilemega", and
+ *     "Mega Raichu X" / "Raichu-Mega-X" -> "raichuxmega" (without colliding with "Raichu").
+ *   - Regional forms: "Alolan Ninetales" / "Ninetales-Alola" -> "ninetalesalola".
+ *   - Gender forms: "Female Indeedee" / "Indeedee-F" -> "indeedeef" (male is the base form).
  */
+
+// Words Serebii puts before the species, mapped to the suffix @smogon/calc puts after it.
+const FORM_WORDS: Record<string, string> = {
+  alolan: 'alola',
+  galarian: 'galar',
+  hisuian: 'hisui',
+  paldean: 'paldea',
+  female: 'f',
+  male: '',
+};
+const FORM_SUFFIXES = new Set(Object.values(FORM_WORDS).filter(Boolean));
+
 export function nameKey(name: string): string {
   const tokens = name
     .trim()
     .toLowerCase()
-    .replace(/[-_]/g, ' ')
+    .replace(/[-_()]/g, ' ')
     .split(/\s+/)
+    .map((t) => FORM_WORDS[t] ?? t)
     .filter(Boolean);
-  // Move any "mega" token to the end so prefix/suffix orderings match.
+  // Species name first, then regional/gender form tokens, the rest, and "mega" last.
   const megas = tokens.filter((t) => t === 'mega');
-  const rest = tokens.filter((t) => t !== 'mega');
-  return [...rest, ...megas].join('').replace(/[^a-z0-9]/g, '');
-}
-
-/**
- * For a Mega form, the key of its BASE species (e.g. "Mega Staraptor" -> "staraptor",
- * "Mega Raichu X" -> "raichu", "Staraptor-Mega" -> "staraptor"). Returns null for
- * non-Mega names. Used for legality: a Mega is legal iff its base species is legal and
- * the specific Mega form isn't separately banned.
- */
-export function baseSpeciesKey(name: string): string | null {
-  const tokens = name
-    .trim()
-    .toLowerCase()
-    .replace(/[-_]/g, ' ')
-    .split(/\s+/)
-    .filter(Boolean);
-  if (!tokens.includes('mega')) return null;
-  let rest = tokens.filter((t) => t !== 'mega');
-  // Drop a trailing single-letter form indicator (the X / Y of multi-Megas).
-  if (rest.length > 1 && rest[rest.length - 1].length === 1) rest = rest.slice(0, -1);
-  return rest.join('').replace(/[^a-z0-9]/g, '');
+  const forms = tokens.filter((t) => FORM_SUFFIXES.has(t));
+  const rest = tokens.filter((t) => t !== 'mega' && !FORM_SUFFIXES.has(t));
+  return [...rest.slice(0, 1), ...forms, ...rest.slice(1), ...megas].join('').replace(/[^a-z0-9]/g, '');
 }

@@ -6,8 +6,8 @@
  * The server only READS these files — it never scrapes on a normal tool call.
  */
 import { z } from 'zod';
-import { nameKey, baseSpeciesKey } from './names.js';
-import { getPokemonMoves, getPokemonInfo } from './dex.js';
+import { nameKey } from './names.js';
+import { getPokemonMoves, getPokemonInfo, getSpeciesForms } from './dex.js';
 import { itemKey } from './items.js';
 
 // NOTE: intentionally free of `node:*` imports so it can be bundled for filesystem-less
@@ -175,10 +175,10 @@ export function checkLegality(
   const banned = reg.bannedPokemon.find((p) => nameKey(p.name) === wantedPoke);
   const legalEntry = reg.legalPokemon.find((p) => nameKey(p.name) === wantedPoke);
 
-  // A Mega form usually isn't a separate roster entry; it's legal if its base species is
-  // legal (and the specific Mega isn't separately banned). Resolve that here.
-  const baseKey = baseSpeciesKey(pokemon);
-  const baseEntry = baseKey ? reg.legalPokemon.find((p) => nameKey(p.name) === baseKey) : undefined;
+  // Forms (Megas, regional forms, Rotom-Wash, Indeedee-F, ...) aren't separate roster entries;
+  // a form is legal if its base species is (and that specific form isn't separately banned).
+  const baseName = getPokemonInfo(pokemon)?.baseSpecies;
+  const baseEntry = baseName ? reg.legalPokemon.find((p) => nameKey(p.name) === nameKey(baseName)) : undefined;
 
   // If an explicit allowlist exists, legality = present on it (or via base species) AND not banned.
   // If the allowlist is empty (e.g. partial scrape), we can't assert legality.
@@ -190,7 +190,7 @@ export function checkLegality(
   } else if (hasAllowlist) {
     pokemonLegal = Boolean(legalEntry) || Boolean(baseEntry);
     if (!legalEntry && baseEntry) {
-      notes.push(`"${pokemon}" is legal via its base species "${baseEntry.name}" (Mega forms follow base-species legality unless separately banned).`);
+      notes.push(`"${pokemon}" is legal via its base species "${baseEntry.name}" (forms follow base-species legality unless separately banned).`);
     }
     if (!legalEntry && !baseEntry) {
       notes.push(`"${pokemon}" is not on the legal-Pokémon list for ${reg.meta.name}.`);
@@ -275,6 +275,8 @@ export function checkLegality(
 
 export interface LegalPokemonEntry {
   name: string;
+  /** Set for a form (Mega, regional, ...): the species it belongs to. */
+  baseSpecies?: string;
   num: number | null;
   types: string[];
   baseStats?: { hp: number; atk: number; def: number; spa: number; spd: number; spe: number };
@@ -288,7 +290,7 @@ export interface LegalPokemonEntry {
 export interface ListLegalPokemonResult {
   regulation: string;
   regulationName: string;
-  /** Total size of the regulation's legal pool, before filters. */
+  /** Total size of the regulation's legal pool (every legal form), before filters. */
   totalLegalPokemon: number;
   count: number;
   filter: { nameContains?: string; type?: string };
@@ -310,20 +312,25 @@ export function listLegalPokemon(
 ): ListLegalPokemonResult {
   const reg = loadRegulation(regulationId);
 
-  let entries: LegalPokemonEntry[] = reg.legalPokemon.map((p) => {
-    const info = getPokemonInfo(p.name);
-    if (!info) {
-      return { name: p.name, num: null, types: [], notes: p.notes, resolved: false };
+  // Every form of every legal species, minus any form the regulation bans.
+  const banned = new Set(reg.bannedPokemon.map((p) => nameKey(p.name)));
+  let entries: LegalPokemonEntry[] = reg.legalPokemon.flatMap((p): LegalPokemonEntry[] => {
+    const forms = getSpeciesForms(p.name);
+    if (forms.length === 0) {
+      return [{ name: p.name, num: null, types: [], notes: p.notes, resolved: false }];
     }
-    return {
-      name: info.name,
-      num: info.num ?? null,
-      types: info.types,
-      baseStats: info.baseStats,
-      abilities: info.abilities,
-      notes: p.notes,
-      resolved: true,
-    };
+    return forms
+      .filter((info) => !banned.has(nameKey(info.name)))
+      .map((info) => ({
+        name: info.name,
+        ...(info.baseSpecies ? { baseSpecies: info.baseSpecies } : {}),
+        num: info.num ?? null,
+        types: info.types,
+        baseStats: info.baseStats,
+        abilities: info.abilities,
+        notes: p.notes,
+        resolved: true,
+      }));
   });
   const totalLegalPokemon = entries.length;
 

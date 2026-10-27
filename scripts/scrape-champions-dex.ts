@@ -15,12 +15,18 @@
  * out each form as three consecutive tables in document order: a "Name … Type" table, an
  * "Abilities:" table, and a "Stats" table. We group them by document order so a page with
  * a base form + N Mega forms yields N+1 forms.
+ *
+ * Alternate forms (Alolan Ninetales, Rotom-Wash, Indeedee-F, ...) don't get tables of their
+ * own; Serebii folds them into the base form's tables. Which forms exist, and their stats and
+ * typing, come from the engine's Champions dex instead; Serebii's labels then say which
+ * abilities and moves belong to which form (see addAlternateForms).
  */
 import { writeFileSync, mkdirSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import * as cheerio from 'cheerio';
 import type { AnyNode } from 'domhandler';
+import { Generations, toID } from '@smogon/calc';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const DATA_DIR = join(__dirname, '..', 'data');
@@ -41,6 +47,8 @@ export interface Form {
   abilities: string[];
   baseStats: { hp: number; atk: number; def: number; spa: number; spd: number; spe: number };
   weightkg: number | null;
+  /** The form's own Champions learnset, when it differs from the species' (`moves`). */
+  moves?: string[];
 }
 export interface DexEntry {
   slug: string;
@@ -97,7 +105,7 @@ const SECTION_LABELS = new Set([
   'Gender Differences', 'Standard Moves', 'Egg Moves', 'Location', 'Flavor Text',
 ]);
 
-export function parsePokemonPage(html: string, slug: string): DexEntry {
+export function parsePokemonPage(html: string, slug: string, warnings: string[] = []): DexEntry {
   const $ = cheerio.load(html);
 
   // Base name + national number come from the <title>: "Staraptor - #398 - Serebii.net Pokédex".
@@ -151,28 +159,141 @@ export function parsePokemonPage(html: string, slug: string): DexEntry {
     if (form.types.length || form.abilities.length || form.baseStats.hp) forms.push(form);
   }
 
-  const moves = extractMoves($);
-  return { slug, name: baseName, num, forms, moves };
+  const sections = extractMoveSections($);
+  const entry: DexEntry = { slug, name: baseName, num, forms, moves: sections[0]?.moves ?? [] };
+  addAlternateForms(entry, sections, warnings);
+  return entry;
 }
 
-// All learnable moves: the names linked to /attackdex-champions/ inside any "… Moves" table
-// (Champions consolidates these into a "Standard Moves" list, but we scan all move tables).
-function extractMoves($: cheerio.CheerioAPI): string[] {
-  const seen = new Set<string>();
-  const moves: string[] = [];
+interface MoveSection {
+  /** "" for the base form, else Serebii's form label ("Alola Form", "Female", "Heat Rotom"). */
+  label: string;
+  moves: string[];
+  /** Rotom's "Special Moves": extra moves on top of the base list, not a full learnset. */
+  extra: boolean;
+}
+
+// Learnsets: one "… Moves" table per form, base form first ("Standard Moves", "Alola Form
+// Standard Moves", "Standard Moves - Female", ...). Rotom's "Special Moves" table instead adds
+// one move per appliance form, marked "Heat Rotom Only" etc.
+function extractMoveSections($: cheerio.CheerioAPI): MoveSection[] {
+  const clean = (s: string) => s.replace(/\s+/g, ' ').trim();
+  const sections: MoveSection[] = [];
   $('table.dextable').each((_, t) => {
-    const header = $(t).find('tr').first().find('td,th').first().text().replace(/\s+/g, ' ').trim();
-    if (!/Moves\b/i.test(header)) return;
+    const heading = clean($(t).find('tr').first().find('td,th').first().text());
+    if (!/Moves\b/i.test(heading)) return;
+    if (heading === 'Special Moves') {
+      let move = '';
+      $(t).find('tr').each((_, tr) => {
+        move = clean($(tr).find('a[href*="/attackdex-champions/"]').first().text()) || move;
+        const only = clean($(tr).children('td').last().text()).match(/^(\S+ \S+) Only$/);
+        if (only && move) sections.push({ label: only[1], moves: [move], extra: true });
+      });
+      return;
+    }
+    const moves = new Set<string>();
     $(t).find('a[href*="/attackdex-champions/"]').each((_, a) => {
-      const name = $(a).text().replace(/\s+/g, ' ').trim();
-      const key = name.toLowerCase();
-      if (name && /[A-Za-z]/.test(name) && !seen.has(key)) {
-        seen.add(key);
-        moves.push(name);
-      }
+      const name = clean($(a).text());
+      if (/[A-Za-z]/.test(name)) moves.add(name);
     });
+    const label = heading.replace('Standard Moves', '').replace(/^\s*-\s*/, '').trim();
+    sections.push({ label, moves: [...moves].sort((a, b) => a.localeCompare(b)), extra: false });
   });
-  return moves.sort((a, b) => a.localeCompare(b));
+  return sections;
+}
+
+// Serebii lists every form's abilities on one line and closes each form's group with its label:
+// "Flash Fire - Drought (Ninetales) - Snow Cloak - Snow Warning (Alola Form)". The base form's
+// group comes first. "(Female Hidden Ability)" marks a form that only swaps the hidden ability.
+function abilityGroups(abilities: string[]) {
+  const groups: { label: string; abilities: string[]; hiddenOnly: boolean }[] = [];
+  let current: string[] = [];
+  for (const ability of abilities) {
+    const m = ability.match(/^(.*?)\s*\((.+)\)$/);
+    current.push(m ? m[1] : ability);
+    if (!m) continue;
+    groups.push({ label: m[2].replace(/ Hidden Ability$/, ''), abilities: current, hiddenOnly: / Hidden Ability$/.test(m[2]) });
+    current = [];
+  }
+  if (current.length || groups.length === 0) groups.push({ label: '', abilities: current, hiddenOnly: false });
+  return groups;
+}
+
+// Serebii's form labels for each @smogon/calc form suffix, most specific first. A form not
+// listed (Castform's weather forms, Gourgeist sizes, Vivillon patterns, ...) shares the base
+// form's abilities and moves.
+const FORM_LABELS: Record<string, string[]> = {
+  Alola: ['Alola Form'],
+  Galar: ['Galarian Form'],
+  Hisui: ['Hisuian Form'],
+  'Paldea-Combat': ['Paldean Form'],
+  'Paldea-Blaze': ['Blaze Breed', 'Paldean Form'],
+  'Paldea-Aqua': ['Aqua Breed', 'Paldean Form'],
+  F: ['Female'],
+  Midnight: ['Midnight Form'],
+  Dusk: ['Dusk Form'],
+  'Low-Key': ['Low Key Form'],
+  Blue: ['Green & Blue'],
+  Yellow: ['Yellow & White'],
+  White: ['Yellow & White'],
+  Heat: ['Heat Rotom'],
+  Wash: ['Wash Rotom'],
+  Frost: ['Frost Rotom'],
+  Fan: ['Fan Rotom'],
+  Mow: ['Mow Rotom'],
+};
+
+/**
+ * Add the species' alternate forms (not Megas) from the engine's Champions dex, each with the
+ * abilities and moves Serebii labels as theirs. Also fixes the base form, whose Serebii typing
+ * and ability line mix in every form's.
+ */
+function addAlternateForms(entry: DexEntry, sections: MoveSection[], warnings: string[]): void {
+  const g = Generations.get(0);
+  const engineBase = g.species.get(toID(entry.name));
+  const formNames = (engineBase?.otherFormes ?? []).filter((f) => !f.includes('-Mega'));
+  if (!engineBase || formNames.length === 0) return;
+
+  const base = entry.forms[0];
+  const groups = abilityGroups(base.abilities);
+  base.types = [...engineBase.types];
+  base.abilities = groups[0].abilities;
+
+  const used = new Set<string>();
+  const pick = <T extends { label: string }>(items: T[], labels: string[]) => {
+    const hit = labels.map((l) => items.find((i) => i.label === l)).find(Boolean);
+    if (hit) used.add(hit.label);
+    return hit;
+  };
+  for (const name of formNames) {
+    const species = g.species.get(toID(name))!;
+    const labels = FORM_LABELS[name.slice(entry.name.length + 1)] ?? [];
+    const group = pick(groups.slice(1), labels);
+    const section = pick(sections.filter((s, i) => i > 0 && !s.extra), labels);
+    const extras = sections.filter((s) => s.extra && labels.includes(s.label)).flatMap((s) => s.moves);
+    if (extras.length) labels.forEach((l) => used.add(l));
+    const abilities = !group
+      ? groups[0].abilities
+      : group.hiddenOnly
+        ? [...groups[0].abilities.slice(0, -1), ...group.abilities]
+        : group.abilities;
+    const { hp, atk, def, spa, spd, spe } = species.baseStats;
+    entry.forms.push({
+      name,
+      types: [...species.types],
+      abilities,
+      baseStats: { hp, atk, def, spa, spd, spe },
+      weightkg: species.weightkg,
+      ...(section || extras.length
+        ? { moves: [...new Set([...(section?.moves ?? entry.moves), ...extras])].sort((a, b) => a.localeCompare(b)) }
+        : {}),
+    });
+  }
+  // A Serebii label no form claimed means a form's abilities or moves would silently be lost.
+  const labels = [...groups.slice(1), ...sections.slice(1)].map((x) => x.label);
+  for (const label of new Set(labels)) {
+    if (!used.has(label)) warnings.push(`${entry.slug}: Serebii form label "${label}" matched no form`);
+  }
 }
 
 /**
@@ -284,7 +405,7 @@ async function main() {
     i++;
     try {
       const html = await fetchText(entryUrl(slug));
-      const entry = parsePokemonPage(html, slug);
+      const entry = parsePokemonPage(html, slug, failures);
       for (const [name, effect] of Object.entries(parseAbilityEffects(html))) {
         abilityEffects[name] ??= effect;
       }

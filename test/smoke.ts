@@ -489,13 +489,11 @@ async function main() {
       hat.parsed.defensiveProfile?.immunities?.includes('Dragon') && hat.parsed.defensiveProfile?.multipliers?.Fighting === 0.25,
       { immunities: hat.parsed.defensiveProfile?.immunities, fighting: hat.parsed.defensiveProfile?.multipliers?.Fighting });
 
-    // Dex entries that merge regional forms have >2 types; the profile must warn instead of
-    // confidently describing a Pokémon that doesn't exist.
+    // Forms are separate entries: base Rotom is Electric/Ghost, Rotom-Wash Electric/Water.
     const rotom = await callJson(client, 'get_pokemon', { name: 'Rotom' });
-    check('merged-form dex entry (Rotom) carries a warning',
-      rotom.parsed.types.length > 2 && /merges several/.test(rotom.parsed.defensiveProfile?.warning ?? ''),
-      { types: rotom.parsed.types, warning: rotom.parsed.defensiveProfile?.warning });
-    check('a normal two-type entry has no warning', dp?.warning === undefined, dp?.warning);
+    check('base Rotom is Electric/Ghost, with its forms listed',
+      rotom.parsed.types.join('/') === 'Electric/Ghost' && rotom.parsed.otherForms?.includes('Rotom-Wash'),
+      { types: rotom.parsed.types, otherForms: rotom.parsed.otherForms });
   }
 
   // 4. check_legality — full roster, a banned Mega form, and a missing regulation.
@@ -664,9 +662,6 @@ async function main() {
     };
 
     const KNOWN_SPECIES: Record<string, string> = {
-      // Our dex merges regional forms into the base entry (two types from two forms).
-      Raichu: 'merged forms', Persian: 'merged forms', Arcanine: 'merged forms', Typhlosion: 'merged forms',
-      Samurott: 'merged forms', Goodra: 'merged forms', Avalugg: 'merged forms',
       // The engine's default ability for these Champions Megas is the base species' one.
       'Mega Skarmory': 'engine ability', 'Mega Hawlucha': 'engine ability',
       // Named differently in the engine (Floette-Eternal, Aegislash-Shield, Meowstic-M-Mega).
@@ -676,7 +671,6 @@ async function main() {
     const dex = readData('champions-dex.json').pokemon;
     for (const entry of Object.values<any>(dex)) {
       for (const form of entry.forms) {
-        if (form.types.length > 2) continue; // merged multi-form entries; see README
         const engineName = engineSpeciesName(form.name);
         const sp = engineName ? g.species.get(toID(engineName)) : undefined;
         if (!sp) { species[form.name] = 'not in engine'; continue; }
@@ -707,6 +701,51 @@ async function main() {
       if (diffs.length) moves[m.name] = diffs.join('; ');
     }
     sameKeys('moves', moves, KNOWN_MOVES);
+  }
+
+  // 14. Alternate forms: each is its own Pokémon with its own typing, stats, abilities and moves,
+  // legal when its base species is, and reachable by either spelling of its name.
+  console.log('\nforms:');
+  {
+    const info = async (name: string) => (await callJson(client, 'get_pokemon', { name, regulation: 'm-c' })).parsed;
+    const indeedee = await info('Indeedee-F');
+    check('Indeedee-F: female stats, Own Tempo, legal in M-C',
+      JSON.stringify(indeedee.baseStats) === JSON.stringify({ hp: 70, atk: 55, def: 65, spa: 95, spd: 105, spe: 85 }) &&
+        indeedee.abilities.includes('Own Tempo') && !indeedee.abilities.includes('Inner Focus') && indeedee.regulation?.legal === true,
+      { baseStats: indeedee.baseStats, abilities: indeedee.abilities, legal: indeedee.regulation?.legal });
+    const alolan = await info('Alolan Ninetales');
+    check('"Alolan Ninetales" resolves to Ninetales-Alola: Ice/Fairy, Snow Warning, learns Moonblast',
+      alolan.name === 'Ninetales-Alola' && alolan.types.join('/') === 'Ice/Fairy' &&
+        alolan.abilities.includes('Snow Warning') && alolan.moves.includes('Moonblast'),
+      { name: alolan.name, types: alolan.types, abilities: alolan.abilities });
+    const ninetales = await info('Ninetales');
+    check('base Ninetales is Fire with Drought, not the Alolan abilities',
+      ninetales.types.join('/') === 'Fire' && ninetales.abilities.includes('Drought') && !ninetales.abilities.includes('Snow Warning'),
+      { types: ninetales.types, abilities: ninetales.abilities });
+    const wash = await info('Rotom-Wash');
+    check('Rotom-Wash: Electric/Water, learns Hydro Pump (base Rotom does not)',
+      wash.types.join('/') === 'Electric/Water' && wash.moves.includes('Hydro Pump') && !(await info('Rotom')).moves.includes('Hydro Pump'),
+      { types: wash.types });
+    const meowF = await info('Meowstic-F');
+    check('Meowstic-F swaps only the hidden ability: Keen Eye + Competitive, no Prankster',
+      meowF.abilities.includes('Keen Eye') && meowF.abilities.includes('Competitive') && !meowF.abilities.includes('Prankster'),
+      meowF.abilities);
+    const blaze = await info('Tauros-Paldea-Blaze');
+    check('Tauros-Paldea-Blaze: Fighting/Fire, Cud Chew', blaze.types.join('/') === 'Fighting/Fire' && blaze.abilities.includes('Cud Chew'), blaze);
+
+    const pump = (await callJson(client, 'find_pokemon_by_move', { move: 'Hydro Pump' })).parsed;
+    check('find_pokemon_by_move lists Rotom-Wash for Hydro Pump', pump.pokemon.some((p: any) => p.name === 'Rotom-Wash'), pump.count);
+    const water = (await callJson(client, 'list_legal_pokemon', { type: 'Water' })).parsed;
+    check('list_legal_pokemon (Water) includes Rotom-Wash, not base Rotom',
+      water.pokemon.some((p: any) => p.name === 'Rotom-Wash') && !water.pokemon.some((p: any) => p.name === 'Rotom'), water.count);
+    const megas = (await callJson(client, 'list_legal_pokemon', { nameContains: 'mega' })).parsed;
+    check('list_legal_pokemon lists Megas as their own entries', megas.pokemon.some((p: any) => p.name === 'Mega Charizard Y' && p.baseSpecies === 'Charizard'), megas.count);
+    const calc = (await callJson(client, 'calculate_damage', {
+      attacker: { name: 'Garchomp', nature: 'Adamant', statPoints: { atk: 32 } },
+      defender: { name: 'Rotom-Wash' },
+      move: 'Earthquake',
+    })).parsed;
+    check('Rotom-Wash (Levitate) takes no Earthquake damage', calc.damageRange.max === 0, calc.damageRange);
   }
 
   // 13. get_ability — Champions ability text and who can have it.

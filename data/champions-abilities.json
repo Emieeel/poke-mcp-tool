@@ -3,7 +3,7 @@
     "game": "Pokémon Champions",
     "source": "https://www.serebii.net/pokedex-champions/",
     "newAbilitiesSource": "https://www.serebii.net/pokemonchampions/newabilities.shtml",
-    "scrapedAt": "2026-10-27T18:18:56.014Z",
+    "scrapedAt": "2026-10-27T18:49:27.194Z",
     "count": 215,
     "note": "Every ability a Champions Pokémon can have, with its Champions description (from the Pokédex pages) and whether it is new in Champions."
   },
@@ -17,6 +17,7 @@
         "Mega Lucario",
         "Dragalge",
         "Basculegion",
+        "Basculegion-F",
         "Mega Glimmora"
       ]
     },
@@ -52,6 +53,9 @@
       "isNew": false,
       "pokemon": [
         "Tauros",
+        "Tauros-Paldea-Aqua",
+        "Tauros-Paldea-Blaze",
+        "Tauros-Paldea-Combat",
         "Camerupt",
         "Krookodile",
         "Crabominable"
@@ -124,6 +128,7 @@
       "pokemon": [
         "Charizard",
         "Typhlosion",
+        "Typhlosion-Hisui",
         "Blaziken",
         "Infernape",
         "Emboar",
@@ -151,7 +156,8 @@
       "pokemon": [
         "Diggersby",
         "Dedenne",
-        "Maushold"
+        "Maushold",
+        "Maushold-Four"
       ]
     },
     "Chlorophyll": {
@@ -194,7 +200,7 @@
         "Wigglytuff",
         "Milotic",
         "Empoleon",
-        "Meowstic"
+        "Meowstic-F"
       ]
     },
     "Compoundeyes": {
@@ -202,7 +208,9 @@
       "effect": "Raises the Pokémon’s accuracy by 30%.",
       "isNew": false,
       "pokemon": [
-        "Vivillon"
+        "Vivillon",
+        "Vivillon-Fancy",
+        "Vivillon-Pokeball"
       ]
     },
     "Contrary": {
@@ -230,7 +238,9 @@
       "effect": "When the Pokémon eats a Berry, it will regurgitate that Berry at the end of the next turn and eat it one more time.",
       "isNew": false,
       "pokemon": [
-        "Tauros",
+        "Tauros-Paldea-Aqua",
+        "Tauros-Paldea-Blaze",
+        "Tauros-Paldea-Combat",
         "Farigiraf"
       ]
     },
@@ -239,7 +249,7 @@
       "effect": "When the Pokémon is brought into battle, any stat alterations of allies are removed",
       "isNew": false,
       "pokemon": [
-        "Slowking"
+        "Slowking-Galar"
       ]
     },
     "Cursed Body": {
@@ -251,6 +261,7 @@
         "Banette",
         "Froslass",
         "Polteageist",
+        "Polteageist-Antique",
         "Dragapult"
       ]
     },
@@ -294,7 +305,8 @@
       "effect": "Once per battle, the Pokémon can withstand one damaging attack without receiving any damage. Damage inflicted through entry hazards, weather or status conditions will not break the disguise. Damage from Confusion will break the Disguise. It causes 1/8th of max Hit Point damage when it breaks",
       "isNew": false,
       "pokemon": [
-        "Mimikyu"
+        "Mimikyu",
+        "Mimikyu-Busted"
       ]
     },
     "Dragonize": {
@@ -433,6 +445,7 @@
       "pokemon": [
         "Ninetales",
         "Arcanine",
+        "Arcanine-Hisui",
         "Flareon",
         "Typhlosion",
         "Houndoom",
@@ -463,7 +476,10 @@
       "effect": "This Pokémon’ changes its form and type if Harsh Sunlight, Heavy Rain or Snow is in effect.",
       "isNew": false,
       "pokemon": [
-        "Castform"
+        "Castform",
+        "Castform-Rainy",
+        "Castform-Snowy",
+        "Castform-Sunny"
       ]
     },
     "Forewarn": {
@@ -480,7 +496,10 @@
       "isNew": false,
       "pokemon": [
         "Vivillon",
-        "Maushold"
+        "Vivillon-Fancy",
+        "Vivillon-Pokeball",
+        "Maushold",
+        "Maushold-Four"
       ]
     },
     "Frisk": {
@@ -489,10 +508,13 @@
       "isNew": false,
       "pokemon": [
         "Wigglytuff",
-        "Typhlosion",
+        "Typhlosion-Hisui",
         "Banette",
         "Trevenant",
         "Gourgeist",
+        "Gourgeist-Large",
+        "Gourgeist-Small",
+        "Gourgeist-Super",
         "Noivern",
         "Grimmsnarl",
         "Wyrdeer",
@@ -504,7 +526,7 @@
       "effect": "Halves the damage from physical moves onto this Pokémon.",
       "isNew": false,
       "pokemon": [
-        "Persian",
+        "Persian-Alola",
         "Furfrou"
       ]
     },
@@ -544,7 +566,8 @@
       "effect": "Lowers the opponent's Speed by one stage when it makes physical contact.",
       "isNew": false,
       "pokemon": [
-        "Goodra"
+        "Goodra",
+        "Goodra-Hisui"
       ]
     },
     "Grass Pelt": {
@@ -581,7 +604,8 @@
         "Heracross",
         "Luxray",
         "Conkeldurr",
-        "Squawkabilly"
+        "Squawkabilly",
+        "Squawkabilly-Blue"
       ]
     },
     "Harvest": {
@@ -609,7 +633,8 @@
       "effect": "Damage from Fire-type moves and the Burn status is halved.",
       "isNew": false,
       "pokemon": [
-        "Sinistcha"
+        "Sinistcha",
+        "Sinistcha-Masterpiece"
       ]
     },
     "Heavy Metal": {
@@ -625,7 +650,8 @@
       "effect": "Heals up to 25% of its partner Pokémon's Maximum Hit Points when it enters battle",
       "isNew": false,
       "pokemon": [
-        "Sinistcha"
+        "Sinistcha",
+        "Sinistcha-Masterpiece"
       ]
     },
     "Huge Power": {
@@ -644,7 +670,8 @@
       "effect": "The Pokémon changes its form, alternating between its Full Belly Mode and Hangry Mode after the end of each turn.",
       "isNew": false,
       "pokemon": [
-        "Morpeko"
+        "Morpeko",
+        "Morpeko-Hangry"
       ]
     },
     "Hustle": {
@@ -653,7 +680,10 @@
       "isNew": false,
       "pokemon": [
         "Flapple",
-        "Squawkabilly"
+        "Squawkabilly",
+        "Squawkabilly-Blue",
+        "Squawkabilly-White",
+        "Squawkabilly-Yellow"
       ]
     },
     "Hydration": {
@@ -685,6 +715,7 @@
         "Glaceon",
         "Vanilluxe",
         "Avalugg",
+        "Avalugg-Hisui",
         "Mr. Rime",
         "Baxcalibur"
       ]
@@ -703,7 +734,8 @@
       "effect": "When sent out into battle, it takes the name and appearance of the last non-fainted Pokémon within your party. It breaks when an attack does damage on the Pokémon but not from Weather Effects or Entry Hazards.",
       "isNew": false,
       "pokemon": [
-        "Zoroark"
+        "Zoroark",
+        "Zoroark-Hisui"
       ]
     },
     "Immunity": {
@@ -732,6 +764,7 @@
         "Chandelure",
         "Mega Chandelure",
         "Meowstic",
+        "Meowstic-F",
         "Malamar",
         "Noivern",
         "Dragapult"
@@ -772,6 +805,9 @@
         "Ariados",
         "Banette",
         "Gourgeist",
+        "Gourgeist-Large",
+        "Gourgeist-Small",
+        "Gourgeist-Super",
         "Scovillain"
       ]
     },
@@ -782,7 +818,11 @@
       "pokemon": [
         "Arbok",
         "Arcanine",
+        "Arcanine-Hisui",
         "Tauros",
+        "Tauros-Paldea-Aqua",
+        "Tauros-Paldea-Blaze",
+        "Tauros-Paldea-Combat",
         "Gyarados",
         "Qwilfish",
         "Mawile",
@@ -797,6 +837,9 @@
         "Wyrdeer",
         "Overqwil",
         "Squawkabilly",
+        "Squawkabilly-Blue",
+        "Squawkabilly-White",
+        "Squawkabilly-Yellow",
         "Mabosstiff"
       ]
     },
@@ -837,8 +880,10 @@
         "Sableye",
         "Watchog",
         "Meowstic",
+        "Meowstic-F",
         "Toucannon",
-        "Lycanroc"
+        "Lycanroc",
+        "Lycanroc-Midnight"
       ]
     },
     "Klutz": {
@@ -870,6 +915,11 @@
         "Mega Chimecho",
         "Mega Garchomp Z",
         "Rotom",
+        "Rotom-Fan",
+        "Rotom-Frost",
+        "Rotom-Heat",
+        "Rotom-Mow",
+        "Rotom-Wash",
         "Eelektross",
         "Hydreigon",
         "Mega Delphox"
@@ -1021,7 +1071,7 @@
       "effect": "Changes to Electric-type in Electric Terrain, Psychic-type in Psychic Terrain, Grass-type in Grassy Terrain and Fairy type in Fairy-terrain. The type reverts to normal when the terrain ends.",
       "isNew": false,
       "pokemon": [
-        "Stunfisk"
+        "Stunfisk-Galar"
       ]
     },
     "Minus": {
@@ -1030,7 +1080,7 @@
       "isNew": false,
       "pokemon": [
         "Manectric",
-        "Toxtricity"
+        "Toxtricity-Low-Key"
       ]
     },
     "Mirror Armor": {
@@ -1055,6 +1105,7 @@
         "Pangoro",
         "Hawlucha",
         "Basculegion",
+        "Basculegion-F",
         "Tinkaton"
       ]
     },
@@ -1129,7 +1180,7 @@
         "Machamp",
         "Golurk",
         "Mega Hawlucha",
-        "Lycanroc"
+        "Lycanroc-Midnight"
       ]
     },
     "Oblivious": {
@@ -1174,6 +1225,7 @@
         "Simisage",
         "Chesnaught",
         "Decidueye",
+        "Decidueye-Hisui",
         "Rillaboom",
         "Meowscarada"
       ]
@@ -1184,10 +1236,12 @@
       "isNew": false,
       "pokemon": [
         "Slowbro",
+        "Slowbro-Galar",
         "Slowking",
+        "Slowking-Galar",
         "Avalugg",
         "Mudsdale",
-        "Indeedee",
+        "Indeedee-F",
         "Tinkaton"
       ]
     },
@@ -1217,7 +1271,10 @@
       "pokemon": [
         "Diggersby",
         "Dedenne",
-        "Gourgeist"
+        "Gourgeist",
+        "Gourgeist-Large",
+        "Gourgeist-Small",
+        "Gourgeist-Super"
       ]
     },
     "Piercing Drill": {
@@ -1321,7 +1378,8 @@
       "effect": "Activates Psychic Terrain for 5 turns when the Pokémon enters a battle.",
       "isNew": false,
       "pokemon": [
-        "Indeedee"
+        "Indeedee",
+        "Indeedee-F"
       ]
     },
     "Punk Rock": {
@@ -1329,7 +1387,8 @@
       "effect": "Increases the damage of Sound based moves by 30%. Reduces damage taken by this Pokémon by Sound based moves by 50%.",
       "isNew": false,
       "pokemon": [
-        "Toxtricity"
+        "Toxtricity",
+        "Toxtricity-Low-Key"
       ]
     },
     "Pure Power": {
@@ -1362,7 +1421,7 @@
       "effect": "At the start of each turn, this Pokémon has a 30% chance of moving first in the Speed Priority Bracket",
       "isNew": false,
       "pokemon": [
-        "Slowbro"
+        "Slowbro-Galar"
       ]
     },
     "Quick Feet": {
@@ -1387,7 +1446,7 @@
       "effect": "Speed is raised by one stage when the Pokémon is hit by a Bug-type, Ghost-type or Dark-type move or is Intimidated",
       "isNew": false,
       "pokemon": [
-        "Persian"
+        "Persian-Alola"
       ]
     },
     "Receiver": {
@@ -1423,7 +1482,9 @@
       "isNew": false,
       "pokemon": [
         "Slowbro",
+        "Slowbro-Galar",
         "Slowking",
+        "Slowking-Galar",
         "Audino",
         "Reuniclus",
         "Mega Dragalge",
@@ -1454,7 +1515,7 @@
       "effect": "Does not receive recoil damage from recoil-causing damages.",
       "isNew": false,
       "pokemon": [
-        "Arcanine",
+        "Arcanine-Hisui",
         "Aerodactyl",
         "Steelix",
         "Aggron",
@@ -1538,6 +1599,7 @@
         "Azumarill",
         "Gogoat",
         "Goodra",
+        "Goodra-Hisui",
         "Drampa",
         "Wyrdeer",
         "Farigiraf"
@@ -1551,7 +1613,7 @@
         "Kangaskhan",
         "Mega Lopunny",
         "Pangoro",
-        "Decidueye",
+        "Decidueye-Hisui",
         "Sirfetch'd"
       ]
     },
@@ -1586,7 +1648,7 @@
       "pokemon": [
         "Mega Absol Z",
         "Gallade",
-        "Samurott",
+        "Samurott-Hisui",
         "Kleavor"
       ]
     },
@@ -1614,7 +1676,8 @@
         "Conkeldurr",
         "Toucannon",
         "Kleavor",
-        "Squawkabilly"
+        "Squawkabilly-White",
+        "Squawkabilly-Yellow"
       ]
     },
     "Shell Armor": {
@@ -1627,7 +1690,7 @@
         "Torterra",
         "Samurott",
         "Mega Scolipede",
-        "Goodra"
+        "Goodra-Hisui"
       ]
     },
     "Shield Dust": {
@@ -1635,7 +1698,9 @@
       "effect": "Damaging moves used by the opponent will not have an additional effect.",
       "isNew": false,
       "pokemon": [
-        "Vivillon"
+        "Vivillon",
+        "Vivillon-Fancy",
+        "Vivillon-Pokeball"
       ]
     },
     "Skill Link": {
@@ -1671,7 +1736,7 @@
       "effect": "Raises the Pokémon’s evasion during a Snowstorm by one level.",
       "isNew": false,
       "pokemon": [
-        "Ninetales",
+        "Ninetales-Alola",
         "Glaceon",
         "Mamoswine",
         "Froslass",
@@ -1683,7 +1748,7 @@
       "effect": "Snowstorm blows when the Pokémon enters battle. As of X & Y, this lasts 5 turns.",
       "isNew": false,
       "pokemon": [
-        "Ninetales",
+        "Ninetales-Alola",
         "Abomasnow",
         "Mega Abomasnow",
         "Mega Froslass",
@@ -1842,7 +1907,7 @@
       "pokemon": [
         "Mega Sharpedo",
         "Tyrantrum",
-        "Avalugg"
+        "Avalugg-Hisui"
       ]
     },
     "Sturdy": {
@@ -1856,6 +1921,7 @@
         "Aggron",
         "Bastiodon",
         "Avalugg",
+        "Avalugg-Hisui",
         "Garganacl",
         "Archaludon"
       ]
@@ -1897,7 +1963,7 @@
       "effect": "Doubles the Pokémon's Speed stat on Electric Terrain.",
       "isNew": false,
       "pokemon": [
-        "Raichu"
+        "Raichu-Alola"
       ]
     },
     "Swarm": {
@@ -1933,6 +1999,7 @@
         "Mega Swampert",
         "Beartic",
         "Basculegion",
+        "Basculegion-F",
         "Overqwil"
       ]
     },
@@ -1956,7 +2023,8 @@
         "Umbreon",
         "Gardevoir",
         "Musharna",
-        "Indeedee"
+        "Indeedee",
+        "Indeedee-F"
       ]
     },
     "Tangled Feet": {
@@ -1974,13 +2042,16 @@
       "isNew": false,
       "pokemon": [
         "Persian",
+        "Persian-Alola",
         "Mr. Mime",
         "Scizor",
         "Mega Scizor",
         "Roserade",
         "Toxtricity",
+        "Toxtricity-Low-Key",
         "Grapploct",
-        "Maushold"
+        "Maushold",
+        "Maushold-Four"
       ]
     },
     "Telepathy": {
@@ -2026,6 +2097,7 @@
         "Swampert",
         "Empoleon",
         "Samurott",
+        "Samurott-Hisui",
         "Simipour",
         "Greninja",
         "Primarina",
@@ -2043,7 +2115,7 @@
         "Mega Metagross",
         "Barbaracle",
         "Mega Barbaracle",
-        "Lycanroc",
+        "Lycanroc-Dusk",
         "Mega Golisopod",
         "Perrserker"
       ]
@@ -2115,7 +2187,7 @@
       "effect": "The Pokémon cannot be Asleep while having this ability.",
       "isNew": false,
       "pokemon": [
-        "Lycanroc",
+        "Lycanroc-Midnight",
         "Annihilape"
       ]
     },
@@ -2163,6 +2235,7 @@
         "Garbodor",
         "Vanilluxe",
         "Polteageist",
+        "Polteageist-Antique",
         "Armarouge",
         "Ceruledge"
       ]
@@ -2180,7 +2253,8 @@
       "effect": "The Pokémon transforms into its Hero Form when it switches out.",
       "isNew": false,
       "pokemon": [
-        "Palafin"
+        "Palafin",
+        "Palafin-Hero"
       ]
     }
   }

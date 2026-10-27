@@ -162,8 +162,9 @@ server.registerTool(
   {
     title: 'Look up a Pokémon (Pokémon Champions)',
     description:
-      'Look up a Pokémon by name (Mega forms accepted, e.g. "Staraptor-Mega" or "Mega ' +
-      'Staraptor") in Pokémon Champions: returns base stats, typing, abilities, and weight. ' +
+      'Look up a Pokémon or one of its forms by name, in either spelling ("Mega Staraptor" / ' +
+      '"Staraptor-Mega", "Alolan Ninetales" / "Ninetales-Alola", "Indeedee-F", "Rotom-Wash") ' +
+      'in Pokémon Champions: returns base stats, typing, abilities, and weight. ' +
       'Data comes from the Champions Pokédex (Serebii), including game-original Mega ' +
       'Evolutions (e.g. Mega Staraptor has Contrary). Also ' +
       'returns the Pokémon\'s full learnable movelist ("moves"). ' +
@@ -548,7 +549,8 @@ server.registerTool(
     description:
       `List the Pokémon legal in a Pokémon Champions regulation (e.g. "${CURRENT_REGULATION}") ` +
       '— the regulation\'s ' +
-      'legal pool — each enriched with its National Dex number, typing, base stats, and ' +
+      'legal pool, every form as its own entry (Megas, regional forms, Rotom-Wash, ...) — ' +
+      'each enriched with its National Dex number, typing, base stats, and ' +
       'abilities from the Champions dex. Optionally filter by name substring or by type (e.g. ' +
       `"Dragon"). Answers "what Fairy types are legal in ${CURRENT_REGULATION_LABEL}?" or ` +
       `"show me the ${CURRENT_REGULATION_LABEL} roster". ` +

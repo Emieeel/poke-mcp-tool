@@ -587,22 +587,6 @@ export interface DefensiveProfile {
   abilityNotes?: string[];
   /** Multipliers that differ from the typing-only profile, e.g. "Fire 4x -> 2x". */
   differsFromTyping?: string[];
-  /** Set when the typing itself is suspect (see MERGED_FORM_WARNING). */
-  warning?: string;
-}
-
-// A Pokémon can only ever have two types. A longer list means the Champions dex entry lumped
-// several forms' typings together (the scraper does this for a handful of species with regional
-// forms, e.g. Rotom, Slowbro, Tauros), so a profile built from it describes no single form. Say
-// so loudly rather than emitting a confident, wrong table.
-const MERGED_FORM_WARNING =
-  'This dex entry lists more than two types, which means it merges several of the species\' ' +
-  'forms (regional/alternate) into one entry. The multipliers below combine ALL of those types, ' +
-  'so they do not describe any single form — look up the specific form, or treat this as ' +
-  'unreliable.';
-
-function mergedFormWarning(types: string[]): string | undefined {
-  return types.length > 2 ? MERGED_FORM_WARNING : undefined;
 }
 
 /**
@@ -672,7 +656,6 @@ export function defensiveProfile(
     summary,
     abilityNotes: abilityNotes.length ? abilityNotes : undefined,
     differsFromTyping: differsFromTyping.length ? differsFromTyping : undefined,
-    warning: mergedFormWarning(types),
   };
 }
 

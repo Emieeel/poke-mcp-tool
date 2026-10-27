@@ -20,6 +20,8 @@ interface RawForm {
   abilities: string[];
   baseStats: { hp: number; atk: number; def: number; spa: number; spd: number; spe: number };
   weightkg: number | null;
+  /** The form's own learnset when it differs from the species' (regional forms, Rotom, ...). */
+  moves?: string[];
 }
 interface RawEntry {
   slug: string;
@@ -41,7 +43,7 @@ export interface PokemonInfo {
   baseStats: { hp: number; atk: number; def: number; spa: number; spd: number; spe: number };
   abilities: string[];
   weightkg: number | null;
-  /** Full learnable movelist in Champions (shared across the species' forms). */
+  /** This form's Champions learnset. */
   moves: string[];
   source: 'champions-dex' | 'smogon-calc';
   /** Other forms of this species available in Champions (names only), for discoverability. */
@@ -84,31 +86,45 @@ export function championsDexMeta(): RawDex['meta'] | null {
   return idx ? idx.meta : null;
 }
 
+function toInfo(entry: RawEntry, form: RawForm): PokemonInfo {
+  return {
+    name: form.name,
+    baseSpecies: form.name !== entry.name ? entry.name : undefined,
+    num: entry.num,
+    types: form.types,
+    baseStats: form.baseStats,
+    abilities: form.abilities,
+    weightkg: form.weightkg,
+    moves: form.moves ?? entry.moves ?? [],
+    source: 'champions-dex',
+    otherForms: entry.forms.length > 1 ? entry.forms.map((f) => f.name) : undefined,
+  };
+}
+
 /**
- * Look up a Pokémon (including Mega forms like "Staraptor-Mega" / "Mega Staraptor") in the
- * Champions dex; fall back to @smogon/calc's bundled dex if not found there.
+ * Look up a Pokémon in the Champions dex, by any common spelling of its form ("Mega Raichu X",
+ * "Raichu-Mega-X", "Alolan Ninetales", "Ninetales-Alola", "Indeedee-F"); fall back to the
+ * engine's Champions dex if not found there.
  */
 export function getPokemonInfo(name: string): PokemonInfo | null {
-  const idx = loadIndex();
-  if (idx) {
-    const hit = idx.byKey.get(nameKey(name));
-    if (hit) {
-      const { entry, form } = hit;
-      return {
-        name: form.name,
-        baseSpecies: form.name !== entry.name ? entry.name : undefined,
-        num: entry.num,
-        types: form.types,
-        baseStats: form.baseStats,
-        abilities: form.abilities,
-        weightkg: form.weightkg,
-        moves: entry.moves ?? [],
-        source: 'champions-dex',
-        otherForms: entry.forms.length > 1 ? entry.forms.map((f) => f.name) : undefined,
-      };
-    }
-  }
-  return getFromSmogon(name);
+  const hit = loadIndex()?.byKey.get(nameKey(name));
+  return hit ? toInfo(hit.entry, hit.form) : getFromSmogon(name);
+}
+
+/** Every form of the species `name` belongs to (base form first, then Megas, then the rest). */
+export function getSpeciesForms(name: string): PokemonInfo[] {
+  const hit = loadIndex()?.byKey.get(nameKey(name));
+  return hit ? hit.entry.forms.map((form) => toInfo(hit.entry, form)) : [];
+}
+
+/** The distinct learnsets of a species: its base form plus each form with a learnset of its own. */
+export function getSpeciesLearnsets(name: string): { name: string; num: number | null; moves: string[] }[] {
+  const hit = loadIndex()?.byKey.get(nameKey(name));
+  if (!hit) return [];
+  const { entry } = hit;
+  return entry.forms
+    .filter((form, i) => i === 0 || form.moves)
+    .map((form) => ({ name: form.name, num: entry.num, moves: form.moves ?? entry.moves ?? [] }));
 }
 
 // Fallback: the engine's Champions dex (@smogon/calc gen 0), which has no learnsets.
@@ -132,9 +148,8 @@ function getFromSmogon(name: string): PokemonInfo | null {
   };
 }
 
-/** A Pokémon's full learnable movelist in Champions, or null if not in the dex. */
+/** A Pokémon's Champions learnset, or null if not in the dex. */
 export function getPokemonMoves(name: string): string[] | null {
-  const idx = loadIndex();
-  const hit = idx?.byKey.get(nameKey(name));
-  return hit ? hit.entry.moves ?? [] : null;
+  const hit = loadIndex()?.byKey.get(nameKey(name));
+  return hit ? hit.form.moves ?? hit.entry.moves ?? [] : null;
 }

@@ -17,7 +17,7 @@
  */
 import { toID } from '@smogon/calc';
 import { gen } from './calc.js';
-import { getPokemonInfo } from './dex.js';
+import { getSpeciesLearnsets } from './dex.js';
 import { championsMoveNumbers } from './movedata.js';
 import { loadRegulation, type Regulation } from './regulations.js';
 
@@ -42,8 +42,9 @@ export function getMoveMeta(name: string): MoveMeta | undefined {
 }
 
 /**
- * The legal Pokémon pool for a regulation, each with its Champions learnset and dex number.
- * Skips entries we can't resolve in the dex (reported via the returned `unresolved` list).
+ * The legal Pokémon pool for a regulation, each with its Champions learnset and dex number: one
+ * entry per species, plus one per form with a learnset of its own (Ninetales-Alola, Rotom-Wash,
+ * ...). Skips entries we can't resolve in the dex (reported via the returned `unresolved` list).
  */
 function legalPool(reg: Regulation): {
   pool: { name: string; num: number | null; moves: string[] }[];
@@ -52,13 +53,10 @@ function legalPool(reg: Regulation): {
   const pool: { name: string; num: number | null; moves: string[] }[] = [];
   const unresolved: string[] = [];
   for (const entry of reg.legalPokemon) {
-    const info = getPokemonInfo(entry.name);
-    // Only the Champions dex carries learnsets; the @smogon/calc fallback returns moves: [].
-    if (info && info.source === 'champions-dex') {
-      pool.push({ name: info.name, num: info.num ?? null, moves: info.moves });
-    } else {
-      unresolved.push(entry.name);
-    }
+    // Only the Champions dex carries learnsets.
+    const learnsets = getSpeciesLearnsets(entry.name);
+    if (learnsets.length) pool.push(...learnsets);
+    else unresolved.push(entry.name);
   }
   return { pool, unresolved };
 }

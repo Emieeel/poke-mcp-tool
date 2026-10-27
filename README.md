@@ -90,13 +90,13 @@ plan, or one connector on Free) or as a remote MCP server in Cursor. Config live
 | --- | --- |
 | `calculate_damage` | "Does my Mystic Water Blastoise OHKO that Garchomp?" — full damage/percent range, hits-to-KO, and the human-readable calc string. Runs on @smogon/calc's Pokémon Champions mode: the Champions roster (Champions-only Megas like Mega Eelektross included), rebalanced moves (Snipe Shot 85 BP, ...), Champions-only abilities (Mega Sol, Dragonize, Aura Guard, ...) and Stat Points. Species outside the Champions Pokédex are rejected. Handles items, weather, terrain, crits (pass `isCrit` for a critical hit; Sniper and screen-ignoring included), multi-hit, and Doubles spread reduction. Every result also reports **how effective the hit was**, in the game's own words (`It's super effective!`). |
 | `type_effectiveness` | The multiplier (0–4x) of an attacking type against 1–2 defending types. |
-| `get_pokemon` | Base stats, typing, abilities, weight, and full **movelist** for a Pokémon (Mega forms accepted, e.g. `Staraptor-Mega`, `Mega Staraptor`, `Mega Raichu X`). Always includes a **`defensiveProfile`**: all 18 attacking types with their multipliers, split into weaknesses / resistances / immunities, plus a table per ability that changes damage taken (Levitate, Thick Fat, Heatproof, …). Pass a `regulation` id to also get legality and regulation-legal moves. |
+| `get_pokemon` | Base stats, typing, abilities, weight, and full **movelist** for a Pokémon or any of its forms, by either spelling (`Mega Raichu X` / `Raichu-Mega-X`, `Alolan Ninetales` / `Ninetales-Alola`, `Indeedee-F`, `Rotom-Wash`). Always includes a **`defensiveProfile`**: all 18 attacking types with their multipliers, split into weaknesses / resistances / immunities, plus a table per ability that changes damage taken (Levitate, Thick Fat, Heatproof, …). Pass a `regulation` id to also get legality and regulation-legal moves. |
 | `get_item` | Effect, how-to-obtain, and category (Hold Item / Mega Stone / Berry) for a held item, e.g. `Choice Scarf`, `Garchompite`, `Lum Berry`. Pass a `regulation` id to also check legality. |
 | `list_items` | Browse the held-item catalog, optionally filtered by `category` or a `nameContains` substring (held-only by default; `includeNonHeld` adds tickets). Pass a `regulation` id to mark which items are legal. |
 | `check_legality` | Whether a Pokémon — and optionally listed moves and/or held `items` — is legal in a regulation. |
 | `find_pokemon_by_move` | "Who can run Fake Out in M-C?" — every Pokémon legal in a regulation that can learn a given move, with the move's type/category/base power. Name-tolerant (`willowisp` → Will-O-Wisp). Defaults to `m-c`. |
 | `list_legal_moves` | The pool of moves usable in a regulation (everything learnable by at least one legal Pokémon), each with type, category, base power, and how many Pokémon learn it. Filter by `type`, `category`, or a `nameContains` substring. Defaults to `m-c`. |
-| `list_legal_pokemon` | The regulation's legal roster, each with its dex number, typing, base stats, and abilities. Filter by `type` (e.g. `Dragon`) or a `nameContains` substring. The complement to `list_legal_moves`. Defaults to `m-c`. |
+| `list_legal_pokemon` | The regulation's legal roster, every form as its own entry (Megas, regional forms, Rotom-Wash, …), each with its dex number, typing, base stats, and abilities. Filter by `type` (e.g. `Dragon`) or a `nameContains` substring. The complement to `list_legal_moves`. Defaults to `m-c`. |
 | `get_move` | A move as it works in Champions: type, category, power, accuracy, PP, the in-game description, target and flags (contact, slicing, …), plus **what Champions changed from Scarlet/Violet** (`Base power 80 -> 85`) and the changed status rules for what it inflicts (paralysis is 12.5% in Champions). |
 | `get_ability` | An ability's Champions description, whether it's new in Champions (Mega Sol, Aura Guard, …), and which Pokémon can have it — optionally only those legal in a regulation. |
 | `list_regulations` | Which regulations are available locally, with each one's metadata and counts. |
@@ -109,9 +109,10 @@ in their output rather than hiding:
 - **There are no per-move bans.** A move is "legal" if a legal Pokémon can learn it, so
   `list_legal_moves` is really the pool of learnable moves — and a move with no legal learners
   (e.g. Spore in M-C) shows up as unusable.
-- **Mega legality follows the base species.** `check_legality("Mega Staraptor")` resolves via
-  Staraptor, unless that specific Mega is separately excluded — M-B dropped Mega Garchomp Z and
-  Mega Lucario Z, both of which M-C enables. M-C excludes none.
+- **Forms follow the base species.** Every form — Megas, regional forms (Alolan Ninetales),
+  Rotom-Wash, Indeedee-F, … — is legal when its species is, unless that specific form is
+  separately excluded: M-B dropped Mega Garchomp Z and Mega Lucario Z, both of which M-C
+  enables. M-C excludes none. Each form has its own typing, stats, abilities and learnset.
 - **The current regulation is `m-c`** (Sept 9 – Dec 2, 2026), and it's the default for every
   regulation-scoped tool. Earlier regulations stay queryable by passing their id (`m-b`); their
   files are frozen snapshots of what was legal then.
@@ -127,10 +128,6 @@ in their output rather than hiding:
   suite compares the two and lists every known disagreement (e.g. Growth is Grass-type in
   Champions, the engine still says Normal), so a patch that lands on one side first shows up as
   a failing test.
-- **Nine dex entries merge regional forms.** The dex scraper lumps some multi-form species
-  (Rotom, Slowbro, Slowking, Tauros, Ninetales, Castform, Zoroark, Stunfisk, Decidueye) into one
-  entry with more than two types. `get_pokemon` output derived from that typing carries an
-  explicit warning; damage calcs are unaffected, since they take typing from the engine.
 
 ## Refreshing the data
 
