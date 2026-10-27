@@ -1,0 +1,1243 @@
+{
+  "meta": {
+    "id": "m-c",
+    "name": "Regulation M-C",
+    "game": "Pokémon Champions",
+    "validFrom": "2026-09-09",
+    "validTo": "2026-12-02",
+    "source": "https://www.serebii.net/pokemonchampions/rankedbattle/regulationm-c.shtml",
+    "rosterSource": "https://www.serebii.net/pokedex-champions/",
+    "itemSource": "https://www.serebii.net/pokemonchampions/items.shtml",
+    "scrapedAt": "2026-09-09T13:13:24.075Z",
+    "listScope": "full-roster",
+    "newlyUseable": [
+      "Wigglytuff",
+      "Persian",
+      "Farfetch'd",
+      "Mr. Mime",
+      "Swalot",
+      "Mega Absol Z",
+      "Salamence",
+      "Mega Salamence",
+      "Mega Garchomp Z",
+      "Mega Lucario Z",
+      "Gogoat",
+      "Golisopod",
+      "Mega Golisopod",
+      "Rillaboom",
+      "Cinderace",
+      "Inteleon",
+      "Thievul",
+      "Toxtricity",
+      "Grapploct",
+      "Perrserker",
+      "Sirfetch'd",
+      "Pincurchin",
+      "Indeedee",
+      "Pawmot",
+      "Arboliva",
+      "Squawkabilly",
+      "Mabosstiff",
+      "Baxcalibur",
+      "Mega Baxcalibur"
+    ]
+  },
+  "legalPokemon": [
+    {
+      "name": "Venusaur"
+    },
+    {
+      "name": "Charizard"
+    },
+    {
+      "name": "Blastoise"
+    },
+    {
+      "name": "Beedrill"
+    },
+    {
+      "name": "Pidgeot"
+    },
+    {
+      "name": "Arbok"
+    },
+    {
+      "name": "Pikachu"
+    },
+    {
+      "name": "Raichu"
+    },
+    {
+      "name": "Clefable"
+    },
+    {
+      "name": "Ninetales"
+    },
+    {
+      "name": "Wigglytuff"
+    },
+    {
+      "name": "Vileplume"
+    },
+    {
+      "name": "Persian"
+    },
+    {
+      "name": "Arcanine"
+    },
+    {
+      "name": "Alakazam"
+    },
+    {
+      "name": "Machamp"
+    },
+    {
+      "name": "Victreebel"
+    },
+    {
+      "name": "Slowbro"
+    },
+    {
+      "name": "Farfetch'd"
+    },
+    {
+      "name": "Gengar"
+    },
+    {
+      "name": "Kangaskhan"
+    },
+    {
+      "name": "Starmie"
+    },
+    {
+      "name": "Mr. Mime"
+    },
+    {
+      "name": "Pinsir"
+    },
+    {
+      "name": "Tauros"
+    },
+    {
+      "name": "Gyarados"
+    },
+    {
+      "name": "Ditto"
+    },
+    {
+      "name": "Vaporeon"
+    },
+    {
+      "name": "Jolteon"
+    },
+    {
+      "name": "Flareon"
+    },
+    {
+      "name": "Aerodactyl"
+    },
+    {
+      "name": "Snorlax"
+    },
+    {
+      "name": "Dragonite"
+    },
+    {
+      "name": "Meganium"
+    },
+    {
+      "name": "Typhlosion"
+    },
+    {
+      "name": "Feraligatr"
+    },
+    {
+      "name": "Ariados"
+    },
+    {
+      "name": "Ampharos"
+    },
+    {
+      "name": "Azumarill"
+    },
+    {
+      "name": "Politoed"
+    },
+    {
+      "name": "Espeon"
+    },
+    {
+      "name": "Umbreon"
+    },
+    {
+      "name": "Slowking"
+    },
+    {
+      "name": "Forretress"
+    },
+    {
+      "name": "Steelix"
+    },
+    {
+      "name": "Qwilfish"
+    },
+    {
+      "name": "Scizor"
+    },
+    {
+      "name": "Heracross"
+    },
+    {
+      "name": "Skarmory"
+    },
+    {
+      "name": "Houndoom"
+    },
+    {
+      "name": "Tyranitar"
+    },
+    {
+      "name": "Sceptile"
+    },
+    {
+      "name": "Blaziken"
+    },
+    {
+      "name": "Swampert"
+    },
+    {
+      "name": "Pelipper"
+    },
+    {
+      "name": "Gardevoir"
+    },
+    {
+      "name": "Sableye"
+    },
+    {
+      "name": "Mawile"
+    },
+    {
+      "name": "Aggron"
+    },
+    {
+      "name": "Medicham"
+    },
+    {
+      "name": "Manectric"
+    },
+    {
+      "name": "Swalot"
+    },
+    {
+      "name": "Sharpedo"
+    },
+    {
+      "name": "Camerupt"
+    },
+    {
+      "name": "Torkoal"
+    },
+    {
+      "name": "Altaria"
+    },
+    {
+      "name": "Milotic"
+    },
+    {
+      "name": "Castform"
+    },
+    {
+      "name": "Banette"
+    },
+    {
+      "name": "Chimecho"
+    },
+    {
+      "name": "Absol"
+    },
+    {
+      "name": "Glalie"
+    },
+    {
+      "name": "Salamence"
+    },
+    {
+      "name": "Metagross"
+    },
+    {
+      "name": "Torterra"
+    },
+    {
+      "name": "Infernape"
+    },
+    {
+      "name": "Empoleon"
+    },
+    {
+      "name": "Staraptor"
+    },
+    {
+      "name": "Luxray"
+    },
+    {
+      "name": "Roserade"
+    },
+    {
+      "name": "Rampardos"
+    },
+    {
+      "name": "Bastiodon"
+    },
+    {
+      "name": "Lopunny"
+    },
+    {
+      "name": "Spiritomb"
+    },
+    {
+      "name": "Garchomp"
+    },
+    {
+      "name": "Lucario"
+    },
+    {
+      "name": "Hippowdon"
+    },
+    {
+      "name": "Toxicroak"
+    },
+    {
+      "name": "Abomasnow"
+    },
+    {
+      "name": "Weavile"
+    },
+    {
+      "name": "Rhyperior"
+    },
+    {
+      "name": "Leafeon"
+    },
+    {
+      "name": "Glaceon"
+    },
+    {
+      "name": "Gliscor"
+    },
+    {
+      "name": "Mamoswine"
+    },
+    {
+      "name": "Gallade"
+    },
+    {
+      "name": "Froslass"
+    },
+    {
+      "name": "Rotom"
+    },
+    {
+      "name": "Serperior"
+    },
+    {
+      "name": "Emboar"
+    },
+    {
+      "name": "Samurott"
+    },
+    {
+      "name": "Watchog"
+    },
+    {
+      "name": "Liepard"
+    },
+    {
+      "name": "Simisage"
+    },
+    {
+      "name": "Simisear"
+    },
+    {
+      "name": "Simipour"
+    },
+    {
+      "name": "Musharna"
+    },
+    {
+      "name": "Excadrill"
+    },
+    {
+      "name": "Audino"
+    },
+    {
+      "name": "Conkeldurr"
+    },
+    {
+      "name": "Scolipede"
+    },
+    {
+      "name": "Whimsicott"
+    },
+    {
+      "name": "Krookodile"
+    },
+    {
+      "name": "Scrafty"
+    },
+    {
+      "name": "Cofagrigus"
+    },
+    {
+      "name": "Garbodor"
+    },
+    {
+      "name": "Zoroark"
+    },
+    {
+      "name": "Reuniclus"
+    },
+    {
+      "name": "Vanilluxe"
+    },
+    {
+      "name": "Emolga"
+    },
+    {
+      "name": "Eelektross"
+    },
+    {
+      "name": "Chandelure"
+    },
+    {
+      "name": "Beartic"
+    },
+    {
+      "name": "Stunfisk"
+    },
+    {
+      "name": "Golurk"
+    },
+    {
+      "name": "Hydreigon"
+    },
+    {
+      "name": "Volcarona"
+    },
+    {
+      "name": "Chesnaught"
+    },
+    {
+      "name": "Delphox"
+    },
+    {
+      "name": "Greninja"
+    },
+    {
+      "name": "Diggersby"
+    },
+    {
+      "name": "Talonflame"
+    },
+    {
+      "name": "Vivillon"
+    },
+    {
+      "name": "Pyroar"
+    },
+    {
+      "name": "Floette"
+    },
+    {
+      "name": "Florges"
+    },
+    {
+      "name": "Gogoat"
+    },
+    {
+      "name": "Pangoro"
+    },
+    {
+      "name": "Furfrou"
+    },
+    {
+      "name": "Meowstic"
+    },
+    {
+      "name": "Aegislash"
+    },
+    {
+      "name": "Aromatisse"
+    },
+    {
+      "name": "Slurpuff"
+    },
+    {
+      "name": "Malamar"
+    },
+    {
+      "name": "Barbaracle"
+    },
+    {
+      "name": "Dragalge"
+    },
+    {
+      "name": "Clawitzer"
+    },
+    {
+      "name": "Heliolisk"
+    },
+    {
+      "name": "Tyrantrum"
+    },
+    {
+      "name": "Aurorus"
+    },
+    {
+      "name": "Sylveon"
+    },
+    {
+      "name": "Hawlucha"
+    },
+    {
+      "name": "Dedenne"
+    },
+    {
+      "name": "Goodra"
+    },
+    {
+      "name": "Klefki"
+    },
+    {
+      "name": "Trevenant"
+    },
+    {
+      "name": "Gourgeist"
+    },
+    {
+      "name": "Avalugg"
+    },
+    {
+      "name": "Noivern"
+    },
+    {
+      "name": "Decidueye"
+    },
+    {
+      "name": "Incineroar"
+    },
+    {
+      "name": "Primarina"
+    },
+    {
+      "name": "Toucannon"
+    },
+    {
+      "name": "Crabominable"
+    },
+    {
+      "name": "Lycanroc"
+    },
+    {
+      "name": "Toxapex"
+    },
+    {
+      "name": "Mudsdale"
+    },
+    {
+      "name": "Araquanid"
+    },
+    {
+      "name": "Salazzle"
+    },
+    {
+      "name": "Tsareena"
+    },
+    {
+      "name": "Oranguru"
+    },
+    {
+      "name": "Passimian"
+    },
+    {
+      "name": "Golisopod"
+    },
+    {
+      "name": "Mimikyu"
+    },
+    {
+      "name": "Drampa"
+    },
+    {
+      "name": "Kommo-o"
+    },
+    {
+      "name": "Rillaboom"
+    },
+    {
+      "name": "Cinderace"
+    },
+    {
+      "name": "Inteleon"
+    },
+    {
+      "name": "Corviknight"
+    },
+    {
+      "name": "Thievul"
+    },
+    {
+      "name": "Flapple"
+    },
+    {
+      "name": "Appletun"
+    },
+    {
+      "name": "Sandaconda"
+    },
+    {
+      "name": "Toxtricity"
+    },
+    {
+      "name": "Grapploct"
+    },
+    {
+      "name": "Polteageist"
+    },
+    {
+      "name": "Hatterene"
+    },
+    {
+      "name": "Grimmsnarl"
+    },
+    {
+      "name": "Perrserker"
+    },
+    {
+      "name": "Sirfetch'd"
+    },
+    {
+      "name": "Mr. Rime"
+    },
+    {
+      "name": "Runerigus"
+    },
+    {
+      "name": "Alcremie"
+    },
+    {
+      "name": "Falinks"
+    },
+    {
+      "name": "Pincurchin"
+    },
+    {
+      "name": "Indeedee"
+    },
+    {
+      "name": "Morpeko"
+    },
+    {
+      "name": "Dragapult"
+    },
+    {
+      "name": "Wyrdeer"
+    },
+    {
+      "name": "Kleavor"
+    },
+    {
+      "name": "Basculegion"
+    },
+    {
+      "name": "Sneasler"
+    },
+    {
+      "name": "Overqwil"
+    },
+    {
+      "name": "Meowscarada"
+    },
+    {
+      "name": "Skeledirge"
+    },
+    {
+      "name": "Quaquaval"
+    },
+    {
+      "name": "Pawmot"
+    },
+    {
+      "name": "Maushold"
+    },
+    {
+      "name": "Arboliva"
+    },
+    {
+      "name": "Squawkabilly"
+    },
+    {
+      "name": "Garganacl"
+    },
+    {
+      "name": "Armarouge"
+    },
+    {
+      "name": "Ceruledge"
+    },
+    {
+      "name": "Bellibolt"
+    },
+    {
+      "name": "Mabosstiff"
+    },
+    {
+      "name": "Scovillain"
+    },
+    {
+      "name": "Espathra"
+    },
+    {
+      "name": "Tinkaton"
+    },
+    {
+      "name": "Palafin"
+    },
+    {
+      "name": "Orthworm"
+    },
+    {
+      "name": "Glimmora"
+    },
+    {
+      "name": "Houndstone"
+    },
+    {
+      "name": "Annihilape"
+    },
+    {
+      "name": "Farigiraf"
+    },
+    {
+      "name": "Kingambit"
+    },
+    {
+      "name": "Baxcalibur"
+    },
+    {
+      "name": "Gholdengo"
+    },
+    {
+      "name": "Sinistcha"
+    },
+    {
+      "name": "Archaludon"
+    },
+    {
+      "name": "Hydrapple"
+    }
+  ],
+  "legalItems": [
+    {
+      "name": "Air Balloon"
+    },
+    {
+      "name": "Big Root"
+    },
+    {
+      "name": "Binding Band"
+    },
+    {
+      "name": "Black Belt"
+    },
+    {
+      "name": "Black Glasses"
+    },
+    {
+      "name": "Bright Powder"
+    },
+    {
+      "name": "Charcoal"
+    },
+    {
+      "name": "Choice Scarf"
+    },
+    {
+      "name": "Damp Rock"
+    },
+    {
+      "name": "Dragon Fang"
+    },
+    {
+      "name": "Eject Button"
+    },
+    {
+      "name": "Electric Seed"
+    },
+    {
+      "name": "Expert Belt"
+    },
+    {
+      "name": "Fairy Feather"
+    },
+    {
+      "name": "Focus Band"
+    },
+    {
+      "name": "Focus Sash"
+    },
+    {
+      "name": "Grassy Seed"
+    },
+    {
+      "name": "Hard Stone"
+    },
+    {
+      "name": "Heat Rock"
+    },
+    {
+      "name": "Icy Rock"
+    },
+    {
+      "name": "Iron Ball"
+    },
+    {
+      "name": "King's Rock"
+    },
+    {
+      "name": "Leek"
+    },
+    {
+      "name": "Leftovers"
+    },
+    {
+      "name": "Life Orb"
+    },
+    {
+      "name": "Light Ball"
+    },
+    {
+      "name": "Light Clay"
+    },
+    {
+      "name": "Magnet"
+    },
+    {
+      "name": "Mental Herb"
+    },
+    {
+      "name": "Metal Coat"
+    },
+    {
+      "name": "Metronome"
+    },
+    {
+      "name": "Miracle Seed"
+    },
+    {
+      "name": "Misty Seed"
+    },
+    {
+      "name": "Muscle Band"
+    },
+    {
+      "name": "Mystic Water"
+    },
+    {
+      "name": "Never-Melt Ice"
+    },
+    {
+      "name": "Normal Gem"
+    },
+    {
+      "name": "Poison Barb"
+    },
+    {
+      "name": "Psychic Seed"
+    },
+    {
+      "name": "Quick Claw"
+    },
+    {
+      "name": "Red Card"
+    },
+    {
+      "name": "Rocky Helmet"
+    },
+    {
+      "name": "Scope Lens"
+    },
+    {
+      "name": "Sharp Beak"
+    },
+    {
+      "name": "Shed Shell"
+    },
+    {
+      "name": "Shell Bell"
+    },
+    {
+      "name": "Silk Scarf"
+    },
+    {
+      "name": "Silver Powder"
+    },
+    {
+      "name": "Smooth Rock"
+    },
+    {
+      "name": "Soft Sand"
+    },
+    {
+      "name": "Spell Tag"
+    },
+    {
+      "name": "Terrain Extender"
+    },
+    {
+      "name": "Twisted Spoon"
+    },
+    {
+      "name": "White Herb"
+    },
+    {
+      "name": "Wide Lens"
+    },
+    {
+      "name": "Wise Glasses"
+    },
+    {
+      "name": "Zoom Lens"
+    },
+    {
+      "name": "Abomasite"
+    },
+    {
+      "name": "Absolite"
+    },
+    {
+      "name": "Absolite Z"
+    },
+    {
+      "name": "Aerodactylite"
+    },
+    {
+      "name": "Aggronite"
+    },
+    {
+      "name": "Alakazite"
+    },
+    {
+      "name": "Altarianite"
+    },
+    {
+      "name": "Ampharosite"
+    },
+    {
+      "name": "Audinite"
+    },
+    {
+      "name": "Banettite"
+    },
+    {
+      "name": "Barbaracite"
+    },
+    {
+      "name": "Baxcalibrite"
+    },
+    {
+      "name": "Beedrillite"
+    },
+    {
+      "name": "Blastoisinite"
+    },
+    {
+      "name": "Blazikenite"
+    },
+    {
+      "name": "Cameruptite"
+    },
+    {
+      "name": "Chandelurite"
+    },
+    {
+      "name": "Charizardite X"
+    },
+    {
+      "name": "Charizardite Y"
+    },
+    {
+      "name": "Chesnaughtite"
+    },
+    {
+      "name": "Chimechite"
+    },
+    {
+      "name": "Clefablite"
+    },
+    {
+      "name": "Crabominite"
+    },
+    {
+      "name": "Delphoxite"
+    },
+    {
+      "name": "Dragalgite"
+    },
+    {
+      "name": "Dragoninite"
+    },
+    {
+      "name": "Drampanite"
+    },
+    {
+      "name": "Eelektrossite"
+    },
+    {
+      "name": "Emboarite"
+    },
+    {
+      "name": "Excadrite"
+    },
+    {
+      "name": "Falinksite"
+    },
+    {
+      "name": "Feraligite"
+    },
+    {
+      "name": "Floettite"
+    },
+    {
+      "name": "Froslassite"
+    },
+    {
+      "name": "Galladite"
+    },
+    {
+      "name": "Garchompite"
+    },
+    {
+      "name": "Garchompite Z"
+    },
+    {
+      "name": "Gardevoirite"
+    },
+    {
+      "name": "Gengarite"
+    },
+    {
+      "name": "Glalitite"
+    },
+    {
+      "name": "Glimmoranite"
+    },
+    {
+      "name": "Golisopite"
+    },
+    {
+      "name": "Golurkite"
+    },
+    {
+      "name": "Greninjite"
+    },
+    {
+      "name": "Gyaradosite"
+    },
+    {
+      "name": "Hawluchanite"
+    },
+    {
+      "name": "Heracronite"
+    },
+    {
+      "name": "Houndoominite"
+    },
+    {
+      "name": "Kangaskhanite"
+    },
+    {
+      "name": "Lopunnite"
+    },
+    {
+      "name": "Lucarionite"
+    },
+    {
+      "name": "Lucarionite Z"
+    },
+    {
+      "name": "Malamarite"
+    },
+    {
+      "name": "Manectite"
+    },
+    {
+      "name": "Mawilite"
+    },
+    {
+      "name": "Medichamite"
+    },
+    {
+      "name": "Meganiumite"
+    },
+    {
+      "name": "Meowsticite"
+    },
+    {
+      "name": "Metagrossite"
+    },
+    {
+      "name": "Pidgeotite"
+    },
+    {
+      "name": "Pinsirite"
+    },
+    {
+      "name": "Pyroarite"
+    },
+    {
+      "name": "Raichunite X"
+    },
+    {
+      "name": "Raichunite Y"
+    },
+    {
+      "name": "Sablenite"
+    },
+    {
+      "name": "Salamencite"
+    },
+    {
+      "name": "Sceptilite"
+    },
+    {
+      "name": "Scizorite"
+    },
+    {
+      "name": "Scolipite"
+    },
+    {
+      "name": "Scovillainite"
+    },
+    {
+      "name": "Scraftinite"
+    },
+    {
+      "name": "Sharpedonite"
+    },
+    {
+      "name": "Skarmorite"
+    },
+    {
+      "name": "Slowbronite"
+    },
+    {
+      "name": "Staraptite"
+    },
+    {
+      "name": "Starminite"
+    },
+    {
+      "name": "Steelixite"
+    },
+    {
+      "name": "Swampertite"
+    },
+    {
+      "name": "Tyranitarite"
+    },
+    {
+      "name": "Venusaurite"
+    },
+    {
+      "name": "Victreebelite"
+    },
+    {
+      "name": "Aspear Berry"
+    },
+    {
+      "name": "Babiri Berry"
+    },
+    {
+      "name": "Charti Berry"
+    },
+    {
+      "name": "Cheri Berry"
+    },
+    {
+      "name": "Chesto Berry"
+    },
+    {
+      "name": "Chilan Berry"
+    },
+    {
+      "name": "Chople Berry"
+    },
+    {
+      "name": "Coba Berry"
+    },
+    {
+      "name": "Colbur Berry"
+    },
+    {
+      "name": "Haban Berry"
+    },
+    {
+      "name": "Kasib Berry"
+    },
+    {
+      "name": "Kebia Berry"
+    },
+    {
+      "name": "Leppa Berry"
+    },
+    {
+      "name": "Lum Berry"
+    },
+    {
+      "name": "Occa Berry"
+    },
+    {
+      "name": "Oran Berry"
+    },
+    {
+      "name": "Passho Berry"
+    },
+    {
+      "name": "Payapa Berry"
+    },
+    {
+      "name": "Pecha Berry"
+    },
+    {
+      "name": "Persim Berry"
+    },
+    {
+      "name": "Rawst Berry"
+    },
+    {
+      "name": "Rindo Berry"
+    },
+    {
+      "name": "Roseli Berry"
+    },
+    {
+      "name": "Shuca Berry"
+    },
+    {
+      "name": "Sitrus Berry"
+    },
+    {
+      "name": "Tanga Berry"
+    },
+    {
+      "name": "Wacan Berry"
+    },
+    {
+      "name": "Yache Berry"
+    }
+  ],
+  "bannedPokemon": [],
+  "bannedItems": [],
+  "notes": "legalPokemon is the full Champions Pokédex (all Pokémon transferable via Pokémon HOME), which is the legal pool for this regulation; per the official rules there are no Restricted Pokémon. bannedPokemon lists specific Mega forms excluded from this format (their base species remain legal). newlyUseable (in meta) is what this regulation newly added. No per-move legality is published, so legalMoves is omitted and move-legality checks are unavailable for this regulation. legalItems is the full Champions held-item catalog (Hold Items, Mega Stones, Berries); the format publishes no per-item bans, so bannedItems is empty."
+}

@@ -83,11 +83,13 @@ export function getSpeciesOverride(name: string): SpeciesOverride | null {
 }
 
 // Serebii sometimes annotates abilities with the form they belong to, e.g.
-// "Lightning Rod (Raichu)". Strip the parenthetical so @smogon/calc recognizes the name.
-function cleanAbility(a?: string): string | undefined {
+// "Lightning Rod (Raichu)" or "Psychic Surge (Female)". Strip the parenthetical so lookups keyed
+// on the bare ability name (@smogon/calc, our own ability tables) recognize it.
+export function cleanAbilityName(a?: string): string | undefined {
   if (!a) return undefined;
   return a.replace(/\s*\(.*?\)\s*$/, '').trim() || undefined;
 }
+const cleanAbility = cleanAbilityName;
 
 // Lazily build a name -> form index from the Champions dex so lookups are O(1) and tolerant
 // of naming conventions (Mega word order, hyphens, casing).

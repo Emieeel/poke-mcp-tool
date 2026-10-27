@@ -40,6 +40,9 @@ interface ScrapeResult {
   // legal roster is sourced separately from the Champions Pokédex index (see main()).
   newlyUseable: { name: string; notes?: string }[];
   listScope: string;
+  // Every regulation ids, oldest first, from the page's own regulation selector — used to tell
+  // whether the requested regulation is the current one (see the guard in main()).
+  allRegulationIds: string[];
   warnings: string[];
 }
 
@@ -51,6 +54,22 @@ function parseRegulationPage(html: string, id: string): ScrapeResult {
   // Regulation display name comes from the <title> or the first heading.
   const heading = $('h1, h2').first().text().trim();
   const name = heading || `Regulation ${id.toUpperCase()}`;
+
+  // Every regulation page carries the same selector listing all regulations in order
+  // (<option value="/pokemonchampions/rankedbattle/regulationm-c.shtml">). Reading it tells us
+  // which regulation is the newest — a source-of-truth signal the guard in main() relies on,
+  // and sturdier than comparing dates (consecutive regulations share a boundary date, and
+  // Serebii revises published end dates after the fact).
+  const allRegulationIds: string[] = [];
+  $('option').each((_, o) => {
+    const m = ($(o).attr('value') || '').match(/\/rankedbattle\/regulation([a-z0-9-]+)\.shtml$/i);
+    if (!m) return;
+    const rid = m[1].toLowerCase();
+    if (!allRegulationIds.includes(rid)) allRegulationIds.push(rid);
+  });
+  if (allRegulationIds.length === 0) {
+    warnings.push('Could not read the regulation selector, so "is this the current regulation?" is unknown.');
+  }
 
   // Date range: Serebii prints "June 17th 2026 - September 2nd 2026" in the Details block.
   // We scan the whole page text for that pattern and convert to ISO dates.
@@ -119,7 +138,7 @@ function parseRegulationPage(html: string, id: string): ScrapeResult {
     listScope = 'unknown';
   }
 
-  return { name, validFrom, validTo, newlyUseable, listScope, warnings };
+  return { name, validFrom, validTo, newlyUseable, listScope, allRegulationIds, warnings };
 }
 
 // ── Full roster (the cumulative legal pool) from the Champions Pokédex index ─────
@@ -127,6 +146,8 @@ function parseRegulationPage(html: string, id: string): ScrapeResult {
 // "all Pokémon transferable via Pokémon HOME" = the entire Champions Pokédex. We read that
 // roster from the dex index's <option value="/pokedex-champions/<slug>/">### Name</option>.
 const DEX_INDEX_URL = 'https://www.serebii.net/pokedex-champions/';
+// Keep in sync with SLUG_PATH in scrape-champions-dex.ts.
+const SLUG_PATH = /^\/pokedex-champions\/[a-z0-9.'-]+\/$/;
 
 async function fetchFullRoster(): Promise<{ name: string; num: number | null }[]> {
   const res = await fetch(DEX_INDEX_URL, {
@@ -140,7 +161,10 @@ async function fetchFullRoster(): Promise<{ name: string; num: number | null }[]
   const out: { name: string; num: number | null }[] = [];
   $('option').each((_, o) => {
     const val = $(o).attr('value') || '';
-    if (!/^\/pokedex-champions\/[a-z0-9-]+\/$/.test(val)) return;
+    // Slugs are lowercase but can contain an apostrophe or a period (farfetch'd, mr.mime,
+    // sirfetch'd, mr.rime) — omitting those from the character class silently drops them
+    // from the roster. The trailing `+` still rejects the empty "choose a Pokémon" option.
+    if (!SLUG_PATH.test(val)) return;
     const text = $(o).text().replace(/\s+/g, ' ').trim(); // "003 Venusaur"
     const num = parseInt((text.match(/#?(\d+)/) || [])[1] || '', 10);
     const name = text.replace(/^#?\d+\s*/, '').trim();
@@ -156,11 +180,18 @@ async function fetchFullRoster(): Promise<{ name: string; num: number | null }[]
 // Forms excluded from this format even though their base species is legal. Serebii's reg
 // page does not encode these, so we carry them explicitly (source: Game8 / official rules).
 // Keyed by regulation id.
+//
+// To re-derive this list for a new regulation: collect every Mega form name in
+// data/champions-dex.json and subtract the union of the "Newly Useable Pokémon" lists from all
+// regulation pages so far. A Mega that exists in the dex but was never announced as useable is
+// an exclusion candidate. For M-C that difference is EMPTY — the Z Megas that M-B excluded
+// (Mega Garchomp Z, Mega Lucario Z) are on M-C's newly-useable list, hence no 'm-c' entry.
 const KNOWN_EXCLUSIONS: Record<string, { name: string; notes: string }[]> = {
   'm-b': [
     { name: 'Mega Garchomp Z', notes: 'Excluded Mega form (base Garchomp is legal). Source: Game8.' },
     { name: 'Mega Lucario Z', notes: 'Excluded Mega form (base Lucario is legal). Source: Game8.' },
   ],
+  // 'm-c': none — M-C newly enabled Mega Garchomp Z, Mega Lucario Z and Mega Absol Z.
 };
 
 function toISODate(human: string): string | undefined {
@@ -192,6 +223,30 @@ async function main() {
   const parsed = parseRegulationPage(html, id);
   for (const w of parsed.warnings) console.error(`[scrape] note: ${w}`);
   console.error(`[scrape] Reg page: ${parsed.newlyUseable.length} newly-useable Pokémon parsed.`);
+
+  // The roster and item sources below are live pages showing the game AS IT IS TODAY, not as it
+  // was during some past regulation. So this script can only faithfully scrape whichever
+  // regulation is CURRENT — re-running it against a superseded one would overwrite that file
+  // with today's larger roster/item catalog and silently make it wrong (e.g. re-scraping m-b
+  // once m-c is out hands m-b all 231 of m-c's Pokémon). Refuse instead.
+  //
+  // "Current" = the newest regulation Serebii lists, not a date comparison: consecutive
+  // regulations share a boundary date (m-b ends the same day m-c starts), and Serebii revises
+  // published end dates after the fact, so dates can't distinguish the two.
+  const newest = parsed.allRegulationIds[parsed.allRegulationIds.length - 1];
+  if (newest && newest !== id) {
+    console.error(
+      '\n*************************************************************************\n' +
+        `[scrape] REFUSING to write ${id}: ${newest} supersedes it.\n` +
+        `         (Serebii lists: ${parsed.allRegulationIds.join(', ')}.)\n` +
+        "         The roster and item catalog come from live pages reflecting TODAY'S game\n" +
+        `         state, so re-scraping ${id} now would inflate its legal lists with the\n` +
+        `         Pokémon and items ${newest} added. Run \`npm run scrape -- ${newest}\`\n` +
+        `         instead, or hand-edit regulations/${id}.json if it needs a correction.\n` +
+        '*************************************************************************\n',
+    );
+    process.exit(1);
+  }
 
   // The full legal roster = the entire Champions Pokédex (all HOME-transferable Pokémon).
   console.error(`[scrape] Fetching full roster from ${DEX_INDEX_URL}`);

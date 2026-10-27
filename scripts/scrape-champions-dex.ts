@@ -29,6 +29,11 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const DATA_DIR = join(__dirname, '..', 'data');
 const INDEX_URL = 'https://www.serebii.net/pokedex-champions/';
 const entryUrl = (slug: string) => `https://www.serebii.net/pokedex-champions/${slug}/`;
+// Slugs are lowercase but can contain an apostrophe or a period (farfetch'd, mr.mime,
+// sirfetch'd, mr.rime) — omitting those from the character class silently drops those
+// Pokémon from the roster. The trailing `+` still rejects the empty "choose a Pokémon"
+// option. Keep in sync with SLUG_PATH in scrape-regulation.ts.
+const SLUG_PATH = /^\/pokedex-champions\/([a-z0-9.'-]+)\/$/;
 
 const UA = 'pokemon-champions-mcp dex scraper (personal use)';
 
@@ -65,7 +70,7 @@ export async function fetchRoster(): Promise<{ slug: string; num: number | null 
   // The index lists every Pokémon as <option value="/pokedex-champions/<slug>/">### Name</option>.
   $('option').each((_, o) => {
     const val = $(o).attr('value') || '';
-    const m = val.match(/^\/pokedex-champions\/([a-z0-9-]+)\/$/);
+    const m = val.match(SLUG_PATH);
     if (!m) return;
     const slug = m[1];
     if (seen.has(slug)) return;

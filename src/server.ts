@@ -18,12 +18,13 @@ import { z } from 'zod';
 import {
   calculateDamage,
   typeEffectiveness,
+  defensiveProfilesForAbilities,
   pokemonSchema,
   fieldSchema,
   moveContextSchema,
   TYPE_NAMES,
 } from './calc.js';
-import { getPokemonInfo } from './dex.js';
+import { getPokemonInfo, cleanAbilityName } from './dex.js';
 import { getItemInfo, listItems, championsItemsMeta, type ItemCategory } from './items.js';
 import { findPokemonByMove, listLegalMoves, MOVE_CATEGORIES, type MoveCategory } from './movedex.js';
 import {
@@ -35,6 +36,16 @@ import {
 } from './regulations.js';
 
 const ITEM_CATEGORIES = ['Hold Item', 'Mega Stone', 'Berry', 'Miscellaneous'] as const;
+
+/**
+ * The regulation currently being played — the default for every regulation-scoped tool, and the
+ * id used as the example in the tool descriptions. Bump this (and add the file to the Worker's
+ * imports in src/worker.ts) when a new regulation starts; it is the ONE place the current
+ * regulation is named, so nothing goes stale. Earlier regulations stay queryable by passing
+ * their id explicitly.
+ */
+const CURRENT_REGULATION = 'm-c';
+const CURRENT_REGULATION_LABEL = CURRENT_REGULATION.toUpperCase();
 
 // ---- helpers ---------------------------------------------------------------
 
@@ -74,7 +85,11 @@ server.registerTool(
       'Respects (per fainted ally) — pass moveContext so the base power scales correctly; ' +
       'or pin any variable-power move with moveContext.basePowerOverride. ' +
       'Answers questions like "does my Choice Band Staraptor-Mega OHKO that Garchomp?". ' +
-      'Returns the damage range, percent range, hits-to-KO, and the human-readable calc string.',
+      'Returns the damage range, percent range, hits-to-KO, and the human-readable calc string. ' +
+      'ALSO returns "typeEffectiveness": the multiplier this hit actually used (with the ' +
+      "in-game line — \"It's super effective!\", \"It's not very effective...\") read off the " +
+      'engine itself, so it accounts for ability/weather retypes and Tera. Never state a type ' +
+      'matchup from memory — read it from this field.',
     inputSchema: {
       attacker: pokemonSchema.describe('The attacking Pokémon and its set.'),
       defender: pokemonSchema.describe('The defending Pokémon and its set.'),
@@ -135,16 +150,23 @@ server.registerTool(
       'Staraptor") in Pokémon Champions: returns base stats, typing, abilities, and weight. ' +
       'Data comes from the Champions Pokédex (Serebii) so game-original Mega Evolutions are ' +
       'accurate — e.g. Mega Staraptor has Contrary, which @smogon/calc gets wrong. Also ' +
-      'returns the Pokémon\'s full learnable movelist ("moves"). The "source" field shows ' +
+      'returns the Pokémon\'s full learnable movelist ("moves"). ' +
+      'ALWAYS returns "defensiveProfile": the complete defensive matchup table for its typing ' +
+      '— every one of the 18 attacking types with its multiplier, split into weaknesses, ' +
+      'resistances, immunities and neutral, plus a one-line summary. Use it instead of ' +
+      'working out weaknesses by hand. "defensiveProfileByAbility" repeats the table for each ' +
+      'ability that changes damage taken (Levitate, Thick Fat, Heatproof, Flash Fire, Filter, ' +
+      '...). The "source" field shows ' +
       'whether the answer came from the Champions dex or the @smogon/calc fallback. ' +
-      'Optionally pass a regulation id (e.g. "m-b") to also get whether the Pokémon is legal ' +
+      `Optionally pass a regulation id (e.g. "${CURRENT_REGULATION}") to also get whether the ` +
+      'Pokémon is legal ' +
       'there and its regulation-legal moves.',
     inputSchema: {
       name: z.string().describe('Pokémon species name, e.g. "Garchomp", "Staraptor-Mega", or "Mega Raichu X".'),
       regulation: z
         .string()
         .optional()
-        .describe('Optional regulation id (e.g. "m-b") to also check legality.'),
+        .describe(`Optional regulation id (e.g. "${CURRENT_REGULATION}") to also check legality.`),
     },
   },
   async ({ name, regulation }) => {
@@ -159,6 +181,26 @@ server.registerTool(
           'Served from the @smogon/calc fallback (not found in the Champions dex). For ' +
           'Champions-original forms this may be inaccurate; run `npm run scrape:dex` to ' +
           'refresh the Champions dex.';
+      }
+
+      // Full defensive matchup table, computed from the type chart on every lookup so the
+      // weaknesses/resistances/immunities never have to be recalled or re-derived by hand.
+      const abilityNames = info.abilities
+        .map((a) => cleanAbilityName(a))
+        .filter((a): a is string => Boolean(a));
+      const { profile, byAbility, otherDefensiveAbilityNotes } = defensiveProfilesForAbilities(
+        info.types,
+        abilityNames,
+      );
+      out.defensiveProfile = {
+        ...profile,
+        note:
+          'Typing only — no ability applied. Abilities that change what this Pokémon takes ' +
+          'damage from appear under defensiveProfileByAbility.',
+      };
+      if (byAbility.length) out.defensiveProfileByAbility = byAbility;
+      if (otherDefensiveAbilityNotes) {
+        out.otherDefensiveAbilityNotes = otherDefensiveAbilityNotes;
       }
 
       if (regulation) {
@@ -195,12 +237,13 @@ server.registerTool(
     title: 'Check regulation legality (Pokémon Champions)',
     description:
       'Check whether a Pokémon — and optionally specific moves and/or held items — is legal ' +
-      'in a given Pokémon Champions regulation (e.g. "m-b"). Reads purely from local ' +
+      `in a given Pokémon Champions regulation (e.g. "${CURRENT_REGULATION}"). Reads purely ` +
+      'from local ' +
       'regulation JSON (fully offline). If the regulation file is missing, returns an error ' +
       'telling you to run the scraper. If the regulation has no per-move or per-item legality ' +
       'data, that is stated explicitly rather than guessed.',
     inputSchema: {
-      regulation: z.string().describe('Regulation id, e.g. "m-b".'),
+      regulation: z.string().describe(`Regulation id, e.g. "${CURRENT_REGULATION}".`),
       pokemon: z.string().describe('Pokémon species name to check.'),
       moves: z
         .array(z.string())
@@ -271,7 +314,8 @@ server.registerTool(
       '(Sitrus, Lum, type-resist berries, ...). Each item includes its in-game effect, how to ' +
       'obtain it, and its category. Data is scraped from the Champions items page (Serebii). ' +
       'Optionally filter by category or a name substring, and pass a regulation id (e.g. ' +
-      '"m-b") to mark which items are legal there. Answers "what berries can I hold?" or ' +
+      `"${CURRENT_REGULATION}") to mark which items are legal there. Answers "what berries ` +
+      'can I hold?" or ' +
       '"which Mega Stones exist in Champions?".',
     inputSchema: {
       category: z
@@ -289,7 +333,10 @@ server.registerTool(
       regulation: z
         .string()
         .optional()
-        .describe('Optional regulation id (e.g. "m-b") to mark each item legal/illegal there.'),
+        .describe(
+          `Optional regulation id (e.g. "${CURRENT_REGULATION}") to mark each item ` +
+            'legal/illegal there.',
+        ),
     },
   },
   async ({ category, nameContains, includeNonHeld, regulation }) => {
@@ -346,14 +393,17 @@ server.registerTool(
       'category (Hold Item / Mega Stone / Berry), and whether it can be held in battle. Data ' +
       'comes from the Champions items page (Serebii). The "source" field shows whether the ' +
       'answer came from the Champions catalog or the @smogon/calc fallback (which lacks ' +
-      'effect/location text). Optionally pass a regulation id (e.g. "m-b") to also get whether ' +
+      `effect/location text). Optionally pass a regulation id (e.g. "${CURRENT_REGULATION}") ` +
+      'to also get whether ' +
       'the item is legal there.',
     inputSchema: {
       name: z.string().describe('Item name, e.g. "Life Orb", "Charizardite X", or "Lum Berry".'),
       regulation: z
         .string()
         .optional()
-        .describe('Optional regulation id (e.g. "m-b") to also check item legality.'),
+        .describe(
+          `Optional regulation id (e.g. "${CURRENT_REGULATION}") to also check item legality.`,
+        ),
     },
   },
   async ({ name, regulation }) => {
@@ -397,23 +447,26 @@ server.registerTool(
   {
     title: 'Find legal Pokémon that learn a move (Pokémon Champions)',
     description:
-      'Given a move and a Pokémon Champions regulation (e.g. "m-b"), list every Pokémon that ' +
-      'is legal in that regulation AND can learn the move. Answers "who can run Fake Out in ' +
-      'M-B?" or "which legal mons get Spore?". Learnsets come from the Champions dex; the ' +
+      `Given a move and a Pokémon Champions regulation (e.g. "${CURRENT_REGULATION}"), list ` +
+      'every Pokémon that is legal in that regulation AND can learn the move. Answers ' +
+      `"who can run Fake Out in ${CURRENT_REGULATION_LABEL}?" or "which legal mons get ` +
+      'Spore?". Learnsets come from the Champions dex; the ' +
       'move\'s type/category/base power are included when the engine knows the move. NOTE: ' +
       'Champions publishes no per-move bans, so "legal move" means a legal Pokémon can learn ' +
-      'it. Defaults to regulation "m-b".',
+      `it. Defaults to regulation "${CURRENT_REGULATION}".`,
     inputSchema: {
       move: z.string().describe('Move name, e.g. "Fake Out", "Will-O-Wisp", "Spore".'),
       regulation: z
         .string()
         .optional()
-        .describe('Regulation id (e.g. "m-b"). Defaults to "m-b".'),
+        .describe(
+          `Regulation id (e.g. "${CURRENT_REGULATION}"). Defaults to "${CURRENT_REGULATION}".`,
+        ),
     },
   },
   async ({ move, regulation }) => {
     try {
-      return ok(findPokemonByMove(regulation ?? 'm-b', move));
+      return ok(findPokemonByMove(regulation ?? CURRENT_REGULATION, move));
     } catch (err) {
       return fail((err as Error).message);
     }
@@ -426,18 +479,22 @@ server.registerTool(
   {
     title: 'List legal moves in a regulation (Pokémon Champions)',
     description:
-      'List the moves available in a Pokémon Champions regulation (e.g. "m-b") — i.e. every ' +
+      `List the moves available in a Pokémon Champions regulation (e.g. "${CURRENT_REGULATION}") ` +
+      '— i.e. every ' +
       'move learnable by at least one legal Pokémon — each with its type, category ' +
       '(Physical/Special/Status), base power, and how many legal Pokémon can learn it. ' +
       'Optionally filter by name substring, move type (e.g. "Fire"), or category. Answers ' +
-      '"what Fairy moves are usable in M-B?" or "is Glacial Lance legal here?". NOTE: ' +
+      `"what Fairy moves are usable in ${CURRENT_REGULATION_LABEL}?" or "is Glacial Lance ` +
+      'legal here?". NOTE: ' +
       'Champions publishes no per-move bans, so this is the pool of learnable moves, not a ' +
-      'separate curated allowlist. Defaults to regulation "m-b".',
+      `separate curated allowlist. Defaults to regulation "${CURRENT_REGULATION}".`,
     inputSchema: {
       regulation: z
         .string()
         .optional()
-        .describe('Regulation id (e.g. "m-b"). Defaults to "m-b".'),
+        .describe(
+          `Regulation id (e.g. "${CURRENT_REGULATION}"). Defaults to "${CURRENT_REGULATION}".`,
+        ),
       nameContains: z
         .string()
         .optional()
@@ -455,7 +512,7 @@ server.registerTool(
   async ({ regulation, nameContains, type, category }) => {
     try {
       return ok(
-        listLegalMoves(regulation ?? 'm-b', {
+        listLegalMoves(regulation ?? CURRENT_REGULATION, {
           nameContains,
           type,
           category: category as MoveCategory | undefined,
@@ -473,17 +530,21 @@ server.registerTool(
   {
     title: 'List legal Pokémon in a regulation (Pokémon Champions)',
     description:
-      'List the Pokémon legal in a Pokémon Champions regulation (e.g. "m-b") — the regulation\'s ' +
+      `List the Pokémon legal in a Pokémon Champions regulation (e.g. "${CURRENT_REGULATION}") ` +
+      '— the regulation\'s ' +
       'legal pool — each enriched with its National Dex number, typing, base stats, and ' +
       'abilities from the Champions dex. Optionally filter by name substring or by type (e.g. ' +
-      '"Dragon"). Answers "what Fairy types are legal in M-B?" or "show me the M-B roster". ' +
+      `"Dragon"). Answers "what Fairy types are legal in ${CURRENT_REGULATION_LABEL}?" or ` +
+      `"show me the ${CURRENT_REGULATION_LABEL} roster". ` +
       'Reads the regulation\'s legal-Pokémon allowlist directly (the complement to ' +
-      'list_legal_moves). Defaults to regulation "m-b".',
+      `list_legal_moves). Defaults to regulation "${CURRENT_REGULATION}".`,
     inputSchema: {
       regulation: z
         .string()
         .optional()
-        .describe('Regulation id (e.g. "m-b"). Defaults to "m-b".'),
+        .describe(
+          `Regulation id (e.g. "${CURRENT_REGULATION}"). Defaults to "${CURRENT_REGULATION}".`,
+        ),
       nameContains: z
         .string()
         .optional()
@@ -496,7 +557,7 @@ server.registerTool(
   },
   async ({ regulation, nameContains, type }) => {
     try {
-      return ok(listLegalPokemon(regulation ?? 'm-b', { nameContains, type }));
+      return ok(listLegalPokemon(regulation ?? CURRENT_REGULATION, { nameContains, type }));
     } catch (err) {
       return fail((err as Error).message);
     }

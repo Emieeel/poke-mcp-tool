@@ -13,9 +13,24 @@ import {
   Field,
   toID,
 } from '@smogon/calc';
+// Deep import: the effectiveness helper isn't re-exported from the package root, but it is the
+// ENGINE's own function — the same one calculate() uses internally — so using it keeps the
+// effectiveness we report identical to the one baked into the damage rolls, including move-
+// specific exceptions (Freeze-Dry hitting Water for 2x, Flying Press's dual typing, Ring Target,
+// Gravity, Scrappy). Reimplementing that logic from the raw type chart is exactly the kind of
+// hand-rolled duplication this file exists to avoid. The package ships no "exports" map, so the
+// path resolves under Node and bundles cleanly for Workers; test/smoke.ts pins the behaviour
+// (Freeze-Dry vs Water = 2x) so a dependency bump that moves this file fails loudly.
+import { getMoveEffectiveness } from '@smogon/calc/dist/mechanics/util.js';
 import { z } from 'zod';
 import { getSpeciesOverride } from './dex.js';
-import { offensiveAbility, defensiveAbility, NO_DAMAGE_EFFECT } from './abilities.js';
+import {
+  offensiveAbility,
+  defensiveAbility,
+  typeDefenseAbility,
+  DEFENSE_NOTES_ONLY,
+  NO_DAMAGE_EFFECT,
+} from './abilities.js';
 import { resolveBasePower } from './moves.js';
 
 // `Generation` isn't re-exported at the package root, so derive it from Generations.get.
@@ -273,6 +288,22 @@ function buildField(input?: FieldInput): Field {
   });
 }
 
+export interface MoveEffectivenessResult {
+  /** The move's type AS RESOLVED by the engine (after Aerilate, Weather Ball in sun, ...). */
+  moveType: string;
+  /** The defender's types actually used (its Tera type alone, if Terastallized). */
+  defenderTypes: string[];
+  multiplier: number;
+  perType: TypeMultiplier[];
+  /** "super effective" | "not very effective" | "neutral" | "no effect". */
+  label: string;
+  /** The line the game prints for this hit, e.g. "It's super effective!". */
+  message: string;
+  note?: string;
+  /** Set when the defender's typing is suspect (see MERGED_FORM_WARNING). */
+  warning?: string;
+}
+
 export interface DamageResult {
   attacker: string;
   defender: string;
@@ -281,8 +312,73 @@ export interface DamageResult {
   percentRange: { min: number; max: number };
   damageRolls: number[];
   koChance: { chance: number; hitsToKO: number; text: string };
+  /** How effective this hit was, in the game's own terms. Always present. */
+  typeEffectiveness: MoveEffectivenessResult;
   description: string;
   notes: string[];
+}
+
+/**
+ * Type effectiveness for a hit that was just calculated. Read off the ENGINE's own effectiveness
+ * function and the RESOLVED move/defender on the result, so it accounts for ability retypes
+ * (Aerilate making Double-Edge Flying), weather retypes (Weather Ball in sun), Tera types and
+ * move-specific exceptions (Freeze-Dry, Flying Press) — and therefore can never contradict the
+ * damage rolls it is printed next to.
+ */
+function resolveMoveEffectiveness(
+  g: Generation,
+  result: ReturnType<typeof calculate>,
+): MoveEffectivenessResult {
+  const mv = result.move as any;
+  const atk = result.attacker as any;
+  const def = result.defender as any;
+  const field = result.field as any;
+
+  // Mirrors the engine's own preconditions (see @smogon/calc mechanics/gen789).
+  const isGhostRevealed = Boolean(
+    atk.hasAbility?.('Scrappy') || atk.hasAbility?.("Mind's Eye") || field.defenderSide?.isForesight,
+  );
+  const isRingTarget = Boolean(def.hasItem?.('Ring Target') && !def.hasAbility?.('Klutz'));
+  const tera = def.teraType && def.teraType !== 'Stellar' ? (def.teraType as string) : undefined;
+  const defenderTypes: string[] = (tera ? [tera] : (def.types as string[])).filter(Boolean);
+
+  const perType: TypeMultiplier[] = defenderTypes.map((type) => ({
+    type,
+    multiplier: getMoveEffectiveness(g, mv, type as any, isGhostRevealed, field.isGravity, isRingTarget),
+  }));
+  let multiplier = perType.reduce((m, e) => m * e.multiplier, 1);
+
+  const notes: string[] = [];
+  if (multiplier === 0 && mv.hasType?.('Ground') && def.hasItem?.('Iron Ball') && !def.hasAbility?.('Klutz')) {
+    multiplier = 1;
+    notes.push('Iron Ball grounds the defender, so its Ground immunity does not apply.');
+  }
+  if (tera) notes.push(`Defender is Terastallized to ${tera}, so only that type is used for effectiveness.`);
+  if (mv.category === 'Status') notes.push('Status move: this is the type matchup, not damage dealt.');
+
+  return {
+    moveType: mv.type,
+    defenderTypes,
+    multiplier,
+    perType,
+    label: effectivenessLabel(multiplier),
+    message: effectivenessMessage(multiplier, result.defender.name),
+    note: notes.length ? notes.join(' ') : undefined,
+    // Only meaningful when the defender's real typing was used; a Tera type is a single type.
+    warning: tera ? undefined : mergedFormWarning(defenderTypes),
+  };
+}
+
+/** The human-readable effectiveness line added to `notes` so it is impossible to miss. */
+function effectivenessNote(te: MoveEffectivenessResult): string {
+  const tail =
+    te.multiplier === 1
+      ? 'the game prints no message for a neutral hit.'
+      : `"${te.message}"`;
+  return (
+    `Type effectiveness: ${te.moveType} vs ${te.defenderTypes.join('/')} = ` +
+    `x${te.multiplier} (${te.label}) — ${tail}`
+  );
 }
 
 /**
@@ -410,7 +506,31 @@ export function calculateDamage(args: {
   if (field.terrain) notes.push(`Terrain "${field.terrain}" in effect.`);
   if (attacker.teraType) notes.push(`Attacker Terastallized to ${attacker.teraType}.`);
   if (bypassingProtect) notes.push('Piercing Drill bypassed Protect; damage is 1/4 of the full hit.');
-  if (max === 0) notes.push('Move deals no damage here (likely a type immunity).');
+
+  // Type effectiveness, reconciled against what the engine actually dealt. A 0-damage hit whose
+  // TYPE matchup isn't 0x was blocked by something else (Levitate, Flash Fire, Air Balloon,
+  // Protect, ...) — say which case it is instead of leaving the two facts to contradict.
+  const te = resolveMoveEffectiveness(g, result);
+  if (max === 0 && te.multiplier > 0) {
+    te.label = 'no effect';
+    te.message = effectivenessMessage(0, defender.name);
+    te.note = [
+      te.note,
+      `The type matchup here is x${te.multiplier}, but the hit deals no damage — an ability, ` +
+      'item or field effect (Levitate, Flash Fire, Air Balloon, Protect, ...) is blocking it, ' +
+      'not the type chart.',
+    ]
+      .filter(Boolean)
+      .join(' ');
+  } else if (max > 0 && te.multiplier === 0) {
+    te.note = [te.note, 'A type immunity was bypassed, so the move still deals damage.']
+      .filter(Boolean)
+      .join(' ');
+  }
+  notes.push(effectivenessNote(te));
+  if (max === 0 && te.multiplier === 0) {
+    notes.push('Move deals no damage here: the defender is immune by type.');
+  }
 
   let description: string;
   let ko: { chance?: number; n: number; text?: string };
@@ -432,6 +552,7 @@ export function calculateDamage(args: {
     percentRange: { min: pct(min), max: pct(max) },
     damageRolls: rolls,
     koChance: { chance: ko.chance ?? 0, hitsToKO: ko.n, text: ko.text ?? '' },
+    typeEffectiveness: te,
     description,
     notes,
   };
@@ -451,12 +572,68 @@ function normalizeRolls(damage: number | number[] | number[][]): number[] {
   return damage as number[];
 }
 
+export interface TypeMultiplier {
+  type: string;
+  multiplier: number;
+}
+
 export interface TypeEffectivenessResult {
   attackingType: string;
   defendingTypes: string[];
   multiplier: number;
-  perType: { type: string; multiplier: number }[];
+  perType: TypeMultiplier[];
   explanation: string;
+}
+
+/**
+ * The 18 real battle types, in canonical order. TYPE_NAMES additionally carries "Stellar" and
+ * "???", which are Tera/typeless markers rather than types a defender can be hit by, so they
+ * are excluded from defensive profiles.
+ */
+export const BATTLE_TYPES: string[] = TYPE_NAMES.filter(
+  (t) => t !== 'Stellar' && t !== '???',
+);
+
+/** One attacking type vs 1–2 defending types, straight off the bundled type chart. */
+function chartMultiplier(
+  g: Generation,
+  attackingType: string,
+  defendingTypes: string[],
+): { attackingTypeName: string; perType: TypeMultiplier[]; multiplier: number } {
+  const atk = g.types.get(toID(attackingType));
+  if (!atk) throw new Error(`Unknown attacking type: "${attackingType}".`);
+
+  const perType: TypeMultiplier[] = [];
+  let multiplier = 1;
+  for (const dt of defendingTypes) {
+    const defType = g.types.get(toID(dt));
+    if (!defType) throw new Error(`Unknown defending type: "${dt}".`);
+    // atk.effectiveness maps defending type NAME -> multiplier.
+    const m = (atk.effectiveness as Record<string, number>)[defType.name];
+    const mult = typeof m === 'number' ? m : 1;
+    perType.push({ type: defType.name, multiplier: mult });
+    multiplier *= mult;
+  }
+  return { attackingTypeName: atk.name, perType, multiplier };
+}
+
+/** Short classification of a multiplier, for machine-readable output. */
+export function effectivenessLabel(multiplier: number): string {
+  if (multiplier === 0) return 'no effect';
+  if (multiplier > 1) return 'super effective';
+  if (multiplier < 1) return 'not very effective';
+  return 'neutral';
+}
+
+/**
+ * The line the game itself prints for a hit of this effectiveness. Neutral hits print nothing
+ * in-battle, so they get an explicit "(no message — neutral hit)" rather than a fake string.
+ */
+export function effectivenessMessage(multiplier: number, defenderName?: string): string {
+  if (multiplier === 0) return `It doesn't affect ${defenderName ?? 'the target'}...`;
+  if (multiplier > 1) return "It's super effective!";
+  if (multiplier < 1) return "It's not very effective...";
+  return '(no message — neutral hit)';
 }
 
 /**
@@ -468,22 +645,7 @@ export function typeEffectiveness(
   defendingTypes: string[],
 ): TypeEffectivenessResult {
   const g = gen();
-  const atk = g.types.get(toID(attackingType));
-  if (!atk) {
-    throw new Error(`Unknown attacking type: "${attackingType}".`);
-  }
-
-  const perType: { type: string; multiplier: number }[] = [];
-  let multiplier = 1;
-  for (const dt of defendingTypes) {
-    const defType = g.types.get(toID(dt));
-    if (!defType) throw new Error(`Unknown defending type: "${dt}".`);
-    // atk.effectiveness maps defending type NAME -> multiplier.
-    const m = (atk.effectiveness as Record<string, number>)[defType.name];
-    const mult = typeof m === 'number' ? m : 1;
-    perType.push({ type: defType.name, multiplier: mult });
-    multiplier *= mult;
-  }
+  const { attackingTypeName, perType, multiplier } = chartMultiplier(g, attackingType, defendingTypes);
 
   const label =
     multiplier === 0
@@ -495,12 +657,156 @@ export function typeEffectiveness(
           : 'deals neutral damage';
 
   return {
-    attackingType: atk.name,
+    attackingType: attackingTypeName,
     defendingTypes: perType.map((p) => p.type),
     multiplier,
     perType,
     explanation:
-      `${atk.name} ${label} against ${perType.map((p) => p.type).join('/')} ` +
+      `${attackingTypeName} ${label} against ${perType.map((p) => p.type).join('/')} ` +
       `(${perType.map((p) => `${p.type} x${p.multiplier}`).join(', ')}) = x${multiplier}.`,
+  };
+}
+
+// ---- defensive profiles -----------------------------------------------------
+
+export interface DefensiveProfile {
+  types: string[];
+  /** The ability folded into these multipliers, if any. */
+  ability?: string;
+  /** Every one of the 18 attacking types -> multiplier. The complete answer, no gaps. */
+  multipliers: Record<string, number>;
+  /** multiplier > 1, worst first. */
+  weaknesses: TypeMultiplier[];
+  /** 0 < multiplier < 1, best resist first. */
+  resistances: TypeMultiplier[];
+  /** multiplier === 0. */
+  immunities: string[];
+  /** multiplier === 1. */
+  neutral: string[];
+  summary: string;
+  /** What the applied ability does (including parts not visible in the multipliers). */
+  abilityNotes?: string[];
+  /** Multipliers that differ from the typing-only profile, e.g. "Fire 4x -> 2x". */
+  differsFromTyping?: string[];
+  /** Set when the typing itself is suspect (see MERGED_FORM_WARNING). */
+  warning?: string;
+}
+
+// A Pokémon can only ever have two types. A longer list means the Champions dex entry lumped
+// several forms' typings together (the scraper does this for a handful of species with regional
+// forms, e.g. Rotom, Slowbro, Tauros), so a profile built from it describes no single form. Say
+// so loudly rather than emitting a confident, wrong table.
+const MERGED_FORM_WARNING =
+  'This dex entry lists more than two types, which means it merges several of the species\' ' +
+  'forms (regional/alternate) into one entry. The multipliers below combine ALL of those types, ' +
+  'so they do not describe any single form — look up the specific form, or treat this as ' +
+  'unreliable.';
+
+function mergedFormWarning(types: string[]): string | undefined {
+  return types.length > 2 ? MERGED_FORM_WARNING : undefined;
+}
+
+/**
+ * The complete defensive matchup table for a typing: what it is weak to, resists, and is immune
+ * to, across all 18 attacking types. Computed from the bundled type chart every time — this
+ * exists so no caller ever has to recall or re-derive the type chart by hand.
+ *
+ * Pass an ability to fold in the abilities that change damage TAKEN by type (Levitate, Thick
+ * Fat, Heatproof, Flash Fire, Filter, ...); the ability's non-type effects come back as notes.
+ */
+export function defensiveProfile(
+  types: string[],
+  opts?: { ability?: string },
+): DefensiveProfile {
+  const g = gen();
+  if (!types.length) throw new Error('A defensive profile needs at least one type.');
+
+  const base: Record<string, number> = {};
+  for (const attacking of BATTLE_TYPES) {
+    base[attacking] = chartMultiplier(g, attacking, types).multiplier;
+  }
+
+  const ability = opts?.ability;
+  const effect = typeDefenseAbility(ability);
+  const multipliers: Record<string, number> = { ...base };
+  const abilityNotes: string[] = [];
+  if (effect) {
+    abilityNotes.push(effect.note);
+    for (const [t, mult] of Object.entries(effect.typeMultipliers ?? {})) {
+      if (multipliers[t] === undefined) continue;
+      multipliers[t] *= mult;
+    }
+    if (effect.superEffectiveMultiplier) {
+      for (const t of BATTLE_TYPES) {
+        if (multipliers[t] > 1) multipliers[t] *= effect.superEffectiveMultiplier;
+      }
+    }
+  }
+  if (ability && DEFENSE_NOTES_ONLY[ability]) abilityNotes.push(DEFENSE_NOTES_ONLY[ability]);
+
+  const entries = BATTLE_TYPES.map((type) => ({ type, multiplier: multipliers[type] }));
+  const weaknesses = entries.filter((e) => e.multiplier > 1).sort((a, b) => b.multiplier - a.multiplier);
+  const resistances = entries.filter((e) => e.multiplier > 0 && e.multiplier < 1).sort((a, b) => a.multiplier - b.multiplier);
+  const immunities = entries.filter((e) => e.multiplier === 0).map((e) => e.type);
+  const neutral = entries.filter((e) => e.multiplier === 1).map((e) => e.type);
+
+  const differsFromTyping = BATTLE_TYPES.filter((t) => multipliers[t] !== base[t]).map(
+    (t) => `${t} ${base[t]}x -> ${multipliers[t]}x`,
+  );
+
+  const list = (es: TypeMultiplier[]) => es.map((e) => `${e.type} ${e.multiplier}x`).join(', ');
+  const head = `${types.join('/')}${ability ? ` + ${ability}` : ''}`;
+  const summary =
+    `${head} — weak to: ${weaknesses.length ? list(weaknesses) : 'nothing'}; ` +
+    `resists: ${resistances.length ? list(resistances) : 'nothing'}; ` +
+    `immune to: ${immunities.length ? immunities.join(', ') : 'nothing'}; ` +
+    `neutral to everything else (${neutral.length} types).`;
+
+  return {
+    types,
+    ability,
+    multipliers,
+    weaknesses,
+    resistances,
+    immunities,
+    neutral,
+    summary,
+    abilityNotes: abilityNotes.length ? abilityNotes : undefined,
+    differsFromTyping: differsFromTyping.length ? differsFromTyping : undefined,
+    warning: mergedFormWarning(types),
+  };
+}
+
+/**
+ * Defensive profiles for a species: the typing-only table, plus one variant per ability that
+ * actually changes it, plus notes for defensive abilities whose effect isn't type-based.
+ */
+export function defensiveProfilesForAbilities(
+  types: string[],
+  abilities: string[],
+): {
+  profile: DefensiveProfile;
+  byAbility: DefensiveProfile[];
+  otherDefensiveAbilityNotes?: string[];
+} {
+  const profile = defensiveProfile(types);
+  const seen = new Set<string>();
+  const byAbility: DefensiveProfile[] = [];
+  const otherNotes: string[] = [];
+
+  for (const ability of abilities) {
+    if (!ability || seen.has(ability)) continue;
+    seen.add(ability);
+    if (typeDefenseAbility(ability)) {
+      byAbility.push(defensiveProfile(types, { ability }));
+    } else if (DEFENSE_NOTES_ONLY[ability]) {
+      otherNotes.push(DEFENSE_NOTES_ONLY[ability]);
+    }
+  }
+
+  return {
+    profile,
+    byAbility,
+    otherDefensiveAbilityNotes: otherNotes.length ? otherNotes : undefined,
   };
 }

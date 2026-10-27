@@ -4,7 +4,7 @@
     "name": "Regulation M-B",
     "game": "Pokémon Champions",
     "validFrom": "2026-06-17",
-    "validTo": "2026-09-02",
+    "validTo": "2026-09-09",
     "source": "https://www.serebii.net/pokemonchampions/rankedbattle/regulationm-b.shtml",
     "rosterSource": "https://www.serebii.net/pokedex-champions/",
     "itemSource": "https://www.serebii.net/pokemonchampions/items.shtml",
@@ -576,6 +576,9 @@
     },
     {
       "name": "Grimmsnarl"
+    },
+    {
+      "name": "Mr. Rime"
     },
     {
       "name": "Runerigus"

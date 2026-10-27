@@ -2,23 +2,37 @@
   "meta": {
     "game": "Pokémon Champions",
     "source": "https://www.serebii.net/pokemonchampions/items.shtml",
-    "scrapedAt": "2026-06-17T19:31:41.229Z",
-    "count": 169,
-    "heldCount": 148,
+    "scrapedAt": "2026-09-09T13:02:42.619Z",
+    "count": 200,
+    "heldCount": 166,
     "byCategory": {
-      "Hold Item": 45,
-      "Mega Stone": 75,
+      "Hold Item": 57,
+      "Mega Stone": 81,
       "Berry": 28,
-      "Miscellaneous": 21
+      "Miscellaneous": 34
     },
     "note": "Champions held-item catalog scraped from Serebii. Hold Items, Mega Stones, and Berries are items a Pokémon can hold in battle (held=true); Miscellaneous tickets are not held (held=false). @smogon/calc bundles mainline items with no Champions effect/location text, which is why we source this ourselves."
   },
   "items": {
+    "air balloon": {
+      "name": "Air Balloon",
+      "category": "Hold Item",
+      "held": true,
+      "effect": "An item to be held by a Pokémon. This balloon makes the holder float in the air. If the holder is hit with an attack, the balloon will burst.",
+      "location": "Shop, 1000 VP"
+    },
     "big root": {
       "name": "Big Root",
       "category": "Hold Item",
       "held": true,
       "effect": "An item to be held by a Pokémon. This root boosts the amount of HP the holder restores to itself when it uses HP-stealing moves.",
+      "location": "Shop, 700 VP"
+    },
+    "binding band": {
+      "name": "Binding Band",
+      "category": "Hold Item",
+      "held": true,
+      "effect": "An item to be held by a Pokémon. This band boosts the power of binding moves used by the holder.",
       "location": "Shop, 700 VP"
     },
     "black belt": {
@@ -70,6 +84,20 @@
       "effect": "An item to be held by a Pokémon. This hard, sharp fang boosts the power of the holder's Dragon-type moves.",
       "location": "Shop, 700 VP"
     },
+    "eject button": {
+      "name": "Eject Button",
+      "category": "Hold Item",
+      "held": true,
+      "effect": "An item to be held by a Pokémon. If the holder is damaged by an attack, it will be switched out of battle to be replaced by another Pokémon on your team.",
+      "location": "Shop, 700 VP"
+    },
+    "electric seed": {
+      "name": "Electric Seed",
+      "category": "Hold Item",
+      "held": true,
+      "effect": "An item to be held by a Pokémon. If the terrain becomes Electric Terrain, the holder will use this seed to boost its own Defense stat.",
+      "location": "Shop, 700 VP"
+    },
     "expert belt": {
       "name": "Expert Belt",
       "category": "Hold Item",
@@ -97,6 +125,13 @@
       "held": true,
       "effect": "An item to be held by a Pokémon. If the holder has full HP and it is hit with a move that should knock it out, it will endure with 1 HP—but only once.",
       "location": "Beginning"
+    },
+    "grassy seed": {
+      "name": "Grassy Seed",
+      "category": "Hold Item",
+      "held": true,
+      "effect": "An item to be held by a Pokémon. If the terrain becomes Grassy Terrain, the holder will use this seed to boost its own Defense stat.",
+      "location": "Shop, 700 VP"
     },
     "hard stone": {
       "name": "Hard Stone",
@@ -132,6 +167,13 @@
       "held": true,
       "effect": "An item to be held by a Pokémon. It may cause the target to flinch whenever the holder successfully inflicts damage on them with an attack.",
       "location": "Beginning"
+    },
+    "leek": {
+      "name": "Leek",
+      "category": "Hold Item",
+      "held": true,
+      "effect": "An item to be held by Farfetch'd or Sirfetch'd. This very long and stiff stalk of leek boosts the critical-hit ratio of their moves.",
+      "location": "Shop, 700 VP"
     },
     "leftovers": {
       "name": "Leftovers",
@@ -196,6 +238,13 @@
       "effect": "An item to be held by a Pokémon. It's a seed imbued with life force that boosts the power of the holder's Grass-type moves.",
       "location": "Shop, 700 VP"
     },
+    "misty seed": {
+      "name": "Misty Seed",
+      "category": "Hold Item",
+      "held": true,
+      "effect": "An item to be held by a Pokémon. If the terrain becomes Misty Terrain, the holder will use this seed to boost its own Sp. Def stat.",
+      "location": "Shop, 700 VP"
+    },
     "muscle band": {
       "name": "Muscle Band",
       "category": "Hold Item",
@@ -217,11 +266,25 @@
       "effect": "An item to be held by a Pokémon. It's a heat-repelling piece of ice that boosts the power of the holder's Ice- type moves.",
       "location": "Shop, 700 VP"
     },
+    "normal gem": {
+      "name": "Normal Gem",
+      "category": "Hold Item",
+      "held": true,
+      "effect": "An item to be held by a Pokémon. This gem is imbued with the essence of normalcy and will boost the power of a Normal-type move—but only once.",
+      "location": "Shop, 1000 VP"
+    },
     "poison barb": {
       "name": "Poison Barb",
       "category": "Hold Item",
       "held": true,
       "effect": "An item to be held by a Pokémon. This small poisonous barb boosts the power of the holder's Poison-type moves.",
+      "location": "Shop, 700 VP"
+    },
+    "psychic seed": {
+      "name": "Psychic Seed",
+      "category": "Hold Item",
+      "held": true,
+      "effect": "An item to be held by a Pokémon. If the terrain becomes Psychic Terrain, the holder will use this seed to boost its own Sp. Def stat.",
       "location": "Shop, 700 VP"
     },
     "quick claw": {
@@ -230,6 +293,20 @@
       "held": true,
       "effect": "An item to be held by a Pokémon. This light, sharp claw lets the holder occasionally unleash a move faster than it usually would.",
       "location": "Beginning"
+    },
+    "red card": {
+      "name": "Red Card",
+      "category": "Hold Item",
+      "held": true,
+      "effect": "An item to be held by a Pokémon. If the holder is damaged by an attack, the mysterious power of this card can remove the attacker from the battle.",
+      "location": "Shop, 1000 VP"
+    },
+    "rocky helmet": {
+      "name": "Rocky Helmet",
+      "category": "Hold Item",
+      "held": true,
+      "effect": "An item to be held by a Pokémon. This helmet damages any attacker that makes direct contact with the holder.",
+      "location": "Shop, 1000 VP"
     },
     "scope lens": {
       "name": "Scope Lens",
@@ -294,6 +371,13 @@
       "effect": "An item to be held by a Pokémon. It's a sinister, eerie tag that boosts the power of the holder's Ghost-type moves.",
       "location": "Shop, 700 VP"
     },
+    "terrain extender": {
+      "name": "Terrain Extender",
+      "category": "Hold Item",
+      "held": true,
+      "effect": "An item to be held by a Pokémon. It extends the duration of terrain caused by the holder's move or Ability.",
+      "location": "Shop, 700 VP"
+    },
     "twisted spoon": {
       "name": "Twisted Spoon",
       "category": "Hold Item",
@@ -338,6 +422,13 @@
     },
     "absolite": {
       "name": "Absolite",
+      "category": "Mega Stone",
+      "held": true,
+      "effect": "One of a variety of mysterious Mega Stones. An Absol holding this stone will be able to Mega Evolve during battle.",
+      "location": "Shop, 2000 VP"
+    },
+    "absolite z": {
+      "name": "Absolite Z",
       "category": "Mega Stone",
       "held": true,
       "effect": "One of a variety of mysterious Mega Stones. An Absol holding this stone will be able to Mega Evolve during battle.",
@@ -397,6 +488,13 @@
       "category": "Mega Stone",
       "held": true,
       "effect": "One of a variety of mysterious Mega Stones. A Barbaracle holding this stone will be able to Mega Evolve during battle.",
+      "location": "Shop, 2000 VP"
+    },
+    "baxcalibrite": {
+      "name": "Baxcalibrite",
+      "category": "Mega Stone",
+      "held": true,
+      "effect": "One of a variety of mysterious Mega Stones. A Baxcalibur holding this stone will be able to Mega Evolve during battle.",
       "location": "Shop, 2000 VP"
     },
     "beedrillite": {
@@ -567,6 +665,13 @@
       "effect": "One of a variety of mysterious Mega Stones. A Garchomp holding this stone will be able to Mega Evolve during battle.",
       "location": "Mega Evolution Tutorial"
     },
+    "garchompite z": {
+      "name": "Garchompite Z",
+      "category": "Mega Stone",
+      "held": true,
+      "effect": "One of a variety of mysterious Mega Stones. A Garchomp holding this stone will be able to Mega Evolve during battle.",
+      "location": "Shop, 2000 VP"
+    },
     "gardevoirite": {
       "name": "Gardevoirite",
       "category": "Mega Stone",
@@ -593,6 +698,13 @@
       "category": "Mega Stone",
       "held": true,
       "effect": "One of a variety of mysterious Mega Stones. A Glimmora holding this stone will be able to Mega Evolve during battle.",
+      "location": "Shop, 2000 VP"
+    },
+    "golisopite": {
+      "name": "Golisopite",
+      "category": "Mega Stone",
+      "held": true,
+      "effect": "One of a variety of mysterious Mega Stones. A Golisopod holding this stone will be able to Mega Evolve during battle.",
       "location": "Shop, 2000 VP"
     },
     "golurkite": {
@@ -653,6 +765,13 @@
     },
     "lucarionite": {
       "name": "Lucarionite",
+      "category": "Mega Stone",
+      "held": true,
+      "effect": "One of a variety of mysterious Mega Stones. A Lucario holding this stone will be able to Mega Evolve during battle.",
+      "location": "Shop, 2000 VP"
+    },
+    "lucarionite z": {
+      "name": "Lucarionite Z",
       "category": "Mega Stone",
       "held": true,
       "effect": "One of a variety of mysterious Mega Stones. A Lucario holding this stone will be able to Mega Evolve during battle.",
@@ -747,6 +866,13 @@
       "category": "Mega Stone",
       "held": true,
       "effect": "One of a variety of mysterious Mega Stones. A Sableye holding this stone will be able to Mega Evolve during battle.",
+      "location": "Shop, 2000 VP"
+    },
+    "salamencite": {
+      "name": "Salamencite",
+      "category": "Mega Stone",
+      "held": true,
+      "effect": "One of a variety of mysterious Mega Stones. A Salamence holding this stone will be able to Mega Evolve during battle.",
       "location": "Shop, 2000 VP"
     },
     "sceptilite": {
@@ -1050,6 +1176,13 @@
       "effect": "If a Pokémon holding this Berry is hit with a supereffective Ice-type move, the power of that move will be weakened.",
       "location": "Shop, 400 VP"
     },
+    "2026 worlds commemorative roster ticket": {
+      "name": "2026 Worlds Commemorative Roster Ticket",
+      "category": "Miscellaneous",
+      "held": false,
+      "effect": "-",
+      "location": ""
+    },
     "bug-type affinity ticket": {
       "name": "Bug-Type Affinity Ticket",
       "category": "Miscellaneous",
@@ -1064,12 +1197,26 @@
       "effect": "A ticket that makes you more likely to meet Dark-type Pokémon in the next lineup.",
       "location": "Achievements"
     },
+    "dive ball guaranteed ticket": {
+      "name": "Dive Ball Guaranteed Ticket",
+      "category": "Miscellaneous",
+      "held": false,
+      "effect": "A ticket that will let you meet a lineup of Pokémon that are inside Dive Balls.",
+      "location": "-"
+    },
     "dragon-type affinity ticket": {
       "name": "Dragon-Type Affinity Ticket",
       "category": "Miscellaneous",
       "held": false,
       "effect": "A ticket that makes you more likely to meet Dragon-type Pokémon in the next lineup.",
       "location": "Achievements"
+    },
+    "dusk ball guaranteed ticket": {
+      "name": "Dusk Ball Guaranteed Ticket",
+      "category": "Miscellaneous",
+      "held": false,
+      "effect": "A ticket that will let you meet a lineup of Pokémon that are inside Dusk Balls.",
+      "location": "-"
     },
     "electric-type affinity ticket": {
       "name": "Electric-Type Affinity Ticket",
@@ -1127,12 +1274,40 @@
       "effect": "A ticket that makes you more likely to meet Ground-type Pokémon in the next lineup.",
       "location": "Achievements"
     },
+    "heal ball guaranteed ticket": {
+      "name": "Heal Ball Guaranteed Ticket",
+      "category": "Miscellaneous",
+      "held": false,
+      "effect": "A ticket that will let you meet a lineup of Pokémon that are inside Heal Balls.",
+      "location": "-"
+    },
     "ice-type affinity ticket": {
       "name": "Ice-Type Affinity Ticket",
       "category": "Miscellaneous",
       "held": false,
       "effect": "A ticket that makes you more likely to meet Ice-type Pokémon in the next lineup.",
       "location": "Achievements"
+    },
+    "luxury ball guaranteed ticket": {
+      "name": "Luxury Ball Guaranteed Ticket",
+      "category": "Miscellaneous",
+      "held": false,
+      "effect": "A ticket that will let you meet a lineup of Pokémon that are inside Luxury Balls.",
+      "location": "-"
+    },
+    "nest ball guaranteed ticket": {
+      "name": "Nest Ball Guaranteed Ticket",
+      "category": "Miscellaneous",
+      "held": false,
+      "effect": "A ticket that will let you meet a lineup of Pokémon that are inside Nest Balls.",
+      "location": "-"
+    },
+    "net ball guaranteed ticket": {
+      "name": "Net Ball Guaranteed Ticket",
+      "category": "Miscellaneous",
+      "held": false,
+      "effect": "A ticket that will let you meet a lineup of Pokémon that are inside Net Balls.",
+      "location": "-"
     },
     "normal-type affinity ticket": {
       "name": "Normal-Type Affinity Ticket",
@@ -1148,6 +1323,20 @@
       "effect": "A ticket that makes you more likely to meet Poison-type Pokémon in the next lineup.",
       "location": "Achievements"
     },
+    "poke ball guaranteed ticket": {
+      "name": "Poke Ball Guaranteed Ticket",
+      "category": "Miscellaneous",
+      "held": false,
+      "effect": "A ticket that will let you meet a lineup of Pokémon that are inside regular Poké Balls.",
+      "location": "-"
+    },
+    "premier ball guaranteed ticket": {
+      "name": "Premier Ball Guaranteed Ticket",
+      "category": "Miscellaneous",
+      "held": false,
+      "effect": "A ticket that will let you meet a lineup of Pokémon that are inside Premier Balls.",
+      "location": "-"
+    },
     "psychic-type affinity ticket": {
       "name": "Psychic-Type Affinity Ticket",
       "category": "Miscellaneous",
@@ -1155,12 +1344,33 @@
       "effect": "A ticket that makes you more likely to meet Psychic-type Pokémon in the next lineup.",
       "location": "Achievements"
     },
+    "quick ball guaranteed ticket": {
+      "name": "Quick Ball Guaranteed Ticket",
+      "category": "Miscellaneous",
+      "held": false,
+      "effect": "A ticket that will let you meet a lineup of Pokémon that are inside Quick Balls.",
+      "location": "-"
+    },
     "quick coupon": {
       "name": "Quick Coupon",
       "category": "Miscellaneous",
       "held": false,
       "effect": "A ticket that can be used to reduce the wait time in Recruit Ranch",
       "location": "MissionsBattle PassAchievements"
+    },
+    "rare poke ball guaranteed ticket": {
+      "name": "Rare Poke Ball Guaranteed Ticket",
+      "category": "Miscellaneous",
+      "held": false,
+      "effect": "A ticket that will let you meet a lineup of Pokémon that are inside rare Poké Balls.",
+      "location": "-"
+    },
+    "repeat ball guaranteed ticket": {
+      "name": "Repeat Ball Guaranteed Ticket",
+      "category": "Miscellaneous",
+      "held": false,
+      "effect": "A ticket that will let you meet a lineup of Pokémon that are inside Repeat Balls.",
+      "location": "-"
     },
     "rock-type affinity ticket": {
       "name": "Rock-Type Affinity Ticket",
@@ -1182,6 +1392,13 @@
       "held": false,
       "effect": "A ticket that can be used to recruit a Pokémon at Recruit Ranch",
       "location": "MissionsBattle PassAchievements"
+    },
+    "timer ball guaranteed ticket": {
+      "name": "Timer Ball Guaranteed Ticket",
+      "category": "Miscellaneous",
+      "held": false,
+      "effect": "A ticket that will let you meet a lineup of Pokémon that are inside Timer Balls.",
+      "location": "-"
     },
     "training ticket": {
       "name": "Training Ticket",

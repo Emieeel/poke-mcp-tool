@@ -5,7 +5,9 @@
  *
  * This mounts the actual server (createServer()) on an in-memory transport and calls each
  * tool exactly as a Claude client would, then asserts the results match the spec's
- * definition of done. Run after `npm run scrape -- m-b` so the regulation tools have data.
+ * definition of done. Run after `npm run scrape -- <current-reg>` so the regulation tools have
+ * data. m-c is the current regulation; the m-b assertions below deliberately stay on m-b, since
+ * an expired regulation's file is frozen and still exercises the per-regulation exclusion path.
  */
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { InMemoryTransport } from '@modelcontextprotocol/sdk/inMemory.js';
@@ -251,6 +253,86 @@ async function main() {
       meow.parsed.description);
   }
 
+  // 1d. Type effectiveness reported ON the damage result. Every calc must state how effective
+  // the hit was, in the game's own words, taken from the ENGINE's effectiveness function and the
+  // RESOLVED move/defender — so the label can never contradict the damage rolls beside it.
+  console.log('\ncalculate_damage (type effectiveness):');
+  {
+    // Bug/Steel: 4x from Fire, and NEUTRAL to Ground (Bug resists Ground, Steel is weak to it).
+    // The Ground case is the regression this field exists to prevent.
+    const fire = await callJson(client, 'calculate_damage', {
+      attacker: { name: 'Mega Charizard Y', level: 50 }, defender: { name: 'Mega Golisopod', level: 50 }, move: 'Heat Wave',
+    });
+    check('Fire vs Bug/Steel = 4x, super effective',
+      fire.parsed.typeEffectiveness?.multiplier === 4 && fire.parsed.typeEffectiveness.label === 'super effective',
+      fire.parsed.typeEffectiveness);
+    check('game message is "It\'s super effective!"',
+      fire.parsed.typeEffectiveness?.message === "It's super effective!", fire.parsed.typeEffectiveness?.message);
+    check('effectiveness is printed in notes',
+      fire.parsed.notes.some((n: string) => /Type effectiveness: Fire vs Bug\/Steel = x4/.test(n)), fire.parsed.notes);
+
+    const ground = await callJson(client, 'calculate_damage', {
+      attacker: { name: 'Mega Garchomp', level: 50 }, defender: { name: 'Mega Golisopod', level: 50 }, move: 'Earthquake',
+    });
+    check('Ground vs Bug/Steel = 1x (Bug resists Ground), neutral',
+      ground.parsed.typeEffectiveness?.multiplier === 1 && ground.parsed.typeEffectiveness.label === 'neutral',
+      ground.parsed.typeEffectiveness);
+
+    const resisted = await callJson(client, 'calculate_damage', {
+      attacker: { name: 'Rillaboom', level: 50 }, defender: { name: 'Mega Golisopod', level: 50 }, move: 'Wood Hammer',
+    });
+    check('Grass vs Bug/Steel = 0.25x, not very effective',
+      resisted.parsed.typeEffectiveness?.multiplier === 0.25 && resisted.parsed.typeEffectiveness.label === 'not very effective',
+      resisted.parsed.typeEffectiveness);
+    check('resisted hit prints "It\'s not very effective..."',
+      resisted.parsed.typeEffectiveness?.message === "It's not very effective...", resisted.parsed.typeEffectiveness?.message);
+
+    // Type immunity: the message names the defender, exactly as the game does.
+    const immune = await callJson(client, 'calculate_damage', {
+      attacker: { name: 'Pikachu', level: 50 }, defender: { name: 'Garchomp', level: 50 }, move: 'Thunderbolt',
+    });
+    check('Electric vs Ground = 0x with "doesn\'t affect" message naming the defender',
+      immune.parsed.typeEffectiveness?.multiplier === 0 && /doesn't affect Garchomp/.test(immune.parsed.typeEffectiveness?.message ?? ''),
+      immune.parsed.typeEffectiveness);
+
+    // Move-specific exception straight from the engine (Ice hits Water for 2x). This also pins
+    // the deep import of the engine's own getMoveEffectiveness: reimplementing the chart by hand
+    // would report 0.5x here.
+    const fd = await callJson(client, 'calculate_damage', {
+      attacker: { name: 'Baxcalibur', level: 50 }, defender: { name: 'Blastoise', level: 50 }, move: 'Freeze-Dry',
+    });
+    check('Freeze-Dry vs Water = 2x (engine exception, not the raw chart)',
+      fd.parsed.typeEffectiveness?.multiplier === 2, fd.parsed.typeEffectiveness);
+
+    // Ability retype: Aerilate makes Double-Edge Flying, which Steel resists back to neutral.
+    const aer = await callJson(client, 'calculate_damage', {
+      attacker: { name: 'Mega Salamence', level: 50, ability: 'Aerilate' }, defender: { name: 'Mega Golisopod', level: 50 }, move: 'Double-Edge',
+    });
+    check('Aerilate Double-Edge is reported as Flying (resolved type), 1x vs Bug/Steel',
+      aer.parsed.typeEffectiveness?.moveType === 'Flying' && aer.parsed.typeEffectiveness.multiplier === 1,
+      aer.parsed.typeEffectiveness);
+
+    // Non-type immunity: typing says 2x but Levitate blocks it. The label must follow the actual
+    // damage (no effect) while the note explains that the type chart is not what stopped it.
+    const lev = await callJson(client, 'calculate_damage', {
+      attacker: { name: 'Garchomp', level: 50 }, defender: { name: 'Eelektross', level: 50, ability: 'Levitate' }, move: 'Earthquake',
+    });
+    check('Levitate: typing 2x but label "no effect" and the note explains why',
+      lev.parsed.typeEffectiveness?.multiplier === 2 &&
+        lev.parsed.typeEffectiveness.label === 'no effect' &&
+        /not the type chart/.test(lev.parsed.typeEffectiveness.note ?? ''),
+      lev.parsed.typeEffectiveness);
+
+    // Tera replaces the defender's typing entirely.
+    const tera = await callJson(client, 'calculate_damage', {
+      attacker: { name: 'Mega Charizard Y', level: 50 }, defender: { name: 'Mega Golisopod', level: 50, teraType: 'Water' }, move: 'Heat Wave',
+    });
+    check('Tera Water turns the 4x Fire weakness into 0.5x',
+      tera.parsed.typeEffectiveness?.multiplier === 0.5 &&
+        JSON.stringify(tera.parsed.typeEffectiveness.defenderTypes) === JSON.stringify(['Water']),
+      tera.parsed.typeEffectiveness);
+  }
+
   // 2. type_effectiveness — the two spec assertions.
   console.log('\ntype_effectiveness:');
   {
@@ -263,7 +345,7 @@ async function main() {
   // 3. get_pokemon — Champions-accurate: Mega Staraptor must be Fighting/Flying + Contrary.
   console.log('\nget_pokemon:');
   {
-    const { parsed } = await callJson(client, 'get_pokemon', { name: 'Staraptor-Mega', regulation: 'm-b' });
+    const { parsed } = await callJson(client, 'get_pokemon', { name: 'Staraptor-Mega', regulation: 'm-c' });
     check('Staraptor-Mega typing is Fighting/Flying', JSON.stringify(parsed.types) === JSON.stringify(['Fighting', 'Flying']), parsed.types);
     check('data came from the Champions dex', parsed.source === 'champions-dex', { source: parsed.source });
     console.log('    abilities:', JSON.stringify(parsed.abilities));
@@ -279,45 +361,117 @@ async function main() {
       { x: rx.parsed.abilities, y: ry.parsed.abilities });
   }
 
+  // 3a. get_pokemon defensive profiles — the complete matchup table must come back on EVERY
+  // lookup, so weaknesses never have to be recalled or re-derived by hand.
+  console.log('\nget_pokemon (defensive profile):');
+  {
+    const { parsed } = await callJson(client, 'get_pokemon', { name: 'Mega Golisopod' });
+    const dp = parsed.defensiveProfile;
+    console.log('   ', dp?.summary);
+    check('every one of the 18 attacking types is covered', Object.keys(dp?.multipliers ?? {}).length === 18, Object.keys(dp?.multipliers ?? {}).length);
+    check('Bug/Steel has exactly one weakness: Fire 4x',
+      dp?.weaknesses.length === 1 && dp.weaknesses[0].type === 'Fire' && dp.weaknesses[0].multiplier === 4,
+      dp?.weaknesses);
+    check('Bug/Steel is NEUTRAL to Ground (Bug resists it, Steel is weak to it)',
+      dp?.multipliers?.Ground === 1 && dp.neutral.includes('Ground'), { ground: dp?.multipliers?.Ground });
+    check('Bug/Steel is immune to Poison', dp?.immunities.includes('Poison'), dp?.immunities);
+    check('Bug/Steel resists Grass at 0.25x', dp?.multipliers?.Grass === 0.25, { grass: dp?.multipliers?.Grass });
+    check('weaknesses are ordered worst-first', (dp?.weaknesses ?? []).every((w: any, i: number, a: any[]) => i === 0 || a[i - 1].multiplier >= w.multiplier), dp?.weaknesses);
+    check('summary names the weakness in prose', /weak to: Fire 4x/.test(dp?.summary ?? ''), dp?.summary);
+    // Typing-only by default, with the ability variants kept separate.
+    check('base profile applies no ability', dp?.ability === undefined && /Typing only/.test(dp?.note ?? ''), { ability: dp?.ability });
+
+    // Abilities that change damage TAKEN get their own table plus an explicit diff.
+    const sin = await callJson(client, 'get_pokemon', { name: 'Sinistcha' });
+    const heatproof = sin.parsed.defensiveProfileByAbility?.find((p: any) => p.ability === 'Heatproof');
+    check('Sinistcha lists a Heatproof defensive profile', Boolean(heatproof), sin.parsed.defensiveProfileByAbility?.map((p: any) => p.ability));
+    check('Heatproof turns the 2x Fire weakness into 1x',
+      heatproof?.multipliers?.Fire === 1 && !heatproof?.weaknesses.some((w: any) => w.type === 'Fire'),
+      { fire: heatproof?.multipliers?.Fire });
+    check('the change is spelled out in differsFromTyping',
+      heatproof?.differsFromTyping?.some((d: string) => /Fire 2x -> 1x/.test(d)), heatproof?.differsFromTyping);
+    check('Heatproof note explains the ability', heatproof?.abilityNotes?.some((n: string) => /Heatproof/.test(n)), heatproof?.abilityNotes);
+
+    // Levitate must show up as a real immunity in the ability-adjusted table.
+    const eel = await callJson(client, 'get_pokemon', { name: 'Eelektross' });
+    const lev = eel.parsed.defensiveProfileByAbility?.find((p: any) => p.ability === 'Levitate');
+    check('Eelektross + Levitate is immune to Ground', lev?.immunities?.includes('Ground'), lev?.immunities);
+    check('base Eelektross profile still shows the Ground weakness',
+      eel.parsed.defensiveProfile?.multipliers?.Ground === 2, { ground: eel.parsed.defensiveProfile?.multipliers?.Ground });
+
+    // A dual-type immunity from typing alone.
+    const hat = await callJson(client, 'get_pokemon', { name: 'Hatterene' });
+    check('Psychic/Fairy is immune to Dragon and resists Fighting 0.25x',
+      hat.parsed.defensiveProfile?.immunities?.includes('Dragon') && hat.parsed.defensiveProfile?.multipliers?.Fighting === 0.25,
+      { immunities: hat.parsed.defensiveProfile?.immunities, fighting: hat.parsed.defensiveProfile?.multipliers?.Fighting });
+
+    // Dex entries that merge regional forms have >2 types; the profile must warn instead of
+    // confidently describing a Pokémon that doesn't exist.
+    const rotom = await callJson(client, 'get_pokemon', { name: 'Rotom' });
+    check('merged-form dex entry (Rotom) carries a warning',
+      rotom.parsed.types.length > 2 && /merges several/.test(rotom.parsed.defensiveProfile?.warning ?? ''),
+      { types: rotom.parsed.types, warning: rotom.parsed.defensiveProfile?.warning });
+    check('a normal two-type entry has no warning', dp?.warning === undefined, dp?.warning);
+  }
+
   // 4. check_legality — full roster, a banned Mega form, and a missing regulation.
   console.log('\ncheck_legality:');
   {
-    const legal = await callJson(client, 'check_legality', { regulation: 'm-b', pokemon: 'Garchomp', moves: ['Earthquake', 'Recover'] });
-    check('Garchomp is legal in m-b (full roster)', legal.parsed.pokemonLegal === true, { legal: legal.parsed.pokemonLegal });
+    const legal = await callJson(client, 'check_legality', { regulation: 'm-c', pokemon: 'Garchomp', moves: ['Earthquake', 'Recover'] });
+    check('Garchomp is legal in m-c (full roster)', legal.parsed.pokemonLegal === true, { legal: legal.parsed.pokemonLegal });
     check('move legality now available (learnset)', legal.parsed.moveLegalityAvailable === true);
     check('Garchomp can learn Earthquake but not Recover', legal.parsed.moves?.find((m: any) => m.move === 'Earthquake')?.legal === true && legal.parsed.moves?.find((m: any) => m.move === 'Recover')?.legal === false, legal.parsed.moves);
+    // Per-regulation Mega exclusions: m-b excluded the Z Megas; m-c newly enables them. Both
+    // resolve through the same base species, so this pins the exclusion list, not the name lookup.
     const banned = await callJson(client, 'check_legality', { regulation: 'm-b', pokemon: 'Mega Garchomp Z' });
     check('Mega Garchomp Z is banned in m-b', banned.parsed.pokemonLegal === false, { legal: banned.parsed.pokemonLegal });
+    const unbanned = await callJson(client, 'check_legality', { regulation: 'm-c', pokemon: 'Mega Garchomp Z' });
+    check('Mega Garchomp Z is legal in m-c', unbanned.parsed.pokemonLegal === true, { legal: unbanned.parsed.pokemonLegal });
+    // Pokémon added in m-c must be legal there and absent from the frozen m-b roster.
+    const newMon = await callJson(client, 'check_legality', { regulation: 'm-c', pokemon: 'Rillaboom' });
+    const newMonOld = await callJson(client, 'check_legality', { regulation: 'm-b', pokemon: 'Rillaboom' });
+    check('Rillaboom is legal in m-c but not m-b', newMon.parsed.pokemonLegal === true && newMonOld.parsed.pokemonLegal === false, { mc: newMon.parsed.pokemonLegal, mb: newMonOld.parsed.pokemonLegal });
+    // Apostrophe/period slugs (farfetch'd, mr.mime) were once dropped by the roster scraper.
+    const punct = await callJson(client, 'check_legality', { regulation: 'm-c', pokemon: "Farfetch'd" });
+    check('"Farfetch\'d" is legal in m-c (punctuated slug)', punct.parsed.pokemonLegal === true, { legal: punct.parsed.pokemonLegal });
     const missing = await callJson(client, 'check_legality', { regulation: 'zz-nonexistent', pokemon: 'Pikachu' });
     check('missing regulation returns a clear error', missing.isError === true && /scrape/i.test(missing.parsed.error ?? ''), missing.parsed.error);
     // Item legality is regulation-scoped: a real held item is legal, a non-held ticket is not.
-    const withItems = await callJson(client, 'check_legality', { regulation: 'm-b', pokemon: 'Garchomp', items: ['Life Orb', 'Bug-Type Affinity Ticket'] });
-    check('item legality available for m-b', withItems.parsed.itemLegalityAvailable === true);
-    check('Life Orb legal, ticket illegal in m-b',
+    const withItems = await callJson(client, 'check_legality', { regulation: 'm-c', pokemon: 'Garchomp', items: ['Life Orb', 'Bug-Type Affinity Ticket'] });
+    check('item legality available for m-c', withItems.parsed.itemLegalityAvailable === true);
+    check('Life Orb legal, ticket illegal in m-c',
       withItems.parsed.items?.find((i: any) => i.item === 'Life Orb')?.legal === true &&
         withItems.parsed.items?.find((i: any) => /Ticket/.test(i.item))?.legal === false,
       withItems.parsed.items);
+    // Items added in m-c are legal there but not on the frozen m-b list.
+    const newItem = await callJson(client, 'check_legality', { regulation: 'm-c', pokemon: 'Garchomp', items: ['Rocky Helmet'] });
+    const newItemOld = await callJson(client, 'check_legality', { regulation: 'm-b', pokemon: 'Garchomp', items: ['Rocky Helmet'] });
+    check('Rocky Helmet legal in m-c but not m-b', newItem.parsed.items?.[0]?.legal === true && newItemOld.parsed.items?.[0]?.legal === false, { mc: newItem.parsed.items?.[0]?.legal, mb: newItemOld.parsed.items?.[0]?.legal });
   }
 
-  // 5. list_regulations — m-b present with meta + full-roster counts.
+  // 5. list_regulations — both regulations present with meta + full-roster counts.
   console.log('\nlist_regulations:');
   {
     const { parsed } = await callJson(client, 'list_regulations', {});
+    const ids = parsed.regulations.map((r: any) => r.id);
     const mb = parsed.regulations.find((r: any) => r.id === 'm-b');
-    check('m-b is listed', Boolean(mb), parsed.regulations.map((r: any) => r.id));
-    check('m-b has meta with source + dates', Boolean(mb?.meta?.source && mb?.meta?.validFrom), mb?.meta);
-    check('m-b full roster has 100+ legal Pokémon', mb?.legalPokemonCount > 100, { count: mb?.legalPokemonCount });
+    const mc = parsed.regulations.find((r: any) => r.id === 'm-c');
+    check('m-b and m-c are both listed', Boolean(mb) && Boolean(mc), ids);
+    check('m-c has meta with source + dates', Boolean(mc?.meta?.source && mc?.meta?.validFrom), mc?.meta);
+    check('m-c full roster has 100+ legal Pokémon', mc?.legalPokemonCount > 100, { count: mc?.legalPokemonCount });
+    check('m-c roster is a superset of m-b\'s', mc?.legalPokemonCount > mb?.legalPokemonCount, { mc: mc?.legalPokemonCount, mb: mb?.legalPokemonCount });
+    check('m-c reports newly-useable count', mc?.newlyUseableCount > 0, { newly: mc?.newlyUseableCount });
     check('m-b reports banned + newly-useable counts', mb?.bannedPokemonCount > 0 && mb?.newlyUseableCount > 0, { banned: mb?.bannedPokemonCount, newly: mb?.newlyUseableCount });
   }
 
   // 6. get_item — Champions-accurate effect/category, plus regulation legality.
   console.log('\nget_item:');
   {
-    const { parsed } = await callJson(client, 'get_item', { name: 'Choice Scarf', regulation: 'm-b' });
+    const { parsed } = await callJson(client, 'get_item', { name: 'Choice Scarf', regulation: 'm-c' });
     check('Choice Scarf is a held Hold Item', parsed.category === 'Hold Item' && parsed.held === true, { category: parsed.category, held: parsed.held });
     check('data came from the Champions item catalog', parsed.source === 'champions-items', { source: parsed.source });
     check('Choice Scarf effect mentions Speed', /speed/i.test(parsed.effect ?? ''), parsed.effect);
-    check('Choice Scarf is legal in m-b', parsed.regulation?.legal === true, { legal: parsed.regulation?.legal });
+    check('Choice Scarf is legal in m-c', parsed.regulation?.legal === true, { legal: parsed.regulation?.legal });
     // A Mega Stone resolves with its category.
     const stone = await callJson(client, 'get_item', { name: 'Garchompite' });
     check('Garchompite is a Mega Stone', stone.parsed.category === 'Mega Stone', { category: stone.parsed.category });
@@ -338,20 +492,21 @@ async function main() {
     check('default list excludes non-held items', all.parsed.items.every((i: any) => i.held === true), { count: all.parsed.count });
     const misc = await callJson(client, 'list_items', { includeNonHeld: true, nameContains: 'ticket' });
     check('includeNonHeld surfaces tickets', misc.parsed.count > 0 && misc.parsed.items.some((i: any) => i.held === false), { count: misc.parsed.count });
-    const reg = await callJson(client, 'list_items', { category: 'Hold Item', regulation: 'm-b' });
-    check('regulation marks Hold Items legal in m-b', reg.parsed.items.length > 0 && reg.parsed.items.every((i: any) => i.regulationLegal === true), { sample: reg.parsed.items.slice(0, 2) });
+    const reg = await callJson(client, 'list_items', { category: 'Hold Item', regulation: 'm-c' });
+    check('regulation marks Hold Items legal in m-c', reg.parsed.items.length > 0 && reg.parsed.items.every((i: any) => i.regulationLegal === true), { sample: reg.parsed.items.slice(0, 2) });
   }
 
-  // 8. find_pokemon_by_move — legal learners of a move in m-b (defaults to m-b).
+  // 8. find_pokemon_by_move — legal learners of a move in the default (current) regulation.
   console.log('\nfind_pokemon_by_move:');
   {
     const fo = await callJson(client, 'find_pokemon_by_move', { move: 'Fake Out' });
-    check('Fake Out is learnable in m-b (defaulted regulation)', fo.parsed.learnable === true && fo.parsed.count > 0, { count: fo.parsed.count });
+    check('Fake Out is learnable in the defaulted regulation', fo.parsed.learnable === true && fo.parsed.count > 0, { count: fo.parsed.count });
+    check('defaulted regulation is the current one (m-c)', fo.parsed.regulation === 'm-c', { regulation: fo.parsed.regulation });
     check('Fake Out learners include Incineroar', fo.parsed.pokemon.some((p: any) => p.name === 'Incineroar'), fo.parsed.pokemon.slice(0, 3));
     check('move metadata enriched (Normal/Physical)', fo.parsed.move.type === 'Normal' && fo.parsed.move.category === 'Physical', fo.parsed.move);
     // A move no legal Champions mon learns -> learnable false, empty list, no crash.
-    const none = await callJson(client, 'find_pokemon_by_move', { regulation: 'm-b', move: 'Glacial Lance' });
-    check('Glacial Lance has no legal learners in m-b', none.parsed.learnable === false && none.parsed.count === 0, { count: none.parsed.count });
+    const none = await callJson(client, 'find_pokemon_by_move', { regulation: 'm-c', move: 'Glacial Lance' });
+    check('Glacial Lance has no legal learners in m-c', none.parsed.learnable === false && none.parsed.count === 0, { count: none.parsed.count });
     // Name normalization: hyphen/spacing variants resolve to the same move.
     const wisp = await callJson(client, 'find_pokemon_by_move', { move: 'willowisp' });
     check('"willowisp" resolves to Will-O-Wisp learners', wisp.parsed.learnable === true && wisp.parsed.move.name === 'Will-O-Wisp', { name: wisp.parsed.move.name, count: wisp.parsed.count });
@@ -361,7 +516,7 @@ async function main() {
   console.log('\nlist_legal_moves:');
   {
     const all = await callJson(client, 'list_legal_moves', {});
-    check('m-b has a large legal-move pool (100+)', all.parsed.totalLegalMoves > 100, { total: all.parsed.totalLegalMoves });
+    check('m-c has a large legal-move pool (100+)', all.parsed.totalLegalMoves > 100, { total: all.parsed.totalLegalMoves });
     check('each move carries a learnableByCount', all.parsed.moves.every((m: any) => typeof m.learnableByCount === 'number' && m.learnableByCount > 0), { sample: all.parsed.moves.slice(0, 2) });
     const fire = await callJson(client, 'list_legal_moves', { type: 'Fire' });
     check('type filter returns only Fire moves', fire.parsed.count > 0 && fire.parsed.moves.every((m: any) => m.type === 'Fire'), { count: fire.parsed.count });
@@ -377,7 +532,7 @@ async function main() {
   console.log('\nlist_legal_pokemon:');
   {
     const all = await callJson(client, 'list_legal_pokemon', {});
-    check('m-b has a large legal-Pokémon pool (100+)', all.parsed.totalLegalPokemon > 100, { total: all.parsed.totalLegalPokemon });
+    check('m-c has a large legal-Pokémon pool (100+)', all.parsed.totalLegalPokemon > 100, { total: all.parsed.totalLegalPokemon });
     check('resolved entries carry typing and base stats', all.parsed.pokemon.some((p: any) => p.resolved && p.types.length > 0 && p.baseStats), { sample: all.parsed.pokemon.slice(0, 2) });
     const dragon = await callJson(client, 'list_legal_pokemon', { type: 'Dragon' });
     check('type filter returns only Dragon types', dragon.parsed.count > 0 && dragon.parsed.pokemon.every((p: any) => p.types.includes('Dragon')), { count: dragon.parsed.count });

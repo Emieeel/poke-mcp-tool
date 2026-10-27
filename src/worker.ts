@@ -1,7 +1,7 @@
 /**
  * worker.ts — Cloudflare Workers entry point (hosted, "paste-a-URL" deployment).
  *
- * Same nine MCP tools as the stdio server (src/index.ts), exposed over the MCP **Streamable
+ * Same ten MCP tools as the stdio server (src/index.ts), exposed over the MCP **Streamable
  * HTTP** transport so any remote MCP client can connect by URL — no local install, works from
  * Claude web/mobile, Cursor, etc.
  *
@@ -22,14 +22,19 @@ import { provideRegulationData } from './regulations.js';
 
 // Data bundled into the Worker at build time (no filesystem at runtime). The `with { type:
 // 'json' }` import attribute is required under NodeNext and accepted by esbuild/wrangler.
+// Every regulation must be imported and injected explicitly — Workers can't enumerate a
+// directory the way the stdio server's diskdata.ts does, so a new regulations/<id>.json is
+// invisible here until it's added below.
 import dexData from '../data/champions-dex.json' with { type: 'json' };
 import itemsData from '../data/champions-items.json' with { type: 'json' };
 import mbRegulation from '../regulations/m-b.json' with { type: 'json' };
+import mcRegulation from '../regulations/m-c.json' with { type: 'json' };
 
 // Inject once, at module load (module scope persists across requests on a warm isolate).
 provideDexData(dexData);
 provideItemsData(itemsData);
 provideRegulationData('m-b', mbRegulation);
+provideRegulationData('m-c', mcRegulation);
 
 // CORS so browser-based MCP clients can connect. The data is public, so `*` is fine.
 const CORS_HEADERS: Record<string, string> = {
@@ -71,7 +76,7 @@ export default {
         status: 'ok',
         transport: 'streamable-http',
         mcpEndpoint: '/mcp',
-        tools: 9,
+        tools: 10,
       });
     }
 
