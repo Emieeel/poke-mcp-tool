@@ -82,7 +82,6 @@ export default {
         status: 'ok',
         transport: 'streamable-http',
         mcpEndpoint: '/mcp',
-        tools: 10,
       });
     }
 
