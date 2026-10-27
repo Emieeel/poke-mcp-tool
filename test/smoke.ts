@@ -630,13 +630,18 @@ async function main() {
     const snipe = (await callJson(client, 'get_move', { name: 'snipe shot' })).parsed;
     check('Snipe Shot: 85 BP Water Special from the Champions data',
       snipe.basePower === 85 && snipe.type === 'Water' && snipe.category === 'Special' && snipe.source === 'champions-moves', snipe);
-    check('Snipe Shot: high crit ratio (1/8) and no contact', snipe.critChance === '1/8' && !snipe.flags.includes('contact'), { critChance: snipe.critChance, flags: snipe.flags });
+    check('Snipe Shot: description has the crit boost; no contact flag',
+      /Critical-Hit Ratio Boost/.test(snipe.description) && !snipe.flags.includes('contact'), { description: snipe.description, flags: snipe.flags });
     check('Snipe Shot: change from S/V listed', (snipe.changesFromScarletViolet ?? []).includes('Base power 80 -> 85'), snipe.changesFromScarletViolet);
     const moon = (await callJson(client, 'get_move', { name: 'Moonblast' })).parsed;
     check('Moonblast: 10% Sp. Atk drop in Champions (was 30%)',
-      moon.effectChance === 10 && (moon.changesFromScarletViolet ?? []).includes('Effect chance 30% -> 10%'), moon);
+      /10% chance/.test(moon.description) && (moon.changesFromScarletViolet ?? []).includes('Effect chance 30% -> 10%'), moon);
+    const dry = (await callJson(client, 'get_move', { name: 'Freeze-Dry' })).parsed;
+    check('Freeze-Dry: no freeze chance in Champions', !/freez/i.test(dry.description), dry.description);
+    const curse = (await callJson(client, 'get_move', { name: "Forest's Curse" })).parsed;
+    check("Forest's Curse (apostrophe in the name) is in the Champions data", curse.source === 'champions-moves', curse.source);
     const rain = (await callJson(client, 'get_move', { name: 'Make It Rain' })).parsed;
-    check('Make It Rain: lowers Sp. Atk by 2 in Champions', /by 2 stages/.test(rain.effect), rain.effect);
+    check('Make It Rain: lowers Sp. Atk by 2 in Champions', /by 2 stages/.test(rain.description), rain.description);
     const twave = (await callJson(client, 'get_move', { name: 'Thunder Wave' })).parsed;
     check('Thunder Wave: Champions paralysis rule attached', (twave.statusConditionNotes ?? []).some((n: string) => /12\.5%/.test(n)), twave.statusConditionNotes);
     const unknown = await client.callTool({ name: 'get_move', arguments: { name: 'Not A Move' } }) as any;
@@ -690,12 +695,7 @@ async function main() {
     const KNOWN_MOVES: Record<string, string> = {
       Growth: 'Champions made it Grass-type; the engine still has Normal',
       Pound: "missing from the engine's Champions move list",
-      'Dire Claw': 'engine (and NCP) treat it as slicing in Champions; Serebii does not',
-      'Dragon Cheer': 'engine (and NCP) treat it as a sound move in Champions; Serebii does not',
-      'Matcha Gotcha': 'Serebii marks it as a bullet move; the engine does not',
-      'Syrup Bomb': 'the engine marks it as a bullet move; Serebii does not',
     };
-    const FLAGS = ['contact', 'sound', 'punch', 'bite', 'slicing', 'bullet', 'wind'];
     const moves: Record<string, string> = {};
     for (const m of Object.values<any>(readData('champions-moves.json').moves)) {
       const e = g.moves.get(toID(m.name)) as any;
@@ -704,7 +704,6 @@ async function main() {
       if (m.type !== e.type) diffs.push(`type ${m.type} vs ${e.type}`);
       if (m.category !== (e.category ?? 'Status')) diffs.push(`category ${m.category} vs ${e.category}`);
       if (m.basePower !== null && e.basePower && m.basePower !== e.basePower) diffs.push(`power ${m.basePower} vs ${e.basePower}`);
-      for (const f of FLAGS) if (Boolean(m.flags[f]) !== Boolean(e.flags?.[f])) diffs.push(`${f} flag`);
       if (diffs.length) moves[m.name] = diffs.join('; ');
     }
     sameKeys('moves', moves, KNOWN_MOVES);

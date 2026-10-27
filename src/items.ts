@@ -14,10 +14,7 @@
  */
 import { gen } from './calc.js';
 import { toID } from '@smogon/calc';
-
-// NOTE: intentionally free of `node:*` imports so it can be bundled for filesystem-less
-// runtimes (Cloudflare Workers). Data arrives INJECTED via provideItemsData() or via a disk
-// LOADER registered by the Node-only src/diskdata.ts. See those two files.
+import { dataSource } from './datasource.js';
 
 export type ItemCategory = 'Hold Item' | 'Mega Stone' | 'Berry' | 'Miscellaneous';
 
@@ -49,29 +46,7 @@ export function itemKey(name: string): string {
   return name.trim().toLowerCase().replace(/[^a-z0-9]/g, '');
 }
 
-// Lazily build a name -> item index from the Champions items file so lookups are O(1) and
-// tolerant of naming conventions.
-let indexCache:
-  | { byKey: Map<string, RawItem>; all: RawItem[]; meta: RawItemsFile['meta'] }
-  | null
-  | undefined;
-
-// Data can be INJECTED (Workers bundle the JSON) or read from disk via a LOADER the Node-only
-// src/diskdata.ts registers. Either way this module stays free of `node:*` imports.
-let injectedItems: RawItemsFile | undefined;
-export function provideItemsData(raw: unknown): void {
-  injectedItems = raw as RawItemsFile;
-  indexCache = undefined; // force a rebuild from the injected data on next access
-}
-
-// A disk loader returns the parsed items JSON, or null if the file is missing/unreadable.
-type ItemsLoader = () => RawItemsFile | null;
-let diskLoader: ItemsLoader | undefined;
-export function registerItemsLoader(loader: ItemsLoader): void {
-  diskLoader = loader;
-  indexCache = undefined;
-}
-
+// A name -> item index over the Champions items file, tolerant of naming conventions.
 function buildIndex(raw: RawItemsFile) {
   const byKey = new Map<string, RawItem>();
   const all: RawItem[] = [];
@@ -83,13 +58,11 @@ function buildIndex(raw: RawItemsFile) {
   return { byKey, all, meta: raw.meta };
 }
 
-function loadIndex() {
-  if (indexCache !== undefined) return indexCache;
-  const raw = injectedItems ?? diskLoader?.() ?? null;
-  // null means no Champions catalog available — callers fall back to @smogon/calc data.
-  indexCache = raw ? buildIndex(raw) : null;
-  return indexCache;
-}
+// null when no Champions catalog is available — callers fall back to @smogon/calc data.
+const source = dataSource(buildIndex);
+export const provideItemsData = source.provide;
+export const registerItemsLoader = source.register;
+const loadIndex = source.get;
 
 /** Source URL + timestamp for the Champions item catalog, if loaded (for provenance). */
 export function championsItemsMeta(): RawItemsFile['meta'] | null {

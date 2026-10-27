@@ -97,7 +97,7 @@ plan, or one connector on Free) or as a remote MCP server in Cursor. Config live
 | `find_pokemon_by_move` | "Who can run Fake Out in M-C?" — every Pokémon legal in a regulation that can learn a given move, with the move's type/category/base power. Name-tolerant (`willowisp` → Will-O-Wisp). Defaults to `m-c`. |
 | `list_legal_moves` | The pool of moves usable in a regulation (everything learnable by at least one legal Pokémon), each with type, category, base power, and how many Pokémon learn it. Filter by `type`, `category`, or a `nameContains` substring. Defaults to `m-c`. |
 | `list_legal_pokemon` | The regulation's legal roster, each with its dex number, typing, base stats, and abilities. Filter by `type` (e.g. `Dragon`) or a `nameContains` substring. The complement to `list_legal_moves`. Defaults to `m-c`. |
-| `get_move` | A move as it works in Champions: type, category, power, accuracy, PP, priority, target, effect text and chance, crit chance, flags, plus **what Champions changed from Scarlet/Violet** (`Base power 80 -> 85`) and the changed status rules for what it inflicts (paralysis is 12.5% in Champions). |
+| `get_move` | A move as it works in Champions: type, category, power, accuracy, PP, the in-game description, target and flags (contact, slicing, …), plus **what Champions changed from Scarlet/Violet** (`Base power 80 -> 85`) and the changed status rules for what it inflicts (paralysis is 12.5% in Champions). |
 | `get_ability` | An ability's Champions description, whether it's new in Champions (Mega Sol, Aura Guard, …), and which Pokémon can have it — optionally only those legal in a regulation. |
 | `list_regulations` | Which regulations are available locally, with each one's metadata and counts. |
 
@@ -122,10 +122,11 @@ in their output rather than hiding:
   for a non-type reason (Levitate, Flash Fire, Air Balloon, Protect), the output says so instead
   of blaming the type chart.
 - **There is no Terastallization in Champions**, so `calculate_damage` has no Tera input.
-- **Two Champions sources, cross-checked.** Damage calcs use @smogon/calc's Champions data;
-  `get_move`, `get_ability` and the learnsets use Serebii's. The test suite compares the two
-  and lists every known disagreement (e.g. the engine treats Dire Claw as a slicing move and
-  Serebii doesn't), so a patch that lands on one side first shows up as a failing test.
+- **Two Champions sources, cross-checked.** Damage calcs and move flags use @smogon/calc's
+  Champions data; move numbers and descriptions, abilities and learnsets use Serebii's. The test
+  suite compares the two and lists every known disagreement (e.g. Growth is Grass-type in
+  Champions, the engine still says Normal), so a patch that lands on one side first shows up as
+  a failing test.
 - **Nine dex entries merge regional forms.** The dex scraper lumps some multi-form species
   (Rotom, Slowbro, Slowking, Tauros, Ninetales, Castform, Zoroark, Stunfisk, Decidueye) into one
   entry with more than two types. `get_pokemon` output derived from that typing carries an
@@ -140,7 +141,7 @@ changes. They pull from [Serebii](https://www.serebii.net/pokedex-champions/).
 npm run scrape -- m-c      # regulation legality (roster + bans + legal items)
 npm run scrape:items       # held-item catalog (effects, locations, categories)
 npm run scrape:dex         # per-Pokémon stats, typing, abilities, learnsets + ability text
-npm run scrape:moves       # move effects, chances, flags, changes from Scarlet/Violet
+npm run scrape:moves       # move numbers + descriptions, changes from Scarlet/Violet
 ```
 
 Pass a different id to the first one for future regulations (`npm run scrape -- m-d`). The

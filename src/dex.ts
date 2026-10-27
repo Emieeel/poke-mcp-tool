@@ -12,11 +12,7 @@
 import { toID } from '@smogon/calc';
 import { gen } from './calc.js';
 import { nameKey } from './names.js';
-
-// NOTE: this module is intentionally free of `node:*` imports so it can be bundled for
-// filesystem-less runtimes (Cloudflare Workers). Data arrives either INJECTED via
-// provideDexData() (Workers bundle the JSON) or through a disk LOADER registered by the
-// Node-only src/diskdata.ts (the stdio server). See those two files.
+import { dataSource } from './datasource.js';
 
 interface RawForm {
   name: string;
@@ -60,30 +56,8 @@ export function cleanAbilityName(a?: string): string | undefined {
   return a.replace(/\s*\(.*?\)\s*$/, '').trim() || undefined;
 }
 
-// Lazily build a name -> form index from the Champions dex so lookups are O(1) and tolerant
-// of naming conventions (Mega word order, hyphens, casing).
-let indexCache:
-  | { byKey: Map<string, { entry: RawEntry; form: RawForm }>; meta: RawDex['meta'] }
-  | null
-  | undefined;
-
-// Data can be INJECTED (Workers bundle the JSON) or read from disk via a LOADER the Node-only
-// src/diskdata.ts registers. Either way this module stays free of `node:*` imports.
-let injectedDex: RawDex | undefined;
-export function provideDexData(raw: unknown): void {
-  injectedDex = raw as RawDex;
-  indexCache = undefined; // force a rebuild from the injected data on next access
-}
-
-// A disk loader returns the parsed dex JSON, or null if the file is missing/unreadable. The
-// stdio entry registers this (src/diskdata.ts); Workers never do (they inject instead).
-type DexLoader = () => RawDex | null;
-let diskLoader: DexLoader | undefined;
-export function registerDexLoader(loader: DexLoader): void {
-  diskLoader = loader;
-  indexCache = undefined;
-}
-
+// A name -> form index over the Champions dex, tolerant of naming conventions (Mega word
+// order, hyphens, casing).
 function buildIndex(raw: RawDex) {
   const byKey = new Map<string, { entry: RawEntry; form: RawForm }>();
   for (const entry of Object.values(raw.pokemon)) {
@@ -98,13 +72,11 @@ function buildIndex(raw: RawDex) {
   return { byKey, meta: raw.meta };
 }
 
-function loadIndex() {
-  if (indexCache !== undefined) return indexCache;
-  const raw = injectedDex ?? diskLoader?.() ?? null;
-  // null means no Champions dex available — callers fall back to @smogon/calc data.
-  indexCache = raw ? buildIndex(raw) : null;
-  return indexCache;
-}
+// null when no Champions dex is available — callers fall back to the engine's data.
+const source = dataSource(buildIndex);
+export const provideDexData = source.provide;
+export const registerDexLoader = source.register;
+const loadIndex = source.get;
 
 /** Source URL + timestamp for the Champions dex, if loaded (used by tools for provenance). */
 export function championsDexMeta(): RawDex['meta'] | null {
